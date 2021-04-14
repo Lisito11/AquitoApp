@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CloudinaryDotNet;
 using AquitoApi.Services;
+using AquitoApi.Models;
 
 namespace AquitoApi
 {
@@ -41,7 +42,7 @@ namespace AquitoApi
             services.AddScoped<ICloudinaryService, CloudinaryService>();
 
             //Falta crear las tablas de la base de datos
-            //services.AddDbContext<namedatatabaseContext>(options => options.UseNpgsql(Configuration.GetConnectionString("Dbconnection")));
+            services.AddDbContext<d2bc1ckqeusvkjContext>(options => options.UseNpgsql(Configuration.GetConnectionString("Dbconnection")));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -39,13 +39,13 @@ namespace AquitoApi.Controllers
 
                     return Ok(new
                     {
-                        Message = "Imagen subida correctamenete",
+                        Message = "Imagen subida correctamente",
                         ImageURL = image
                     });
                 }
             }
 
-            return BadRequest("Faltan o los parametros del formdata an sido mal especificado");
+            return BadRequest("Faltan o los parametros del formdata han sido mal especificado");
         }
     }
 }

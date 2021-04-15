@@ -60,3 +60,6 @@ CREATE TABLE reservation (
     useraquitoid int, constraint fk_useraquito_reservation foreign key (useraquitoid) references useraquito(useraquitoid),
     status int
 );
+
+INSERT INTO useraquito(firstname, lastname, email, userpassword, userrole, phone, status) 
+VALUES ('Aquito', 'Jefe', 'lisanny11@hotmail.com', 'JefeAquito123456', 'admin', '8492802042', 1);

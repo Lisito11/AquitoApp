@@ -1,54 +1,43 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
-
-
-@inject HttpClient Http
-
-<h1>Weather forecast</h1>
-
-<p>This component demonstrates fetching data from the APIPRUEBA.</p>
-
-@if (forecasts == null) {
-    <p><em>Loading...</em></p>
-} else {
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts) {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
+<MudGrid>
+    <MudItem xs="12">
+        <MudGrid Spacing="3" Justify="Justify.Center">
+            @foreach (var card in cardsPaginas) {
+                <MudItem Class="m-4">
+                    <MudLink Href="@card.Link" Underline="Underline.None" Class="text-center" Color="Color.Inherit">
+                        <MudCard Style="height:120px; width:200px;">
+                            <MudCardContent>
+                                <div>
+                                    <MudIcon Icon="@card.Icono" Size="MudBlazor.Size.Large"></MudIcon>
+                                </div>
+                                <div>
+                                    <h6 class="mat-subtitle2">@card.Nombre</h6>
+                                </div>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudLink>
+                </MudItem>
             }
-        </tbody>
-    </table>
-}
-
-@code {
-    private WeatherForecast[] forecasts;
-
-    protected override async Task OnInitializedAsync() {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("https://aquitoapp.herokuapp.com/weatherforecast");
+        </MudGrid>
+    </MudItem>
+</MudGrid>
+@code{
+    private class CustomCard {
+        public string Link { get; set; }
+        public string Nombre { get; set; }
+        public string Icono { get; set; }
     }
 
-    public class WeatherForecast {
-        public DateTime Date { get; set; }
+    List<CustomCard> cardsPaginas = new List<CustomCard>() {
+        new CustomCard { Link = "vehiculos", Nombre = "Vehiculos", Icono = Icons.Filled.CarRental },
+        new CustomCard { Link = "clientes", Nombre = "Clientes", Icono = Icons.Filled.People },
+        new CustomCard { Link = "reservas", Nombre = "Reservas", Icono = Icons.Filled.FactCheck },
+        new CustomCard { Link = "cobros", Nombre = "Cobros", Icono = Icons.Filled.AttachMoney },
+        new CustomCard { Link = "reportes", Nombre = "Reportes", Icono = Icons.Filled.MenuBook },
+        new CustomCard { Link = "empleados", Nombre = "Empleados", Icono = Icons.Filled.AccountBox },
+        new CustomCard { Link = "configuracion", Nombre = "Configuración", Icono = Icons.Filled.Settings },
+        new CustomCard { Link = "about", Nombre = "Acerca de nosotros", Icono = Icons.Filled.ContactSupport },
+    };
 
-        public int TemperatureC { get; set; }
-
-        public string Summary { get; set; }
-
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-    }
 }

@@ -1,18 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-#nullable disable
-
-namespace AquitoApi.Models
-{
-    public partial class Client
-    {
-        public Client()
-        {
-            Reservations = new HashSet<Reservation>();
-        }
-
-        public int Clientid { get; set; }
+namespace AquitoApi.DTOs.Client {
+    public class ClientCreacionDTO {
         public string Cedula { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
@@ -24,8 +16,5 @@ namespace AquitoApi.Models
         public string Licencepic { get; set; }
         public int? Useraquitoid { get; set; }
         public int? Status { get; set; }
-
-        public virtual Useraquito Useraquito { get; set; }
-        public virtual ICollection<Reservation> Reservations { get; set; }
     }
 }

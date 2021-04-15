@@ -4,8 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace AquitoApi.Models
-{
+namespace AquitoApi.Entities {
     public partial class d2bc1ckqeusvkjContext : DbContext
     {
         public d2bc1ckqeusvkjContext(){}
@@ -26,7 +25,7 @@ namespace AquitoApi.Models
             {
                 entity.ToTable("client");
 
-                entity.Property(e => e.Clientid)
+                entity.Property(e => e.Id)
                     .HasColumnName("clientid")
                     .UseIdentityAlwaysColumn();
 
@@ -80,7 +79,7 @@ namespace AquitoApi.Models
             {
                 entity.ToTable("reservation");
 
-                entity.Property(e => e.Reservationid)
+                entity.Property(e => e.Id)
                     .HasColumnName("reservationid")
                     .UseIdentityAlwaysColumn();
 
@@ -122,7 +121,7 @@ namespace AquitoApi.Models
             {
                 entity.ToTable("typevehicle");
 
-                entity.Property(e => e.Typevehicleid)
+                entity.Property(e => e.Id)
                     .HasColumnName("typevehicleid")
                     .UseIdentityAlwaysColumn();
 
@@ -137,7 +136,7 @@ namespace AquitoApi.Models
             {
                 entity.ToTable("useraquito");
 
-                entity.Property(e => e.Useraquitoid)
+                entity.Property(e => e.Id)
                     .HasColumnName("useraquitoid")
                     .UseIdentityAlwaysColumn();
 
@@ -172,7 +171,7 @@ namespace AquitoApi.Models
             {
                 entity.ToTable("vehicle");
 
-                entity.Property(e => e.Vehicleid)
+                entity.Property(e => e.Id)
                     .HasColumnName("vehicleid")
                     .UseIdentityAlwaysColumn();
 

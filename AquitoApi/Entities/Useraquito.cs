@@ -1,12 +1,12 @@
-﻿using System;
+﻿using AquitoApi.Entities;
+using System;
 using System.Collections.Generic;
 
 #nullable disable
 
-namespace AquitoApi.Models
-{
-    public partial class Useraquito
-    {
+namespace AquitoApi.Entities {
+    public partial class Useraquito : IId 
+        {
         public Useraquito()
         {
             Clients = new HashSet<Client>();
@@ -14,7 +14,7 @@ namespace AquitoApi.Models
             Vehicles = new HashSet<Vehicle>();
         }
 
-        public int Useraquitoid { get; set; }
+        public int Id { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
         public string Email { get; set; }

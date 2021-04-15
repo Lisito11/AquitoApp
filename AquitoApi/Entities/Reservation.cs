@@ -1,13 +1,12 @@
-﻿using System;
+﻿using AquitoApi.Entities;
+using System;
 using System.Collections.Generic;
 
 #nullable disable
 
-namespace AquitoApi.Models
-{
-    public partial class Reservation
-    {
-        public int Reservationid { get; set; }
+namespace AquitoApi.Entities {
+    public partial class Reservation : IId {
+        public int Id { get; set; }
         public DateTime? Startdate { get; set; }
         public DateTime? Enddate { get; set; }
         public decimal? Totalpay { get; set; }

@@ -1,18 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-#nullable disable
-
-namespace AquitoApi.Models
-{
-    public partial class Vehicle
-    {
-        public Vehicle()
-        {
-            Reservations = new HashSet<Reservation>();
-        }
-
-        public int Vehicleid { get; set; }
+namespace AquitoApi.DTOs.Vehicle {
+    public class VehicleCreacionDTO {
         public string Brand { get; set; }
         public string Model { get; set; }
         public int? Age { get; set; }
@@ -27,9 +19,5 @@ namespace AquitoApi.Models
         public int? Typevehicleid { get; set; }
         public int? Useraquitoid { get; set; }
         public int? Status { get; set; }
-
-        public virtual Typevehicle Typevehicle { get; set; }
-        public virtual Useraquito Useraquito { get; set; }
-        public virtual ICollection<Reservation> Reservations { get; set; }
     }
 }

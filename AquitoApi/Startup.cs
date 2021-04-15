@@ -13,7 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CloudinaryDotNet;
 using AquitoApi.Services;
-using AquitoApi.Models;
+using AquitoApi.Entities;
 
 namespace AquitoApi
 {
@@ -30,19 +30,20 @@ namespace AquitoApi
         {
             services.AddControllers();
 
-            services.AddCors(c =>
-            {
-                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-            });
-
+            //Services
 
             services.Configure<Account>(Configuration.GetSection("Cloudinary"));
 
-            //Services
             services.AddScoped<ICloudinaryService, CloudinaryService>();
 
-            //Falta crear las tablas de la base de datos
             services.AddDbContext<d2bc1ckqeusvkjContext>(options => options.UseNpgsql(Configuration.GetConnectionString("Dbconnection")));
+
+            services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            services.AddCors(c => {
+                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+            });
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

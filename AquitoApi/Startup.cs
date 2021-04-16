@@ -31,6 +31,7 @@ namespace AquitoApi
             services.AddControllers();
 
             //Services
+            services.AddAutoMapper(typeof(Startup));
 
             services.Configure<Account>(Configuration.GetSection("Cloudinary"));
 

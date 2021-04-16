@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace AquitoApi.DTOs.Vehicle {
     public class VehicleDTO: VehicleCreacionDTO {
+        public int Id { get; set; }
         public virtual TypevehicleDTO Typevehicle { get; set; }
         public virtual ICollection<ReservationDTO> Reservations { get; set; }
     }

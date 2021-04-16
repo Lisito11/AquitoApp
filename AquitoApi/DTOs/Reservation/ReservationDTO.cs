@@ -11,5 +11,7 @@ namespace AquitoApi.DTOs.Reservation {
         public virtual ClientDTO Client { get; set; }
         public virtual VehicleDTO Vehicle { get; set; }
 
+        
+
     }
 }

@@ -22,7 +22,7 @@ namespace AquitoApi.Controllers {
         //Metodo Get
         [HttpGet]
         public async Task<ActionResult<List<VehicleDTO>>> Get() {
-            var Vehiculo = await context.Vehicles.Include(x => x.Useraquito).ToListAsync();
+            var Vehiculo = await context.Vehicles.Include(x => x.Typevehicle).ToListAsync();
             return mapper.Map<List<VehicleDTO>>(Vehiculo);
         }
 

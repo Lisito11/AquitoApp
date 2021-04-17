@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AquitoApi", "AquitoApi\Aqui
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AquitoWebApp", "AquitoWebApp\AquitoWebApp.csproj", "{962CA0C1-072F-422A-AD35-EEF39E8D5A61}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aquito.Shared", "Aquito.Shared\Aquito.Shared.csproj", "{53B489AF-A0C1-4DAA-8249-63DC8F2C601B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{962CA0C1-072F-422A-AD35-EEF39E8D5A61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{962CA0C1-072F-422A-AD35-EEF39E8D5A61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{962CA0C1-072F-422A-AD35-EEF39E8D5A61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53B489AF-A0C1-4DAA-8249-63DC8F2C601B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53B489AF-A0C1-4DAA-8249-63DC8F2C601B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53B489AF-A0C1-4DAA-8249-63DC8F2C601B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53B489AF-A0C1-4DAA-8249-63DC8F2C601B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

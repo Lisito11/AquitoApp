@@ -25,9 +25,8 @@ namespace AquitoApi.Controllers
         [HttpGet]
         public async Task<ActionResult<List<ClientDTO>>> Get()
         {
-            var cliente = await context.Clients.Include(x => x.Useraquito).ToListAsync();
-            return mapper.Map<List<ClientDTO>>(cliente);
-            
+
+            return await Get<Client, ClientDTO>();
         }
 
         //Metodo Get(id)

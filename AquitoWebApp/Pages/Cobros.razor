@@ -1,17 +1,59 @@
 ﻿@page "/cobros"
-<MudGrid Spacing="3" Justify="Justify.Center">
-    <MudItem>
-        <MudCard>
-            <MudCardContent>
-                <MudText Typo="Typo.h6">Cobros</MudText>
-                <MudText Typo="Typo.body2">Aqui vamos a poder ver los pagar las facturas de nuestros clientes y otras cositas... :)</MudText>
-            </MudCardContent>
-            <MudCardActions>
-                <MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack">Regresar</MudNavLink>
-            </MudCardActions>
-        </MudCard>
-    </MudItem>
-</MudGrid>
+
+@inject HttpClient Http
+
+
+<div class="col-md-6">
+    <MudCard>
+        <MudCardHeader>
+
+            <CardHeaderContent>
+                <MudText Typo="Typo.h5">AQUITO</MudText>
+                <MudText>Empleado</MudText>
+                <MudText>Fecha</MudText>
+            </CardHeaderContent>
+
+            <CardHeaderActions>
+                <br />
+                <MudText>Cliente nombre.</MudText>
+                <MudText>Cedula</MudText>
+                <MudText>Email</MudText>
+            </CardHeaderActions>
+        </MudCardHeader>
+
+        <MudCardContent>
+            <hr color="blue" size=100>
+            <MudText Typo="Typo.h6">Factura</MudText>
+        </MudCardContent>
+
+        <MudTable Items="@reservaciones" Hover="@true" Striped="@true">
+            <HeaderContent>
+                <MudTh>Descripcion</MudTh>
+                <MudTh>Precio </MudTh>
+                <MudTh>Cantidad</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Descripcion">@context.</MudTd>
+                <MudTd DataLabel="Precio">@context.</MudTd>
+                <MudTd DataLabel="Cantidad">@context.</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudText>Total a pagar = </MudText>
+            </PagerContent>
+        </MudTable>
+
+    </MudCard>
+</div>
+
+
 @code {
+
+    private List<> reservaciones = new List<>();
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        reservaciones = await Http.GetFromJsonAsync<List<Res>>("api/reservacion");
+    }
 
 }

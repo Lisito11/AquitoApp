@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AquitoApi.DTOs.Reservation {
+namespace Aquito.Shared {
     public class ReservationCreacionDTO {
         public DateTime? Startdate { get; set; }
         public DateTime? Enddate { get; set; }

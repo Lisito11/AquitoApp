@@ -30,30 +30,31 @@
             <HeaderContent>
                 <MudTh>Descripcion</MudTh>
                 <MudTh>Precio </MudTh>
-                <MudTh>Cantidad</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Descripcion">@context.</MudTd>
-                <MudTd DataLabel="Precio">@context.</MudTd>
-                <MudTd DataLabel="Cantidad">@context.</MudTd>
+                <MudTd DataLabel="Descripcion">@context.@($"{context.Vehicle.Typevehicle.Namevehicle} {context.Vehicle.Brand}, matricula: {context.Vehicle.Matricula}, año: {context.Vehicle.Age}")</MudTd>
+                <MudTd DataLabel="Precio por dia">@context.Vehicle.Priceday</MudTd>
             </RowTemplate>
-            <PagerContent>
-                <MudText>Total a pagar = </MudText>
-            </PagerContent>
         </MudTable>
-
+        <hr color="blue" size=100>
+        <MudText></MudText>
     </MudCard>
 </div>
 
 
 @code {
 
-    private List<> reservaciones = new List<>();
+    private List<ReservationDTO> reservaciones = new List<ReservationDTO>();
+    
     public int Id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        reservaciones = await Http.GetFromJsonAsync<List<Res>>("api/reservacion");
+        reservaciones = await Http.GetFromJsonAsync<List<ReservationDTO>>("api/reservacion");
+        foreach(var reservacion in reservaciones)
+        {
+
+        }
     }
 
 }

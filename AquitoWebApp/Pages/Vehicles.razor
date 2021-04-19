@@ -24,7 +24,7 @@
 
     <div class="mx-auto" style="max-width: 1200px;">
         <MudExpansionPanels>
-            <MudExpansionPanel Style="max-width: 1000px" IsExpanded="@expanded" @onclick="@isExpanded">
+            <MudExpansionPanel Style="max-width: 1000px" IsExpanded="true">
                 <TitleContent>
                     <div class="d-flex pl-5">
                         <MudIcon Icon="@Icons.Material.Filled.DirectionsCar" Style=" color: #3f51b5" class="mr-3"> </MudIcon>
@@ -171,7 +171,7 @@
                 </ChildContent>
             </MudExpansionPanel>
 
-            <MudExpansionPanel  IsExpanded="@expanded2" @onclick="@isExpanded">
+            <MudExpansionPanel  IsExpanded="true">
                 <TitleContent>
                     <div class="d-flex pl-5">
                         <MudIcon Icon="@Icons.Material.Filled.Tablet" Style="color: #3f51b5" class="mr-3"></MudIcon>
@@ -230,13 +230,6 @@
 @code {
 
     private string TextValue { get; set; }
-    private bool expanded { get; set; } = true;
-    private bool expanded2 { get; set; } = false;
-
-    private void isExpanded()
-    {
-        expanded = (expanded == true) ? expanded2 = true : expanded = true;
-    }
 
     private List<string> Marcas = new List<string>() { "BMW", "Ferrari", "Toyota", "Honda"};
     private List<string> Modelos = new List<string>() { "F8 Spider", "BMW Serie 3", "Hilux", "Honda BR-V" };

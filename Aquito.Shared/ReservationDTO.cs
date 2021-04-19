@@ -8,8 +8,5 @@ namespace Aquito.Shared {
         public int Id { get; set; }
         public virtual ClientDTO Client { get; set; }
         public virtual VehicleDTO Vehicle { get; set; }
-
-        
-
     }
 }

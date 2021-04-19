@@ -1,5 +1,5 @@
 ﻿@page "/vehiculos"
-<MudGrid Spacing="3" Justify="Justify.Center">
+@*<MudGrid Spacing="3" Justify="Justify.Center">
     <MudItem>
         <MudCard>
             <MudCardContent>
@@ -11,8 +11,237 @@
             </MudCardActions>
         </MudCard>
     </MudItem>
-</MudGrid>
+</MudGrid>*@
+
+
+
+<MudCard>
+    <h1 class="text-center">Gestion de Vehiculos</h1>
+
+    <MudCardActions Class="d-flex justify-start py-2 px-1 ml-4">
+        <MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
+    </MudCardActions>
+
+    <div class="mx-auto" style="max-width: 1200px;">
+        <MudExpansionPanels>
+            <MudExpansionPanel Style="max-width: 1000px" IsExpanded="@expanded" @onclick="@isExpanded">
+                <TitleContent>
+                    <div class="d-flex pl-5">
+                        <MudIcon Icon="@Icons.Material.Filled.DirectionsCar" Style=" color: #3f51b5" class="mr-3"> </MudIcon>
+                        <MudText><strong>Gestion de Vehiculos</strong></MudText>
+                    </div>
+                </TitleContent>
+                <ChildContent>
+                    <MudPaper Class="pa-10 ma-2" Elevation="3">
+                        <MudGrid Spacing="2">
+                            <MudItem xs="4">
+                                <MudSelect T="string" Label="Tipo de vehiculo" Variant="Variant.Outlined">
+                                    @foreach (var type in Tipos)
+                                    {<MudSelectItem Value="@type"> @type </MudSelectItem>}
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem xs="4">
+                                <MudSelect T="string" Label="Marca" Variant=" Variant.Outlined">
+                                    @foreach (var marca in Marcas)
+                                    {<MudSelectItem Value="@marca"> @marca </MudSelectItem>}
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem xs="4">
+                                <MudSelect T="string" Label="Modelo" Variant=" Variant.Outlined">
+                                    @foreach (var modelo in Modelos)
+                                    {<MudSelectItem Value="@modelo"> @modelo </MudSelectItem>}
+                                </MudSelect>
+                            </MudItem>
+                        </MudGrid>
+
+                        <MudGrid Spacing="2">
+                            <MudItem xs="4">
+                                <MudSelect T="string" Label="Año" Variant=" Variant.Outlined">
+                                    @foreach (var age in Años)
+                                    {<MudSelectItem Value="@age"> @age </MudSelectItem>}
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem xs="4">
+                                <MudSelect T="string" Label="Pasajeros" Variant=" Variant.Outlined">
+                                    @foreach (var pasajeros in Pasajeros)
+                                    {<MudSelectItem Value="@pasajeros"> @pasajeros </MudSelectItem>}
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem xs="4">
+                                <MudSelect T="string" Label="Color" Variant=" Variant.Outlined">
+                                    @foreach (var color in Colores)
+                                    {<MudSelectItem Value="@color"> @color </MudSelectItem>}
+                                </MudSelect>
+                            </MudItem>
+                        </MudGrid>
+
+                        <MudGrid Spacing="2">
+                            <MudItem xs="12" sm="6" md="4">
+                                <MudTextField T="string" @bind-Value="TextValue"
+                                              Label="Precio"
+                                              Variant="Variant.Outlined"
+                                              Adornment="Adornment.End"
+                                              AdornmentIcon="@Icons.Material.Filled.AttachMoney"
+                                              Margin="Margin.Dense">
+
+                                </MudTextField>
+                            </MudItem>
+                            <MudItem xs="12" sm="6" md="4">
+                                <MudTextField T="string" @bind-Value="TextValue"
+                                              Label="Capacidad de carga"
+                                              Variant="Variant.Outlined"
+                                              Adornment="Adornment.End"
+                                              AdornmentText="Kg"
+                                              Margin="Margin.Dense">
+
+                                </MudTextField>
+                            </MudItem>
+                            <MudItem xs="12" sm="6" md="4">
+                                <MudTextField T="string" @bind-Value="TextValue"
+                                              Label="No seguro"
+                                              Variant="Variant.Outlined"
+                                              Adornment="Adornment.End"
+                                              AdornmentText="#"
+                                              Margin="Margin.Dense">
+
+                                </MudTextField>
+                            </MudItem>
+                            <MudItem xs="12" sm="6" md="4">
+                                <MudTextField T="string" @bind-Value="TextValue"
+                                              Label="Matricula"
+                                              Variant="Variant.Outlined"
+                                              Adornment="Adornment.End"
+                                              AdornmentText="#"
+                                              Margin="Margin.Dense">
+
+                                </MudTextField>
+                            </MudItem>
+                            <MudItem xs="12" sm="6" md="4">
+                                <MudTextField T="string" @bind-Value="TextValue"
+                                              Label="Foto"
+                                              Variant="Variant.Outlined"
+                                              Adornment="Adornment.End"
+                                              AdornmentIcon="@Icons.Material.Filled.AddAPhoto"
+                                              Margin="Margin.Dense">
+
+                                </MudTextField>
+                            </MudItem>
+
+                            <!--Aqui va la ubicacion-->
+                            <MudItem xs="12" sm="6" md="4" Class="px-0 py-0">
+                                <MudList Clickable="true">
+                                    <MudListItem Icon="@Icons.Material.Filled.Room" Text="Ubicacion">
+                                        <NestedList>
+                                            <MudListItem Icon="@Icons.Material.Filled.AddLocation">
+                                                <MudTextField T="string" @bind-Value="TextValue"
+                                                              Label="Calle"
+                                                              Variant="Variant.Outlined"
+                                                              Margin="Margin.Dense">
+
+                                                </MudTextField>
+                                            </MudListItem>
+
+                                            <MudListItem Icon="@Icons.Material.Filled.AddLocation">
+                                                <MudSelect T="string" Label="Provincia" Variant=" Variant.Outlined" Dense="true">
+
+                                                </MudSelect>
+                                            </MudListItem>
+                                            <MudListItem Icon="@Icons.Material.Filled.AddLocation">
+                                                <MudSelect T="string" Label="Pais" Variant=" Variant.Outlined" Dense="true">
+
+                                                </MudSelect>
+                                            </MudListItem>
+                                        </NestedList>
+                                    </MudListItem>
+                                </MudList>
+                                    
+
+                            </MudItem>
+                        </MudGrid>
+
+                        <MudGrid>
+                            <MudItem xs="12">
+                                <MudCardActions>
+                                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="m-auto">Register</MudButton>
+                                </MudCardActions>
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+
+                </ChildContent>
+            </MudExpansionPanel>
+
+            <MudExpansionPanel  IsExpanded="@expanded2" @onclick="@isExpanded">
+                <TitleContent>
+                    <div class="d-flex pl-5">
+                        <MudIcon Icon="@Icons.Material.Filled.Tablet" Style="color: #3f51b5" class="mr-3"></MudIcon>
+                        <MudText><strong>Tabla de datos</strong></MudText>
+                    </div>
+                </TitleContent>
+                <ChildContent>
+                    <MudPaper>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Marca</th>
+                                    <th scope="col">Modelo</th>
+                                    <th scope="col">Año</th>
+                                    <th scope="col">Color</th>
+                                    <th scope="col">Tipo</th>
+                                    <th scope="col">Precio</th>
+                                    <th scope="col">Capacidad de carga(Kg)</th>
+                                    <th scope="col">Pasajeros</th>
+                                    <th scope="col">Matricula</th>
+                                    <th scope="col">No seguro</th>
+                                    <th scope="col">Foto</th>
+                                    <th scope="col">Ubicacion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Mark</td>
+                                    <td>Otto</td>
+                                    <td>mdo</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Jacob</td>
+                                    <td>Thornton</td>
+                                    <td>fat</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td colspan="2">Larry the Bird</td>
+                                    <td>twitter</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </MudPaper>
+                </ChildContent>
+            </MudExpansionPanel>
+
+        </MudExpansionPanels>
+    </div>
+
+    
+</MudCard>
 
 @code {
 
+    private string TextValue { get; set; }
+    private bool expanded { get; set; } = true;
+    private bool expanded2 { get; set; } = false;
+
+    private void isExpanded()
+    {
+        expanded = (expanded == true) ? expanded2 = true : expanded = true;
+    }
+
+    private List<string> Marcas = new List<string>() { "BMW", "Ferrari", "Toyota", "Honda"};
+    private List<string> Modelos = new List<string>() { "F8 Spider", "BMW Serie 3", "Hilux", "Honda BR-V" };
+    private List<string> Años = new List<string>() { "2020", "2019", "2018", "2017" };
+    private List<string> Colores = new List<string>() { "Blanco", "Negro", "Azul", "Rojo" };
+    private List<string> Tipos = new List<string>() { "Deportivo", "Van", "Camioneta", "Sedán" };
+    private List<string> Pasajeros = new List<string>() { "2", "5", "7"};
 }

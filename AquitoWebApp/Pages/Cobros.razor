@@ -1,59 +1,75 @@
 ﻿@page "/cobros"
 
 @inject HttpClient Http
-
-<MudGrid>
-    <MudItem xs="12">
-        <MudGrid Spacing="3" Justify="Justify.Center">
-            <MudCard>
-                <MudCardHeader>
-
-                    <CardHeaderContent>
-                        <MudText Typo="Typo.h5">AQUITO</MudText>
-                        <MudText>Empleado</MudText>
-                        <MudText>Fecha</MudText>
-                    </CardHeaderContent>
-
-                    <CardHeaderActions>
-                        <br />
-                        <MudText>Cliente nombre.</MudText>
-                        <MudText>Cedula</MudText>
-                        <MudText>Email</MudText>
-                    </CardHeaderActions>
-                </MudCardHeader>
-
-                <MudCardContent>
-                    <hr color="blue" size=100>
-                    <MudText Typo="Typo.h6">Factura</MudText>
-                </MudCardContent>
-
-                <MudTable Items="@reservaciones" Hover="@true" Striped="@true">
-                    <HeaderContent>
-                        <MudTh>Descripcion</MudTh>
-                        <MudTh>Precio </MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="Descripcion">@($"{context.Vehicle.Typevehicle.Namevehicle} {context.Vehicle.Brand}, matricula: {context.Vehicle.Matricula}, año: {context.Vehicle.Age}")</MudTd>
-                        <MudTd DataLabel="Precio por dia">@context.Totalpay</MudTd>
-                    </RowTemplate>
-                </MudTable>
-                <hr color="blue" size=100>
-                <MudText></MudText>
-            </MudCard>
-        </MudGrid>
-    </MudItem>
-</MudGrid>
-
+@if (reservaciones != null) {
+    <MudGrid>
+        <MudItem xs="12">
+            <MudGrid Spacing="3" Justify="Justify.Center">
+                @foreach (var factura in reservaciones) {
+                    <MudItem>
+                        <MudCard>
+                            <MudCardHeader>
+                                <CardHeaderAvatar>
+                                    <MudAvatar Color="@(factura.Status == 2 ? Color.Success : Color.Error)">$</MudAvatar>
+                                </CardHeaderAvatar>
+                                <CardHeaderContent>
+                                    <MudText Typo="Typo.h5">AQUITO</MudText>
+                                    <MudText Typo="Typo.body1">Creado por Admin</MudText>
+                                    @*<MudText Typo="Typo.body1">@factura.Useraquito.Firstname</MudText>*@
+                                    <MudText Typo="Typo.body2">@factura.Startdate.Value.ToString("yyyy-MM-dd")</MudText>
+                                </CardHeaderContent>
+                                <CardHeaderActions>
+                                    <MudText Typo="Typo.h6">Cliente</MudText>
+                                    <MudText Typo="Typo.body1">@factura.Client.Firstname</MudText>
+                                    <MudText Typo="Typo.body2">@factura.Client.Cedula</MudText>
+                                </CardHeaderActions>
+                            </MudCardHeader>
+                            <MudCardMedia Image="@factura.Vehicle.Vehiclepic" Height="250" />
+                            <MudCardContent>
+                                <MudText Typo="Typo.body2">Descripción: @($"El vehiculo alquilado fue un {factura.Vehicle.Typevehicle.Namevehicle}.")</MudText>
+                                <br />
+                                <MudText Typo="Typo.body2">Modelo: @($"El modelo del {factura.Vehicle.Typevehicle.Namevehicle} es {factura.Vehicle.Model}.")</MudText>
+                                <br />
+                                <MudText Typo="Typo.body2">Matricula: @($"La matricula del {factura.Vehicle.Typevehicle.Namevehicle} es {factura.Vehicle.Matricula}")</MudText>
+                                <br />
+                                <MudText Typo="Typo.body2">Dias alquilados: @($"El {factura.Vehicle.Typevehicle.Namevehicle} se alquiló durante {factura.Enddate.Value.Day - factura.Startdate.Value.Day} días.")</MudText>
+                                <br />
+                                <MudText Typo="Typo.body2">El precio por dia: @($"El precio por dia del {factura.Vehicle.Typevehicle.Namevehicle} es RD${factura.Vehicle.Priceday}.")</MudText>
+                                <br />
+                                <MudText Typo="Typo.body2">Total: @($"El total a pagar del {factura.Vehicle.Typevehicle.Namevehicle} es RD${factura.Vehicle.Priceday * (factura.Enddate.Value.Day - factura.Startdate.Value.Day)}.")</MudText>
+                                <br />
+                                <MudText Typo="Typo.body2">Se debe: @($"Se debe RD${(factura.Vehicle.Priceday * (factura.Enddate.Value.Day - factura.Startdate.Value.Day)) -factura.Totalpay}.")</MudText>
+                            </MudCardContent>
+                            <MudCardActions>
+                                @if (factura.Status == 1) {
+                                    <MudTextField @bind-Value="Pago" Label="Pagar factura" Variant="Variant.Outlined"  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+                                    <MudTooltip Text="Pagar factura">
+                                        <MudFab Icon="@Icons.Material.Filled.Payment" Color="Color.Secondary" />
+                                    </MudTooltip>
+                                }
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudItem>
+    </MudGrid>
+} else {
+    <MudText>Cargando...</MudText>
+}
 
 @code {
 
     private List<Reservation> reservaciones;
 
-    public int Id { get; set; }
+    public decimal Pago { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
+    protected override async Task OnInitializedAsync() {
         reservaciones = await Http.GetFromJsonAsync<List<Reservation>>("api/reservacion");
     }
+
+
+    @*Pendiente mejorar aspecto visual de la factura, la parte de la descripcion. Tambien pendiente hacer funcion para recibir el pago de la factura y actualizar el campo totalpay
+        y verificar que si no se debe nada cambiar el estatus a 2 y se pondra de color verde el icono y no aparecera el textfield para pagar.*@
 
 }

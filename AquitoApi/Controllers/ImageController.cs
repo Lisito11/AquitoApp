@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace AquitoApi.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/image")]
     public class ImageController : ControllerBase
     {
         private readonly ICloudinaryService _cloudinaryService;

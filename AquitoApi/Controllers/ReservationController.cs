@@ -27,6 +27,7 @@ namespace AquitoApi.Controllers
         {
             var reservacion = await context.Reservations
                             .Include(x => x.Client)
+                            .Include(x => x.Useraquito)
                             .Include(x => x.Vehicle)
                             .ThenInclude(x => x.Typevehicle)
                             .ToListAsync();
@@ -39,6 +40,7 @@ namespace AquitoApi.Controllers
         {
             var reservacion = await context.Reservations
                 .Include(x => x.Client)
+                .Include(x => x.Useraquito)
                 .Include(x => x.Vehicle)
                 .ThenInclude(x => x.Typevehicle)
                 .FirstOrDefaultAsync(x => x.Id == id);

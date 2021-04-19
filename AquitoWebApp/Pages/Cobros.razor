@@ -2,44 +2,47 @@
 
 @inject HttpClient Http
 
+<MudGrid>
+    <MudItem xs="12">
+        <MudGrid Spacing="3" Justify="Justify.Center">
+            <MudCard>
+                <MudCardHeader>
 
-<div class="col-md-6">
-    <MudCard>
-        <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h5">AQUITO</MudText>
+                        <MudText>Empleado</MudText>
+                        <MudText>Fecha</MudText>
+                    </CardHeaderContent>
 
-            <CardHeaderContent>
-                <MudText Typo="Typo.h5">AQUITO</MudText>
-                <MudText>Empleado</MudText>
-                <MudText>Fecha</MudText>
-            </CardHeaderContent>
+                    <CardHeaderActions>
+                        <br />
+                        <MudText>Cliente nombre.</MudText>
+                        <MudText>Cedula</MudText>
+                        <MudText>Email</MudText>
+                    </CardHeaderActions>
+                </MudCardHeader>
 
-            <CardHeaderActions>
-                <br />
-                <MudText>Cliente nombre.</MudText>
-                <MudText>Cedula</MudText>
-                <MudText>Email</MudText>
-            </CardHeaderActions>
-        </MudCardHeader>
+                <MudCardContent>
+                    <hr color="blue" size=100>
+                    <MudText Typo="Typo.h6">Factura</MudText>
+                </MudCardContent>
 
-        <MudCardContent>
-            <hr color="blue" size=100>
-            <MudText Typo="Typo.h6">Factura</MudText>
-        </MudCardContent>
-
-        <MudTable Items="@reservaciones" Hover="@true" Striped="@true">
-            <HeaderContent>
-                <MudTh>Descripcion</MudTh>
-                <MudTh>Precio </MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Descripcion">@context.@($"{context.Vehicle.Typevehicle.Namevehicle} {context.Vehicle.Brand}, matricula: {context.Vehicle.Matricula}, año: {context.Vehicle.Age}")</MudTd>
-                <MudTd DataLabel="Precio por dia">@context.Vehicle.Priceday</MudTd>
-            </RowTemplate>
-        </MudTable>
-        <hr color="blue" size=100>
-        <MudText></MudText>
-    </MudCard>
-</div>
+                <MudTable Items="@reservaciones" Hover="@true" Striped="@true">
+                    <HeaderContent>
+                        <MudTh>Descripcion</MudTh>
+                        <MudTh>Precio </MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Descripcion">@($"{context.Vehicle.Typevehicle.Namevehicle} {context.Vehicle.Brand}, matricula: {context.Vehicle.Matricula}, año: {context.Vehicle.Age}")</MudTd>
+                        <MudTd DataLabel="Precio por dia">@context.Totalpay</MudTd>
+                    </RowTemplate>
+                </MudTable>
+                <hr color="blue" size=100>
+                <MudText></MudText>
+            </MudCard>
+        </MudGrid>
+    </MudItem>
+</MudGrid>
 
 
 @code {
@@ -51,10 +54,6 @@
     protected override async Task OnInitializedAsync()
     {
         reservaciones = await Http.GetFromJsonAsync<List<Reservation>>("api/reservacion");
-        // foreach(var reservacion in reservaciones)
-        //{
-
-        //}
     }
 
 }

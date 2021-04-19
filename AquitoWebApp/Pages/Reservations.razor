@@ -1,17 +1,135 @@
 ﻿@page "/reservas"
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+@inject NavigationManager navigationManager
 <MudGrid Spacing="3" Justify="Justify.Center">
-    <MudItem>
-        <MudCard>
-            <MudCardContent>
-                <MudText Typo="Typo.h6">Reservas</MudText>
-                <MudText Typo="Typo.body2">Aqui vamos a poder reservar vehiculos para nuestros clientes y otras cositas... :)</MudText>
-            </MudCardContent>
-            <MudCardActions>
-                <MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack">Regresar</MudNavLink>
-            </MudCardActions>
-        </MudCard>
-    </MudItem>
+    <MudForm @ref="form" @bind-IsValid="@success">
+        <MudItem xs="12">
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">Reservación</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudGrid Spacing="2" Justify="Justify.Center">
+                        <MudItem xs="12" sm="6" md="6">
+                            <MudSelect T="string" Label="Vehiculos Disponibles" @bind-Value="VehiculoSeleccionado">
+                                @if (vehiculos != null) {
+                                    @foreach (var vehiculo in vehiculos) {<MudSelectItem Value="@vehiculo.Id.ToString()"> @($"{vehiculo.Typevehicle.Namevehicle} {vehiculo.Brand} {vehiculo.Model} {vehiculo.Age}") </MudSelectItem>}
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="6">
+                            <MudSelect T="string" Label="Clientes" @bind-Value="ClienteSeleccionado">
+                                @if (clientes != null) {
+
+                                    @foreach (var cliente in clientes) {<MudSelectItem Value="@cliente.Id.ToString()"> @($"{cliente.Firstname} {cliente.Lastname}") </MudSelectItem>}
+                                }
+                            </MudSelect>
+                        </MudItem>
+                    </MudGrid>
+                    <MudGrid Spacing="2" Justify="Justify.Center">
+                        <MudItem xs="12" sm="6" md="6">
+                            <MudDatePicker @bind-Date="Reservation.Startdate" Label="Fecha de inicio" DisableToolbar="true" Editable="true" />
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="6">
+                            <MudDatePicker @bind-Date="Reservation.Enddate" Label="Fecha de entrega" DisableToolbar="true" Editable="true" />
+                        </MudItem>
+                    </MudGrid>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudItem xs="12" sm="12" md="12">
+                        <MudButton OnClick="@GenerarFactura" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Generar Factura</MudButton>
+                    </MudItem>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudForm>
+    @if (success) {
+        <MudItem>
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderAvatar>
+                    </CardHeaderAvatar>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h5">AQUITO</MudText>
+                        <MudText Typo="Typo.body1">Preview Factura</MudText>
+                        <MudText Typo="Typo.body2">@Reservation.Startdate.Value.ToString("yyyy-MM-dd")</MudText>
+                    </CardHeaderContent>
+                    <CardHeaderActions>
+                        <MudText Typo="Typo.h6">Cliente</MudText>
+                        <MudText Typo="Typo.body1">@Client.Firstname</MudText>
+                        <MudText Typo="Typo.body2">@Client.Cedula</MudText>
+                    </CardHeaderActions>
+                </MudCardHeader>
+                <MudCardMedia Image="@Vehicle.Vehiclepic" Height="250" />
+                <MudCardContent>
+                    <MudText Typo="Typo.body2">Descripción: @($"El vehiculo se alquirá es un {Vehicle.Typevehicle.Namevehicle}, el modelo es {Vehicle.Model}, matricula {Vehicle.Matricula}.")</MudText>
+                    <br />
+                    <MudText Typo="Typo.body2">Dias alquilados: @($"El {Vehicle.Typevehicle.Namevehicle} se alquirá durante {Reservation.Enddate.Value.Day - Reservation.Startdate.Value.Day} días.")</MudText>
+                    <br />
+                    <MudText Typo="Typo.body2">El precio por dia: @($"El precio por dia del {Vehicle.Typevehicle.Namevehicle} es RD${Vehicle.Priceday}.")</MudText>
+
+                </MudCardContent>
+                <MudCardActions>
+                    <MudTextField @bind-Value="Pago" Label="Pagar factura" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+                    <MudTooltip Text="Pagar factura">
+                        <MudFab OnClick="Reservar" Icon="@Icons.Material.Filled.Payment" Color="Color.Secondary" />
+                    </MudTooltip>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    }
 </MudGrid>
 @code {
+
+    // PENDIENTE CAMBIAR EL STATUS DEL VEHICULO CUANDO SE RESERVA, STATUS = 2
+    // PENDIENTE TRAER SOLO VEHICULOS CON STATUS = 1
+    // AMBOS USANDO EL METODO PATCH
+
+    bool success;
+    MudForm form;
+    string MensajeError(string field) => $"{field} debe introducirse!";
+    private Vehicle Vehicle { get; set; }
+    private string VehiculoSeleccionado { get; set; }
+    private string ClienteSeleccionado { get; set; }
+    private string Pago { get; set; }
+    private Client Client { get; set; }
+    private Reservation Reservation = new Reservation();
+    private DateTime FechaInicio { get; set; }
+    private DateTime FechaFin { get; set; }
+    private List<Vehicle> vehiculos;
+    private List<Client> clientes;
+
+
+    protected override async Task OnInitializedAsync() {
+        vehiculos = await Http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
+        clientes = await Http.GetFromJsonAsync<List<Client>>("api/client");
+    }
+
+    private async Task<bool> GenerarFactura() {
+        Reservation.Clientid = int.Parse(ClienteSeleccionado);
+        Reservation.Vehicleid = int.Parse(VehiculoSeleccionado);
+        Vehicle = vehiculos.Where(x => x.Id == int.Parse(VehiculoSeleccionado)).FirstOrDefault();
+        Client = clientes.Where(x => x.Id == int.Parse(ClienteSeleccionado)).FirstOrDefault();
+        Pago = (Vehicle.Priceday.Value * (Reservation.Enddate.Value.Day - Reservation.Startdate.Value.Day)).ToString();
+        success = true;
+        return success;
+    }
+
+    private async Task Reservar() {
+        Reservation.Totalpay = decimal.Parse(Pago);
+        var reservacion = await Http.PostAsJsonAsync("api/reservacion", Reservation);
+        if (reservacion.IsSuccessStatusCode) {
+            Snackbar.Add($"Se ha hecho la reserva correctamente!", Severity.Success);
+            navigationManager.NavigateTo("cobros");
+        } else {
+            Snackbar.Add($"Ha ocurrido un error, porfavor revisar los datos.", Severity.Error);
+        }
+    }
+
+
+
 
 }

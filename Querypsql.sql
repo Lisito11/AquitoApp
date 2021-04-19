@@ -63,3 +63,12 @@ CREATE TABLE reservation (
 
 INSERT INTO useraquito(firstname, lastname, email, userpassword, userrole, phone, status) 
 VALUES ('Aquito', 'Jefe', 'lisanny11@hotmail.com', 'JefeAquito123456', 'admin', '8492802042', 1);
+
+INSERT INTO client(cedula,firstname,lastname, email, licence, nacionality, typeblood,userpic,licencepic,useraquitoid, status) 
+VALUES ('40211455049', 'Lisanny', 'Peña', 'lisanny11@hotmail.com', '40211455049', 'Dominicano', 'O+','nada','nada',1,1);
+
+INSERT INTO vehicle(brand,model,age, priceday, weightcapacity, passengers, matricula,securitynum,vehiclepic,latitude,longitude,typevehicleid,useraquitoid, status) 
+VALUES ('Honda', 'Civic', 2021, 500.00, 350.55, 5, 'AA45S','1456875','nada',18.6176122,-68.7085308,2,1,1);
+
+INSERT INTO reservation(startdate,enddate,totalpay, vehicleid, clientid,useraquitoid, status) 
+VALUES ('2021-04-18', '2021-04-20', 1000.00, 2, 1, 1, 1);

@@ -1,18 +1,147 @@
 ﻿@page "/clientes"
-<MudGrid Spacing="3" Justify="Justify.Center">
-    <MudItem>
-        <MudCard>
-            <MudCardContent>
-                <MudText Typo="Typo.h6">Clientes</MudText>
-                <MudText Typo="Typo.body2">Aqui vamos a poder nuevos clientes y otras cositas... :)</MudText>
-            </MudCardContent>
-            <MudCardActions>
-                <MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack">Regresar</MudNavLink>
-            </MudCardActions>
-        </MudCard>
-    </MudItem>
-</MudGrid>
+@*<MudGrid Spacing="3" Justify="Justify.Center">
+        <MudItem>
+            <MudCard>
+                <MudCardContent>
+                    <MudText Typo="Typo.h6">Clientes</MudText>
+                    <MudText Typo="Typo.body2">Aqui vamos a poder nuevos clientes y otras cositas... :)</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack">Regresar</MudNavLink>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+
+                        <div class="d-flex pl-5">
+                            <MudIcon Icon="@Icons.Material.Filled.DirectionsCar" Style=" color: #3f51b5" class="mr-3"> </MudIcon>
+                            <MudText><strong>Gestion de Vehiculos</strong></MudText>
+                        </div>
+
+*@
+
+<MudCard>
+    <h1 class="text-center">Gestion de Cliente</h1>
+
+    <MudCardActions Class="d-flex justify-start py-2 px-1 ml-4">
+        <MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
+    </MudCardActions>
+
+    <div class="mx-auto" style="max-width: 1300px;">
+        <MudExpansionPanels>
+            <MudExpansionPanel Style="max-width: 1000px" IsExpanded="true" HideIcon="true">
+                <TitleContent>
+                    <div class="d-flex pl-5">
+                        <MudIcon Icon="@Icons.Material.Filled.AccountBox" Style=" color: #3f51b5" class="mr-3"> </MudIcon>
+                        <MudText><strong>Registro</strong></MudText>
+                    </div>
+                </TitleContent>
+                <ChildContent>
+                    <MudPaper Class="pa-10 ma-2" Elevation="3">
+                        <MudGrid Spacing="2">
+                            <MudItem xs="6">
+                                <MudTextField T="string" @bind-Value="TextValue" Label="Cedula" Variant="Variant.Outlined" ></MudTextField>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudTextField T="string" @bind-Value="TextValue" Label="Nombre" Variant="Variant.Outlined"></MudTextField>
+                            </MudItem>
+
+                            <MudItem xs="6">
+                                <MudTextField T="string" @bind-Value="TextValue" Label="Apellido" Variant="Variant.Outlined" ></MudTextField>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudTextField T="string" @bind-Value="TextValue" Label="Correo" Variant="Variant.Outlined" ></MudTextField>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudTextField T="string" @bind-Value="TextValue" Label="Licencia" Variant="Variant.Outlined" ></MudTextField>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudTextField T="string" @bind-Value="TextValue" Label="Nacionalidad" Variant="Variant.Outlined" ></MudTextField>
+                            </MudItem>
+                            <MudItem xs="4">
+                                <MudTextField T="string" @bind-Value="TextValue" Label="Foto de la persona" Variant="Variant.Outlined"></MudTextField>
+                            </MudItem>
+                            <MudItem xs="4">
+                                <MudTextField T="string" @bind-Value="TextValue" Label="Foto de la licencia" Variant="Variant.Outlined" ></MudTextField>
+                            </MudItem>
+                            <MudItem xs="4">
+                                <MudSelect T="string" Label="Año" Variant=" Variant.Outlined" Dense="true" Class="px-14.5px py-12.5px">
+                                    @foreach (var sangre in TiposSangres)
+                                    {<MudSelectItem Value="@sangre"> @sangre </MudSelectItem>}
+                                </MudSelect>
+                            </MudItem>
+                        </MudGrid>
+
+                        <MudGrid>
+                            <MudItem xs="12">
+                                <MudCardActions>
+                                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="m-auto">Register</MudButton>
+                                </MudCardActions>
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+
+                </ChildContent>
+            </MudExpansionPanel>
+
+            <MudExpansionPanel IsExpanded="true" HideIcon="true">
+                <TitleContent>
+                    <div class="d-flex pl-5">
+                        <MudIcon Icon="@Icons.Material.Filled.Tablet" Style="color: #3f51b5" class="mr-3"></MudIcon>
+                        <MudText><strong>Tabla de datos</strong></MudText>
+                    </div>
+                </TitleContent>
+                <ChildContent>
+                    <MudPaper>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Cedula</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Apellido</th>
+                                    <th scope="col">Correo</th>
+                                    <th scope="col">Licencia</th>
+                                    <th scope="col">Nacionalidad</th>
+                                    <th scope="col">Sangre</th>
+                                    <th scope="col">Foto de la persona</th>
+                                    <th scope="col">Foto de la licencia</th>
+                                    <th scope="col"><MudIcon Icon="@Icons.Material.Filled.Edit"></MudIcon></th>
+                                    <th scope="col"><MudIcon Icon="@Icons.Material.Filled.Delete"></MudIcon></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var sangre in TiposSangres)
+	                            {
+                                    <tr>
+                                        <td>@sangre</td>
+                                        <td>@sangre</td>
+                                        <td>@sangre</td>
+                                        <td>@sangre</td>
+                                        <td>@sangre</td>
+                                        <td>@sangre</td>
+                                        <td>@sangre</td>
+                                        <td>@sangre</td>
+                                        <td>@sangre</td>
+                                        <td style="cursor:pointer"><MudIcon Icon="@Icons.Material.Filled.Edit" ></MudIcon></td>
+                                        <td style="cursor:pointer"><MudIcon Icon="@Icons.Material.Filled.Delete"></MudIcon></td>
+                                    </tr>
+	                            }
+                                
+                            </tbody>
+                        </table>
+                    </MudPaper>
+                </ChildContent>
+            </MudExpansionPanel>
+
+        </MudExpansionPanels>
+    </div>
+</MudCard>
 
 @code {
+
+    private string TextValue;
+
+    private List<string> TiposSangres = new List<string>() { "O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-" };
 
 }

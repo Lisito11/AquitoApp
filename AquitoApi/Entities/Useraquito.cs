@@ -1,12 +1,14 @@
 ﻿using AquitoApi.Entities;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 
 #nullable disable
 
-namespace AquitoApi.Entities {
-    public partial class Useraquito : IId 
-        {
+namespace AquitoApi.Entities
+{
+    public partial class Useraquito : IdentityUser<int>
+    {
         public Useraquito()
         {
             Clients = new HashSet<Client>();
@@ -14,12 +16,8 @@ namespace AquitoApi.Entities {
             Vehicles = new HashSet<Vehicle>();
         }
 
-        public int Id { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
-        public string Email { get; set; }
-        public string Userpassword { get; set; }
-        public string Userrole { get; set; }
         public string Phone { get; set; }
         public int? Status { get; set; }
 

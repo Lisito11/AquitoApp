@@ -1,19 +1,17 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider Theme="MyCustomTheme" />
-<MudDialogProvider />
-<MudSnackbarProvider />
-
 <MudLayout>
-    <MudAppBar Elevation="1" Dense="true" >
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer"/>
+    <MudAppBar Elevation="1" Dense="true">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+            OnClick="@ToggleDrawer" />
         <MudText Typo="Typo.h5" Class="ml-3">Aquito</MudText>
         <MudAppBarSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit"  />
+        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" />
     </MudAppBar>
-    <MudDrawer  @bind-Open="@open" Elevation="1" Variant="@DrawerVariant.Temporary">
-        <img src="https://res.cloudinary.com/dlnyb1her/image/upload/v1618456469/aquito-imagenes/u0rd2z7ohcgwecqwdnf9.png" />
-        <NavMenu/>
+    <MudDrawer @bind-Open="@open" Elevation="1" Variant="@DrawerVariant.Temporary">
+        <img
+            src="https://res.cloudinary.com/dlnyb1her/image/upload/v1618456469/aquito-imagenes/u0rd2z7ohcgwecqwdnf9.png" />
+        <NavMenu />
     </MudDrawer>
     <MudMainContent>
         @Body
@@ -29,22 +27,15 @@
         transition: all 300ms ease 0ms;
         box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
         z-index: 99;
-    }    
+    }
 </style>
 
 @code{
     bool open = false;
 
-    void ToggleDrawer() {
+    void ToggleDrawer()
+    {
         open = !open;
     }
-
-    MudTheme MyCustomTheme = new MudTheme() {
-        Palette = new Palette() {
-            Primary = Colors.Blue.Default,
-            Secondary = Colors.Green.Accent4,
-            AppbarBackground = Colors.Indigo.Default,
-        },
-    };
 
 }

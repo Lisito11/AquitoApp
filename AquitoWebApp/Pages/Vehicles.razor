@@ -1,238 +1,302 @@
 ﻿@page "/vehiculos"
-@*<MudGrid Spacing="3" Justify="Justify.Center">
-    <MudItem>
-        <MudCard>
-            <MudCardContent>
-                <MudText Typo="Typo.h6">Vehículos</MudText>
-                <MudText Typo="Typo.body2">Aqui vamos a poder agregar vehículos y otras cositas... :)</MudText>
-            </MudCardContent>
-            <MudCardActions>
-                <MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack">Regresar</MudNavLink>
-            </MudCardActions>
-        </MudCard>
-    </MudItem>
-</MudGrid>*@
+@inject HttpClient _http
+@inject ISnackbar _snackbar
+@inject NavigationManager _navigationManager
 
-<MudCard>
-    <h1 class="text-center">Gestion de Vehiculos</h1>
-
-    <MudCardActions Class="d-flex justify-start py-2 px-1 ml-4">
-        <MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
-    </MudCardActions>
-
+    <h1 class="text-center">Gestión de Vehiculos</h1>
+    <MudNavLink Class="d-flex justify-start py-2 px-1 ml-4" Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
     <div class="mx-auto" style="max-width: 1300px;">
-        <MudExpansionPanels>
-            <MudExpansionPanel Style="max-width: 1000px" IsExpanded="true" HideIcon="true">
+        <MudPaper Class="pa-10 ma-2" Elevation="2">
+            <MudText Typo="Typo.h6"><strong>Registrar Vehículos</strong></MudText>
+            <MudExpansionPanel>
                 <TitleContent>
                     <div class="d-flex pl-5">
                         <MudIcon Icon="@Icons.Material.Filled.DirectionsCar" Style=" color: #3f51b5" class="mr-3"> </MudIcon>
-                        <MudText><strong>Gestion de Vehiculos</strong></MudText>
+                        <MudText><strong>Información Principal</strong></MudText>
                     </div>
                 </TitleContent>
                 <ChildContent>
-                    <MudPaper Class="pa-10 ma-2" Elevation="3">
-                        <MudGrid Spacing="2">
-                            <MudItem xs="4">
-                                <MudSelect T="string" Label="Tipo de vehiculo" Variant="Variant.Outlined">
-                                    @foreach (var type in Tipos)
-                                    {<MudSelectItem Value="@type"> @type </MudSelectItem>}
-                                </MudSelect>
-                            </MudItem>
-                            <MudItem xs="4">
-                                <MudSelect T="string" Label="Marca" Variant=" Variant.Outlined">
-                                    @foreach (var marca in Marcas)
-                                    {<MudSelectItem Value="@marca"> @marca </MudSelectItem>}
-                                </MudSelect>
-                            </MudItem>
-                            <MudItem xs="4">
-                                <MudSelect T="string" Label="Modelo" Variant=" Variant.Outlined">
-                                    @foreach (var modelo in Modelos)
-                                    {<MudSelectItem Value="@modelo"> @modelo </MudSelectItem>}
-                                </MudSelect>
-                            </MudItem>
-                        </MudGrid>
+                    <MudGrid Spacing="2">
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudSelect T="string" Label="Tipo de vehiculo" Variant="_variant" Margin="_margin" Placeholder="Elige un tipo de vehiculo" @bind-Value="TipoVehiculoSeleccionado">
+                                @if (_typevehicles != null) {
+                                    @foreach (var typevehicle in _typevehicles) {<MudSelectItem Value="@typevehicle.Id"> @typevehicle.Namevehicle </MudSelectItem>}
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudAutocomplete T="string" Label="Marca" @bind-Value="MarcaSeleccionada" Variant="_variant" SearchFunc="@Search" ResetValueOnEmptyText="@_resetValueOnEmptyText" CoerceText="@_coerceText" Dense="true" Placeholder="Elegi una marca" Margin="_margin" />
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudTextField @bind-Value="ModeloSeleccionado" Label="Modelo" Variant="_variant" Placeholder="Escribe el modelo" Margin="_margin" />
+                        </MudItem>
+                    </MudGrid>
 
-                        <MudGrid Spacing="2">
-                            <MudItem xs="4">
-                                <MudSelect T="string" Label="Año" Variant=" Variant.Outlined">
-                                    @foreach (var age in Años)
-                                    {<MudSelectItem Value="@age"> @age </MudSelectItem>}
-                                </MudSelect>
-                            </MudItem>
-                            <MudItem xs="4">
-                                <MudSelect T="string" Label="Pasajeros" Variant=" Variant.Outlined">
-                                    @foreach (var pasajeros in Pasajeros)
-                                    {<MudSelectItem Value="@pasajeros"> @pasajeros </MudSelectItem>}
-                                </MudSelect>
-                            </MudItem>
-                            <MudItem xs="4">
-                                <MudSelect T="string" Label="Color" Variant=" Variant.Outlined">
-                                    @foreach (var color in Colores)
-                                    {<MudSelectItem Value="@color"> @color </MudSelectItem>}
-                                </MudSelect>
-                            </MudItem>
-                        </MudGrid>
-
-                        <MudGrid Spacing="2">
-                            <MudItem xs="12" sm="6" md="4">
-                                <MudTextField T="string" @bind-Value="TextValue"
-                                              Label="Precio"
-                                              Variant="Variant.Outlined"
-                                              Adornment="Adornment.End"
-                                              AdornmentIcon="@Icons.Material.Filled.AttachMoney"
-                                              Margin="Margin.Dense">
-
-                                </MudTextField>
-                            </MudItem>
-                            <MudItem xs="12" sm="6" md="4">
-                                <MudTextField T="string" @bind-Value="TextValue"
-                                              Label="Capacidad de carga"
-                                              Variant="Variant.Outlined"
-                                              Adornment="Adornment.End"
-                                              AdornmentText="Kg"
-                                              Margin="Margin.Dense">
-
-                                </MudTextField>
-                            </MudItem>
-                            <MudItem xs="12" sm="6" md="4">
-                                <MudTextField T="string" @bind-Value="TextValue"
-                                              Label="No seguro"
-                                              Variant="Variant.Outlined"
-                                              Adornment="Adornment.End"
-                                              AdornmentText="#"
-                                              Margin="Margin.Dense">
-
-                                </MudTextField>
-                            </MudItem>
-                            <MudItem xs="12" sm="6" md="4">
-                                <MudTextField T="string" @bind-Value="TextValue"
-                                              Label="Matricula"
-                                              Variant="Variant.Outlined"
-                                              Adornment="Adornment.End"
-                                              AdornmentText="#"
-                                              Margin="Margin.Dense">
-
-                                </MudTextField>
-                            </MudItem>
-                            <MudItem xs="12" sm="6" md="4">
-                                <MudTextField T="string" @bind-Value="TextValue"
-                                              Label="Foto"
-                                              Variant="Variant.Outlined"
-                                              Adornment="Adornment.End"
-                                              AdornmentIcon="@Icons.Material.Filled.AddAPhoto"
-                                              Margin="Margin.Dense">
-
-                                </MudTextField>
-                            </MudItem>
-
-                            <!--Aqui va la ubicacion-->
-                            <MudItem xs="12" sm="6" md="4" Class="px-0 py-0">
-                                <MudList Clickable="true">
-                                    <MudListItem Icon="@Icons.Material.Filled.Room" Text="Ubicacion">
-                                        <NestedList>
-                                            <MudListItem Icon="@Icons.Material.Filled.AddLocation">
-                                                <MudTextField T="string" @bind-Value="TextValue"
-                                                              Label="Calle"
-                                                              Variant="Variant.Outlined"
-                                                              Margin="Margin.Dense">
-
-                                                </MudTextField>
-                                            </MudListItem>
-
-                                            <MudListItem Icon="@Icons.Material.Filled.AddLocation">
-                                                <MudSelect T="string" Label="Provincia" Variant=" Variant.Outlined" Dense="true">
-
-                                                </MudSelect>
-                                            </MudListItem>
-                                            <MudListItem Icon="@Icons.Material.Filled.AddLocation">
-                                                <MudSelect T="string" Label="Pais" Variant=" Variant.Outlined" Dense="true">
-
-                                                </MudSelect>
-                                            </MudListItem>
-                                        </NestedList>
-                                    </MudListItem>
-                                </MudList>
-                                    
-
-                            </MudItem>
-                        </MudGrid>
-
-                        <MudGrid>
-                            <MudItem xs="12">
-                                <MudCardActions>
-                                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="m-auto">Register</MudButton>
-                                </MudCardActions>
-                            </MudItem>
-                        </MudGrid>
-                    </MudPaper>
-
+                    <MudGrid Spacing="2">
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudSelect T="string" Label="Año" Variant="Variant.Outlined" @bind-Value="AgeSeleccionado" Margin="_margin">
+                                @foreach (var age in _ages) {<MudSelectItem Value="@age"> @age </MudSelectItem>}
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudTextField T="string" @bind-Value="Matricula"
+                                          Label="Matricula"
+                                          Variant="_variant"
+                                          Adornment="_adornment"
+                                          AdornmentIcon="@Icons.Material.Filled.Wysiwyg"
+                                          Margin="_margin">
+                            </MudTextField>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudTextField @bind-Value="PrecioPorDia"
+                                          Label="Precio por dia"
+                                          Variant="_variant"
+                                          Adornment="_adornment"
+                                          AdornmentIcon="@Icons.Material.Filled.AttachMoney"
+                                          Margin="_margin">
+                            </MudTextField>
+                        </MudItem>
+                    </MudGrid>
                 </ChildContent>
             </MudExpansionPanel>
 
-            <MudExpansionPanel  IsExpanded="true" HideIcon="true">
+            <MudExpansionPanel>
                 <TitleContent>
                     <div class="d-flex pl-5">
-                        <MudIcon Icon="@Icons.Material.Filled.Tablet" Style="color: #3f51b5" class="mr-3"></MudIcon>
-                        <MudText><strong>Tabla de datos</strong></MudText>
+                        <MudIcon Icon="@Icons.Material.Filled.DirectionsCar" Style=" color: #3f51b5" class="mr-3"> </MudIcon>
+                        <MudText><strong>Información Extra</strong></MudText>
                     </div>
                 </TitleContent>
                 <ChildContent>
-                    <MudPaper>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Marca</th>
-                                    <th scope="col">Modelo</th>
-                                    <th scope="col">Año</th>
-                                    <th scope="col">Color</th>
-                                    <th scope="col">Tipo</th>
-                                    <th scope="col">Precio</th>
-                                    <th scope="col">Capacidad(Kg)</th>
-                                    <th scope="col">Pasajeros</th>
-                                    <th scope="col">Matricula</th>
-                                    <th scope="col">No seguro</th>
-                                    <th scope="col">Foto</th>
-                                    <th scope="col">Ubicacion</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>mdo</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Jacob</td>
-                                    <td>Thornton</td>
-                                    <td>fat</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td colspan="2">Larry the Bird</td>
-                                    <td>twitter</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </MudPaper>
+                    <MudGrid Spacing="2">
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudSelect T="string" Label="Color" Variant="Variant.Outlined" @bind-Value="ColorSeleccionado" Margin="_margin">
+                                @foreach (var color in _colors) {<MudSelectItem Value="@color"> @color </MudSelectItem>}
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudTextField @bind-Value="CapacidadCarga"
+                                          Label="Capacidad de carga"
+                                          Variant="_variant"
+                                          Adornment="_adornment"
+                                          AdornmentText="Kg"
+                                          Margin="_margin">
+                            </MudTextField>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudTextField @bind-Value="Pasajeros"
+                                          Label="Pasajeros"
+                                          Variant="_variant"
+                                          Adornment="_adornment"
+                                          AdornmentIcon="@Icons.Material.Filled.People"
+                                          Margin="_margin">
+                            </MudTextField>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudTextField T="string" @bind-Value="NumeroSeguro"
+                                          Label="No seguro"
+                                          Variant="_variant"
+                                          Adornment="_adornment"
+                                          AdornmentText="#"
+                                          Margin="_margin">
+                            </MudTextField>
+                        </MudItem>
+
+                        <!--Aqui va la ubicacion-->
+                        <MudItem xs="12" sm="6" md="8">
+                            <MudCard>
+                                <MudCardHeader>
+                                    <CardHeaderContent>
+                                        <MudText Typo="Typo.h6">Ubicación del vehiculo</MudText>
+                                    </CardHeaderContent>
+                                </MudCardHeader>
+                                <MudCardContent>
+                                    <RadzenGoogleMap style="height: 200px" Zoom=8 Center=@(new Radzen.GoogleMapPosition() { Lat = Latitud, Lng = Longitud }) MapClick=@OnMapClick>
+                                        <Markers>
+                                            <RadzenGoogleMapMarker Title="@($"Vehiculo {MarcaSeleccionada}")" Label="@($"Vehiculo {MarcaSeleccionada}")" Position=@(new Radzen.GoogleMapPosition() { Lat = Latitud, Lng = Longitud }) />
+                                        </Markers>
+                                    </RadzenGoogleMap>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudItem>
+
+                        <MudItem xs="12" sm="12" md="12">
+                            <InputFile id="vehiculopic" OnChange="UploadImage" hidden multiple accept=".jpg, .jpeg, .png" />
+                            <MudButton HtmlTag="label"
+                                       Variant="_variant"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Filled.CloudUpload"
+                                       for="fileInput112"
+                                       FullWidth="true">
+                                Imagen del Vehiculo
+                            </MudButton>
+                        </MudItem>
+
+                    </MudGrid>
                 </ChildContent>
             </MudExpansionPanel>
 
-        </MudExpansionPanels>
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudCardActions>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="m-auto">Registrar Vehiculo</MudButton>
+                    </MudCardActions>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
     </div>
-
-    
-</MudCard>
+    <div class="mx-auto" style="max-width: 1300px;">
+        <MudPaper Class="pa-10 ma-2" Elevation="2">
+            <MudText Typo="Typo.h6"><strong>Vehículos Registrados</strong></MudText>
+            <MudTable Items="@_vehicles" Hover="@true" Striped="@true">
+                <HeaderContent>
+                    <MudTh>Marca</MudTh>
+                    <MudTh>Modelo </MudTh>
+                    <MudTh>Año</MudTh>
+                    <MudTh>Color</MudTh>
+                    <MudTh>Tipo Robado</MudTh>
+                    <MudTh>Precio</MudTh>
+                    <MudTh>Capacidad(Kg)</MudTh>
+                    <MudTh>Pasajeros</MudTh>
+                    <MudTh>Matricula</MudTh>
+                    <MudTh>Seguro</MudTh>
+                    <MudTh>Editar</MudTh>
+                    <MudTh>Deshabilitar</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    @*<MudTd DataLabel="Color">@context.Color</MudTd>*@
+                    <MudTd DataLabel="Marca">@context.Brand</MudTd>
+                    <MudTd DataLabel="Modelo">@context.Model</MudTd>
+                    <MudTd DataLabel="Año">@context.Age</MudTd>
+                    <MudTd DataLabel="Color">Predeterminado</MudTd>
+                    <MudTd DataLabel="Tipo">@context.Typevehicle.Namevehicle</MudTd>
+                    <MudTd DataLabel="Precio">@context.Priceday</MudTd>
+                    <MudTd DataLabel="Capacidad(Kg)">@context.Weightcapacity</MudTd>
+                    <MudTd DataLabel="Pasajeros">@context.Passengers</MudTd>
+                    <MudTd DataLabel="Matricula">@context.Matricula</MudTd>
+                    <MudTd DataLabel="Seguro">@context.Securitynum</MudTd>
+                    <MudTd DataLabel="Editar"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => Editar(context.Id)"></MudIconButton></MudTd>
+                    <MudTd DataLabel="Deshabilitar"><MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="() => Deshabilitar(context.Id)"></MudIconButton></MudTd>
+                </RowTemplate>
+            </MudTable>
+        </MudPaper>
+    </div>
 
 @code {
 
-    private string TextValue { get; set; }
 
-    private List<string> Marcas = new List<string>() { "BMW", "Ferrari", "Toyota", "Honda"};
-    private List<string> Modelos = new List<string>() { "F8 Spider", "BMW Serie 3", "Hilux", "Honda BR-V" };
-    private List<string> Años = new List<string>() { "2020", "2019", "2018", "2017" };
-    private List<string> Colores = new List<string>() { "Blanco", "Negro", "Azul", "Rojo" };
-    private List<string> Tipos = new List<string>() { "Deportivo", "Van", "Camioneta", "Sedán" };
-    private List<string> Pasajeros = new List<string>() { "2", "5", "7"};
+    private List<Typevehicle> _typevehicles;
+    private List<Vehicle> _vehicles;
+    private readonly string[] _marcasCarros = {
+        "Toyota",
+        "Volkswagen",
+        "Ford",
+        "Honda",
+        "Nissan",
+        "Hyundai",
+        "Chevrolet",
+        "Kia",
+        "Mercedes-Benz",
+        "BMW",
+        "Renault",
+        "Audi",
+        "Maruti",
+        "Peugeot",
+        "Mazda",
+        "Jeep",
+        "Geely",
+        "Fiat",
+        "Skoda",
+        "Changan",
+    };
+    private readonly List<string> _ages = new();
+    private readonly string[] _colors = { "Negro",
+        "Blanco",
+        "Plateado",
+        "Dorado",
+        "Naranja",
+        "Morado",
+        "Verde",
+        "Rojo",
+        "Azul",
+        "Amarillo",
+        "Marrón"};
+
+
+    private Vehicle _vehicle = new();
+
+    public string NumeroSeguro { get; set; }
+    public decimal PrecioPorDia { get; set; }
+    public string Matricula { get; set; }
+    public string TipoVehiculoSeleccionado { get; set; }
+    public decimal CapacidadCarga { get; set; }
+    public string AgeSeleccionado { get; set; }
+    public string ColorSeleccionado { get; set; }
+    public int Pasajeros { get; set; }
+    public string MarcaSeleccionada { get; set; }
+    public string ModeloSeleccionado { get; set; }
+    public string UrlImage { get; set; }
+    public double Latitud { get; set; } = 18.617612;
+    public double Longitud { get; set; } = -68.7085308;
+
+
+    private readonly Margin _margin = Margin.Dense;
+    private readonly Variant _variant = Variant.Outlined;
+    private readonly Adornment _adornment = Adornment.End;
+    private bool _resetValueOnEmptyText;
+    private bool _coerceText;
+
+    protected override async Task OnInitializedAsync() {
+
+        _typevehicles = await _http.GetFromJsonAsync<List<Typevehicle>>("api/tipovehiculo");
+
+        _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehicles");
+
+        var ageActual = int.Parse((DateTime.Now.Year + 1).ToString());
+        for (var i = 0; i < 100; i++) {
+            _ages.Add(ageActual.ToString());
+            ageActual--;
+        }
+
+    }
+
+    private async Task<IEnumerable<string>> Search(string value) {
+        return string.IsNullOrEmpty(value) ? _marcasCarros : _marcasCarros.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    void OnMapClick(Radzen.GoogleMapClickEventArgs args) {
+        Latitud = args.Position.Lat;
+        Longitud = args.Position.Lng;
+    }
+
+    void Editar(int Id) {
+        _navigationManager.NavigateTo($"editar/{Id.ToString()}");
+    }
+
+    void Deshabilitar(int Id) {
+        //Logica para deshabilitar un carro y volver a cargar los vehiculos
+    }
+
+    private void UploadImage(InputFileChangeEventArgs e) {
+        //Logica para subir una imagen y utilizar cloudinary para obtener la url
+    }
+
+    private void RegistrarVehiculo(InputFileChangeEventArgs e) {
+        //Logica para registrar un vehiculo y limpiar los campos y actualizar la lista de abajo
+    }
+
+    //Pendiente resolver lo de la api para traer los carros
+    //Pendiente Pagina editar
+    //Pendiente Logica para deshabilitar
+    //Pendiente Subir una imagen y utilizar cloudinary para obtener la url
+    //Pendiente metodo para registrar un vehiculo y limpiar los campos
+
+
+
+
+
+
+
+
+
 }

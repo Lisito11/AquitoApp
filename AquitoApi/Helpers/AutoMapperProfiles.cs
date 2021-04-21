@@ -3,6 +3,7 @@ using AquitoApi.DTOs.Reservation;
 using AquitoApi.DTOs.TypeVehicle;
 using AquitoApi.DTOs.Vehicle;
 using AquitoApi.Entities;
+using AquitoApi.Entities.Request;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,8 @@ namespace AquitoApi.Helpers {
 
             CreateMap<Reservation, ReservationDTO>().ReverseMap();
             CreateMap<ReservationCreacionDTO, Reservation>();
+
+            CreateMap<Useraquito, UserRequest>().ReverseMap();
         }
     }
 }

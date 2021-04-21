@@ -26,6 +26,29 @@ namespace AquitoApi.Controllers {
             return mapper.Map<List<VehicleDTO>>(Vehiculo);
         }
 
+        //Metodo Get para traer los vehiculos que estan disponibles
+        [HttpGet("disponible")]
+        public async Task<ActionResult<List<VehicleDTO>>> GetActiveVehicle() {
+            var Vehiculo = await context.Vehicles.Include(x => x.Typevehicle).Where(x=> x.Status == 1).ToListAsync();
+            return mapper.Map<List<VehicleDTO>>(Vehiculo);
+        }
+
+
+        //Metodo Get para traer los vehiculos que no estan disponibles
+        [HttpGet("nodisponible")]
+        public async Task<ActionResult<List<VehicleDTO>>> GetNoActiveVehicle() {
+            var Vehiculo = await context.Vehicles.Include(x => x.Typevehicle).Where(x => x.Status == 2).ToListAsync();
+            return mapper.Map<List<VehicleDTO>>(Vehiculo);
+        }
+
+
+        //Metodo Get para traer los vehiculos que no estan disponibles
+        [HttpGet("deshabilitados")]
+        public async Task<ActionResult<List<VehicleDTO>>> GetDeshabilitados() {
+            var Vehiculo = await context.Vehicles.Include(x => x.Typevehicle).Where(x => x.Status == 0).ToListAsync();
+            return mapper.Map<List<VehicleDTO>>(Vehiculo);
+        }
+
         //Metodo Get(id)
         [HttpGet("{id:int}", Name = "obtenerVehiculo")]
         public async Task<ActionResult<VehicleDTO>> Get(int id) {

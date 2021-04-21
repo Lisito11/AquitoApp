@@ -84,10 +84,6 @@
 </MudGrid>
 @code {
 
-    // PENDIENTE CAMBIAR EL STATUS DEL VEHICULO CUANDO SE RESERVA, STATUS = 2
-    // PENDIENTE TRAER SOLO VEHICULOS CON STATUS = 1
-    // AMBOS USANDO EL METODO PATCH
-
     bool success;
     MudForm form;
     string MensajeError(string field) => $"{field} debe introducirse!";
@@ -104,7 +100,7 @@
 
 
     protected override async Task OnInitializedAsync() {
-        vehiculos = await Http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
+        vehiculos = await Http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo/disponible");
         clientes = await Http.GetFromJsonAsync<List<Client>>("api/client");
     }
 
@@ -122,14 +118,19 @@
         Reservation.Totalpay = decimal.Parse(Pago);
         var reservacion = await Http.PostAsJsonAsync("api/reservacion", Reservation);
         if (reservacion.IsSuccessStatusCode) {
-            Snackbar.Add($"Se ha hecho la reserva correctamente!", Severity.Success);
-            navigationManager.NavigateTo("cobros");
+            string statusNoDisponible = "2";
+
+            string json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{statusNoDisponible}\"" + "}]";
+
+            HttpContent content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+            var response = await Http.PatchAsync($"api/vehiculo/{VehiculoSeleccionado}", content);
+
+            if (response.IsSuccessStatusCode) {
+                Snackbar.Add($"Se ha hecho la reserva correctamente!", Severity.Success);
+                navigationManager.NavigateTo("cobros");
+            }
         } else {
             Snackbar.Add($"Ha ocurrido un error, porfavor revisar los datos.", Severity.Error);
         }
     }
-
-
-
-
 }

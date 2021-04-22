@@ -41,7 +41,7 @@ namespace AquitoWebApp.Authentication
 
                 IEnumerable<Claim> claims = new[] {
                     new Claim( ClaimTypes.Name, userLogged.UserName )
-                }.Concat(userLogged.ExposedClaims.Select(x => new Claim(x.Key, x.Value)));
+                }.Concat(userLogged.Claims.Select(x => new Claim(x.Key, x.Value)));
 
                 identity = new ClaimsIdentity(claims, "Server authentication");
 

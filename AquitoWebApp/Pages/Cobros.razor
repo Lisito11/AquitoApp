@@ -49,7 +49,7 @@
                                 {
                                     <MudTextField @bind-Value="Pago" Label="Pagar factura" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
                                     <MudTooltip Text="Pagar factura">
-                                        <MudFab Icon="@Icons.Material.Filled.Payment" Color="Color.Secondary" @onclick="() => RealizarPago(factura.Id)" />
+                                        <MudFab Icon="@Icons.Material.Filled.Payment" Color="Color.Secondary" @onclick="() => RealizarPago(factura.Id, factura.Totalpay)" />
                                     </MudTooltip>
                                 }
                             </MudCardActions>
@@ -62,7 +62,7 @@
 }
 else
 {
-    <MudText>Cargando...</MudText>
+    <MudText>Cargando... espera</MudText>
 }
 
 @code {
@@ -76,9 +76,11 @@ else
         reservaciones = await Http.GetFromJsonAsync<List<Reservation>>("api/reservacion");
     }
 
-    private async Task RealizarPago(int id)
+    private async Task RealizarPago(int id, decimal? total)
     {
-        string json = "{\"op\": \"replace\",\"path\": \"/totalpay\",\"value\":" + $"\"{Pago}\"" + "}]";
+        var resto = total - Pago;
+
+        string json = "{\"op\": \"replace\",\"path\": \"/totalpay\",\"value\":" + $"\"{resto}\"" + "}]";
         HttpContent content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
 
         var response = await Http.PatchAsync($"api/reservacion/{id}", content);

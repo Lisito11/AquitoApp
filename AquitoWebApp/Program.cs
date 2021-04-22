@@ -13,9 +13,12 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AquitoWebApp {
-    public class Program {
-        public static async Task Main(string[] args) {
+namespace AquitoWebApp
+{
+    public class Program
+    {
+        public static async Task Main(string[] args)
+        {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
 

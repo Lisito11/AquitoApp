@@ -97,6 +97,8 @@ namespace AquitoApi.Controllers
             {   
                 Ok = true,
                 Data = new {
+                    
+                    
                     IsAuthenticated = User.Identity.IsAuthenticated,
                     UserName = User.Identity.Name,
                     ExposedClaims = User.Claims.ToDictionary(c => c.Type, c => c.Value)

@@ -19,14 +19,14 @@ namespace AquitoWebApp.Services
     {
         public Task Login(UserAuthViewModel user);
         public Task Logout();
-        public Task<BaseResponse> GetCurrentUser();
+        public Task<BaseResponse<UserAuth>> GetCurrentUser();
     }
 
-    public class AuthService: IAuthService
+    public class AuthService : IAuthService
     {
         private readonly HttpClient _http;
 
-            
+
         public AuthService(HttpClient http)
         {
             _http = http;
@@ -54,6 +54,6 @@ namespace AquitoWebApp.Services
             result.EnsureSuccessStatusCode();
         }
 
-       
+
     }
 }

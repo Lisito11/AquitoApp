@@ -1,0 +1,15 @@
+@inherits LayoutComponentBase
+
+<style>
+    body {
+        background-color: #f5f5f5;
+    }
+</style>
+
+<MudLayout Class="main d-flex justify-center align-center" style="@styleLayout">
+    @Body
+</MudLayout>
+
+@code {
+    string styleLayout = $"color:{Colors.Grey.Lighten4}; min-height:100vh;";
+}

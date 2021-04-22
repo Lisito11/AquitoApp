@@ -17,7 +17,6 @@ namespace AquitoApi.DTOs.Vehicle {
         public decimal? Latitude { get; set; }
         public decimal? Longitude { get; set; }
         public int? Typevehicleid { get; set; }
-        public int? Useraquitoid { get; set; }
         public int? Status { get; set; }
     }
 }

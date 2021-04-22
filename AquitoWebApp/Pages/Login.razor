@@ -1,0 +1,70 @@
+@page "/auth/login"
+@layout EmptyLayout
+
+<div style="max-width: 400px;">
+    <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+        <MudCard Outlined="true" Class="px-2 py-1">
+            <MudCardContent class="pb-0">
+
+                <MudText Typo="Typo.h4">Inicio de Sesión</MudText>
+            </MudCardContent>
+            <MudCardContent>
+
+                <MudTextField Label="Email" @bind-Value="model.Email" For="@(() => model.Email)" />
+
+                <MudTextField Label="Contraseña" Class="mt-3" @bind-Value="model.Password" For="@(() => model.Password)"
+                    InputType="InputType.Password" />
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton ButtonType="ButtonType.Submit" FullWidth Variant="Variant.Filled" Color="Color.Primary"
+                    Class="ml-auto">Login</MudButton>
+            </MudCardActions>
+
+            <MudCardContent>
+                @if (!firstRender && isLoading && !success)
+                {
+                    <MudAlert Severity="Severity.Success">
+                        <MudProgressCircular Color="Color.Info" Indeterminate="true" />
+                    </MudAlert>
+                }
+                else if (!firstRender && !success)
+                {
+                    <MudAlert Severity="Severity.Error">
+                        Completa formulario correctamente.
+                    </MudAlert>
+                }
+            </MudCardContent>
+
+        </MudCard>
+
+
+
+    </EditForm>
+</div>
+
+@code {
+    private UserAuthViewModel model = new UserAuthViewModel();
+    bool success;
+    bool isLoading;
+    bool firstRender;
+
+    protected override void OnAfterRender(bool fr)
+    {
+        firstRender = fr;
+    }
+    public void OnValidSubmit()
+    {
+        isLoading = true;
+        success = true;
+
+
+
+        isLoading = false;
+
+        StateHasChanged();
+
+
+
+    }
+}

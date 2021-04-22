@@ -14,7 +14,6 @@ namespace AquitoApi.DTOs.Client {
         public string Typeblood { get; set; }
         public string Userpic { get; set; }
         public string Licencepic { get; set; }
-        public int? Useraquitoid { get; set; }
         public int? Status { get; set; }
     }
 }

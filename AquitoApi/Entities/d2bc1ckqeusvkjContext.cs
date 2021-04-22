@@ -1,15 +1,17 @@
 ﻿using System;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace AquitoApi.Entities {
-    public partial class d2bc1ckqeusvkjContext : DbContext
+namespace AquitoApi.Entities
+{
+    public partial class d2bc1ckqeusvkjContext : IdentityDbContext<Useraquito, Roleaquito, int>
     {
-        public d2bc1ckqeusvkjContext(){}
+        public d2bc1ckqeusvkjContext() { }
 
-        public d2bc1ckqeusvkjContext(DbContextOptions<d2bc1ckqeusvkjContext> options) : base(options){}
+        public d2bc1ckqeusvkjContext(DbContextOptions<d2bc1ckqeusvkjContext> options) : base(options) { }
 
         public virtual DbSet<Client> Clients { get; set; }
         public virtual DbSet<Reservation> Reservations { get; set; }
@@ -19,6 +21,9 @@ namespace AquitoApi.Entities {
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.HasAnnotation("Relational:Collation", "en_US.UTF-8");
 
             modelBuilder.Entity<Client>(entity =>
@@ -136,13 +141,6 @@ namespace AquitoApi.Entities {
             {
                 entity.ToTable("useraquito");
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("useraquitoid")
-                    .UseIdentityAlwaysColumn();
-
-                entity.Property(e => e.Email)
-                    .HasMaxLength(150)
-                    .HasColumnName("email");
 
                 entity.Property(e => e.Firstname)
                     .HasMaxLength(80)
@@ -157,14 +155,6 @@ namespace AquitoApi.Entities {
                     .HasColumnName("phone");
 
                 entity.Property(e => e.Status).HasColumnName("status");
-
-                entity.Property(e => e.Userpassword)
-                    .HasMaxLength(650)
-                    .HasColumnName("userpassword");
-
-                entity.Property(e => e.Userrole)
-                    .HasMaxLength(650)
-                    .HasColumnName("userrole");
             });
 
             modelBuilder.Entity<Vehicle>(entity =>

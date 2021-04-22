@@ -5,10 +5,8 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace AquitoApi.Entities
-{
-    public partial class d2bc1ckqeusvkjContext : IdentityDbContext<Useraquito, Roleaquito, int>
-    {
+namespace AquitoApi.Entities {
+    public partial class d2bc1ckqeusvkjContext : IdentityDbContext<Useraquito, Roleaquito, int> {
         public d2bc1ckqeusvkjContext() { }
 
         public d2bc1ckqeusvkjContext(DbContextOptions<d2bc1ckqeusvkjContext> options) : base(options) { }
@@ -19,15 +17,13 @@ namespace AquitoApi.Entities
         public virtual DbSet<Useraquito> Useraquitos { get; set; }
         public virtual DbSet<Vehicle> Vehicles { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
+        protected override void OnModelCreating(ModelBuilder modelBuilder) {
 
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.HasAnnotation("Relational:Collation", "en_US.UTF-8");
 
-            modelBuilder.Entity<Client>(entity =>
-            {
+            modelBuilder.Entity<Client>(entity => {
                 entity.ToTable("client");
 
                 entity.Property(e => e.Id)
@@ -80,8 +76,7 @@ namespace AquitoApi.Entities
                     .HasConstraintName("fk_useraquito_client");
             });
 
-            modelBuilder.Entity<Reservation>(entity =>
-            {
+            modelBuilder.Entity<Reservation>(entity => {
                 entity.ToTable("reservation");
 
                 entity.Property(e => e.Id)
@@ -122,8 +117,7 @@ namespace AquitoApi.Entities
                     .HasConstraintName("fk_vehicle_reservation");
             });
 
-            modelBuilder.Entity<Typevehicle>(entity =>
-            {
+            modelBuilder.Entity<Typevehicle>(entity => {
                 entity.ToTable("typevehicle");
 
                 entity.Property(e => e.Id)
@@ -137,8 +131,7 @@ namespace AquitoApi.Entities
                 entity.Property(e => e.Status).HasColumnName("status");
             });
 
-            modelBuilder.Entity<Useraquito>(entity =>
-            {
+            modelBuilder.Entity<Useraquito>(entity => {
                 entity.ToTable("useraquito");
 
 
@@ -157,8 +150,7 @@ namespace AquitoApi.Entities
                 entity.Property(e => e.Status).HasColumnName("status");
             });
 
-            modelBuilder.Entity<Vehicle>(entity =>
-            {
+            modelBuilder.Entity<Vehicle>(entity => {
                 entity.ToTable("vehicle");
 
                 entity.Property(e => e.Id)
@@ -190,6 +182,10 @@ namespace AquitoApi.Entities
                 entity.Property(e => e.Securitynum)
                     .HasMaxLength(25)
                     .HasColumnName("securitynum");
+
+                entity.Property(e => e.Color)
+                    .HasMaxLength(25)
+                    .HasColumnName("color");
 
                 entity.Property(e => e.Status).HasColumnName("status");
 

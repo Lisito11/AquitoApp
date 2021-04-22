@@ -11,6 +11,7 @@ namespace AquitoWebApp.Entities {
             Reservations = new HashSet<Reservation>();
         }
 
+    
         public int Id { get; set; }
         public string Brand { get; set; }
         public string Model { get; set; }
@@ -25,6 +26,7 @@ namespace AquitoWebApp.Entities {
         public decimal? Longitude { get; set; }
         public int? Typevehicleid { get; set; }
         public int? Useraquitoid { get; set; }
+        public string Color { get; set; }
         public int? Status { get; set; }
 
         public virtual Typevehicle Typevehicle { get; set; }

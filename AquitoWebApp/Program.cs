@@ -9,12 +9,15 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Tewr.Blazor.FileReader;
 
 namespace AquitoWebApp {
     public class Program {
         public static async Task Main(string[] args) {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
+
+            builder.Services.AddFileReaderService(o => o.UseWasmSharedBuffer = true);
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://aquitoapp.herokuapp.com/") });
 

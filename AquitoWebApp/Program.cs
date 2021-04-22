@@ -1,4 +1,7 @@
+using AquitoWebApp.Authentication;
+using AquitoWebApp.Services;
 using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +18,11 @@ namespace AquitoWebApp {
         public static async Task Main(string[] args) {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
+
+            builder.Services.AddOptions();
+            builder.Services.AddAuthorizationCore();
+            builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://aquitoapp.herokuapp.com/") });
 

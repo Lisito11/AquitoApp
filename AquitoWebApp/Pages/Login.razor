@@ -1,5 +1,7 @@
 @page "/auth/login"
 @layout EmptyLayout
+@inject AuthStateProvider _authStateProvider
+@inject NavigationManager NavManager
 
 <div style="max-width: 400px;">
     <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
@@ -22,16 +24,25 @@
             </MudCardActions>
 
             <MudCardContent>
-                @if (!firstRender && isLoading && !success)
+                @if (isLoading && !success)
                 {
-                    <MudAlert Severity="Severity.Success">
-                        <MudProgressCircular Color="Color.Info" Indeterminate="true" />
-                    </MudAlert>
+                    
+                    <div>
+                        <MudProgressCircular Color="Color.Info" Class="mx-auto" Indeterminate="true" />
+                    </div>
+                    
                 }
-                else if (!firstRender && !success)
+                else if (!success)
                 {
                     <MudAlert Severity="Severity.Error">
                         Completa formulario correctamente.
+                    </MudAlert>
+                }
+
+                @if (String.IsNullOrEmpty(ErrorAuthMessage) && showAuthError)
+                {
+                    <MudAlert Severity="Severity.Error" >
+                        @ErrorAuthMessage
                     </MudAlert>
                 }
             </MudCardContent>
@@ -47,24 +58,27 @@
     private UserAuthViewModel model = new UserAuthViewModel();
     bool success;
     bool isLoading;
-    bool firstRender;
+    bool showAuthError;
+    string ErrorAuthMessage = String.Empty;
 
-    protected override void OnAfterRender(bool fr)
-    {
-        firstRender = fr;
-    }
-    public void OnValidSubmit()
+    public async Task OnValidSubmit()
     {
         isLoading = true;
-        success = true;
+
+        try
+        {
+            await _authStateProvider.UserLogin(model);
+            NavManager.NavigateTo("/");
+            success = true;
+        }
+        catch(Exception ex) {
+            showAuthError = true;
+            ErrorAuthMessage = ex.Message;
+        }
 
 
 
         isLoading = false;
-
         StateHasChanged();
-
-
-
     }
 }

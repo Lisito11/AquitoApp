@@ -1,0 +1,45 @@
+﻿@page "/verify-auth"
+<h3>VerifyAuth</h3>
+
+@if (isAuth)
+{
+    <span>@UserName is authenticated</span>
+    <li>Tiene acceso de Admin Role: @(isAdmin ? "Si":"No") </li>
+    <li>Tiene acceso de User Role: @(isUser ? "Si":"No") </li>
+            }
+            else
+            {
+                <p>Usuario no autorizado</p>
+            }
+
+@code {
+
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
+
+
+    private bool isAuth;
+    private string UserName;
+    private bool isAdmin;
+    private bool isUser;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthenticationState authState = await AuthState;
+
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            isAuth = true;
+
+
+            UserName = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
+            isAdmin = authState.User.IsInRole("Admin");
+            isUser = authState.User.IsInRole("User");
+        }
+
+
+
+    }
+
+}

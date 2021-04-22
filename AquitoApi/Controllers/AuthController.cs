@@ -1,14 +1,13 @@
-using AquitoApi.DTOs.Client;
 using AquitoApi.Entities;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AquitoApi.Services;
 using PasantesBackendApi.Models.Request;
 using PasantesBackendApi.Models.Response;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace AquitoApi.Controllers
 {
@@ -18,15 +17,14 @@ namespace AquitoApi.Controllers
     {
         private readonly ITokenService _tokenService;
         private readonly UserManager<Useraquito> _userManager;
+        private readonly SignInManager<Useraquito> _signInManager;
 
-        public AuthController(d2bc1ckqeusvkjContext context, IMapper mapper, ITokenService tokenService, UserManager<Useraquito> userManager) : base(context, mapper)
+        public AuthController(d2bc1ckqeusvkjContext context, IMapper mapper, ITokenService tokenService, SignInManager<Useraquito> signInManager, UserManager<Useraquito> userManager) : base(context, mapper)
         {
             _tokenService = tokenService;
             _userManager = userManager;
+            _signInManager = signInManager;
         }
-
-
-        
 
             // POST auth/login
             [HttpPost]
@@ -47,18 +45,20 @@ namespace AquitoApi.Controllers
 
             if (existingUser == null)
             {
-                res.Message = "Solicitud de Autenticacion Invalida";
+                res.Message = "Ese email no existe";
                 return Unauthorized(res);
             }
 
-            bool isValidPassword = await _userManager.CheckPasswordAsync(existingUser, model.Password);
+            Microsoft.AspNetCore.Identity.SignInResult isValidPassword = await _signInManager.CheckPasswordSignInAsync(existingUser, model.Password, false);
 
-            if (!isValidPassword)
+            if (!isValidPassword.Succeeded)
             {
                 res.Message = "Contraseña incorrecta";
-                return Unauthorized(res);
+                return BadRequest(res);
 
             }
+
+            await _signInManager.SignInAsync(existingUser, false);
 
             (string token, IEnumerable<string> roles) = await _tokenService.GenerateJwtToken(existingUser);
 
@@ -75,7 +75,38 @@ namespace AquitoApi.Controllers
 
             return Ok(res);
         }
+
+
+        [HttpPost]
+        [Route("logout")]
+        public async Task<IActionResult> LogoutAsync()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok(new BaseResponse
+            {
+                Ok = true,
+                Message = "Se ha cerrado session correctamente."
+            });
+        }
+
+        [HttpGet]
+        [Route("userAuth")]
+        public IActionResult UserAuth()
+        {
+            return Ok( new BaseResponse
+            {   
+                Ok = true,
+                Data = new {
+                    IsAuthenticated = User.Identity.IsAuthenticated,
+                    UserName = User.Identity.Name,
+                    ExposedClaims = User.Claims.ToDictionary(c => c.Type, c => c.Value)
+                }
+            });
+        }
+
+
     }
+
 
 
 }

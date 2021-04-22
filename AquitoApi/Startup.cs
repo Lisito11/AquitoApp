@@ -42,7 +42,7 @@ namespace AquitoApi
 
             // Agregar Identity
             services.AddIdentity<Useraquito, Roleaquito>(
-                options => options.SignIn.RequireConfirmedAccount = true)
+                options => options.SignIn.RequireConfirmedAccount = false)
             .AddEntityFrameworkStores<d2bc1ckqeusvkjContext>()
             .AddDefaultTokenProviders();
 

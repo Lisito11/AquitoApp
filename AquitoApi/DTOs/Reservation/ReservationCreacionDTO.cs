@@ -10,7 +10,6 @@ namespace AquitoApi.DTOs.Reservation {
         public decimal? Totalpay { get; set; }
         public int? Vehicleid { get; set; }
         public int? Clientid { get; set; }
-        public int? Useraquitoid { get; set; }
         public int? Status { get; set; }
     }
 }

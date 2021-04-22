@@ -23,7 +23,7 @@ namespace AquitoApi.Controllers
 
         [HttpPost]
         [Route("upload")]
-        public async Task<IActionResult> PostAsync([FromForm] IFormFile file, [FromForm] string filename)
+        public async Task<IActionResult> PostAsync([FromForm] IFormFile file)
         {
 
             if (ModelState.IsValid)

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Tewr.Blazor.FileReader;
 
 namespace AquitoWebApp
 {
@@ -26,6 +27,7 @@ namespace AquitoWebApp
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddFileReaderService(o => o.UseWasmSharedBuffer = true);
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://aquitoapp.herokuapp.com/") });
 

@@ -25,6 +25,7 @@ namespace AquitoApi.Entities {
         public decimal? Longitude { get; set; }
         public int? Typevehicleid { get; set; }
         public int? Useraquitoid { get; set; }
+        public string Color { get; set; }
         public int? Status { get; set; }
 
         public virtual Typevehicle Typevehicle { get; set; }

@@ -72,9 +72,9 @@ namespace AquitoApi
             });
 
 
+            services.AddHttpContextAccessor();
             services.AddScoped<ICloudinaryService, CloudinaryService>();
             services.AddScoped<ITokenService, TokenService>();
-
 
             services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 

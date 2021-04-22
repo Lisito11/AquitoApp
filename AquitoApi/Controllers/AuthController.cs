@@ -8,6 +8,10 @@ using AquitoApi.Services;
 using PasantesBackendApi.Models.Request;
 using PasantesBackendApi.Models.Response;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using System;
+using System.Security.Claims;
 
 namespace AquitoApi.Controllers
 {
@@ -18,6 +22,7 @@ namespace AquitoApi.Controllers
         private readonly ITokenService _tokenService;
         private readonly UserManager<Useraquito> _userManager;
         private readonly SignInManager<Useraquito> _signInManager;
+        
 
         public AuthController(d2bc1ckqeusvkjContext context, IMapper mapper, ITokenService tokenService, SignInManager<Useraquito> signInManager, UserManager<Useraquito> userManager) : base(context, mapper)
         {
@@ -26,8 +31,8 @@ namespace AquitoApi.Controllers
             _signInManager = signInManager;
         }
 
-            // POST auth/login
-            [HttpPost]
+        // POST auth/login
+        [HttpPost]
         [Route("login")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0037:Usar nombre de miembro inferido", Justification = "<pendiente>")]
         public async Task<IActionResult> LoginAsync([FromBody] AuthRequest model)
@@ -58,7 +63,7 @@ namespace AquitoApi.Controllers
 
             }
 
-            await _signInManager.SignInAsync(existingUser, false);
+            await _signInManager.SignInAsync(existingUser, true);
 
             (string token, IEnumerable<string> roles) = await _tokenService.GenerateJwtToken(existingUser);
 
@@ -90,25 +95,29 @@ namespace AquitoApi.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("userAuth")]
         public IActionResult UserAuth()
         {
-            return Ok( new BaseResponse
-            {   
+
+            ClaimsPrincipal userAuth = HttpContext.User;
+
+            return Ok(new BaseResponse
+            {
                 Ok = true,
-                Data = new {
-                    
-                    
-                    IsAuthenticated = User.Identity.IsAuthenticated,
-                    UserName = User.Identity.Name,
-                    ExposedClaims = User.Claims.ToDictionary(c => c.Type, c => c.Value)
+                Data = new
+                {
+                    UserName = userAuth?.Identity?.Name,
+                    IsAuthentication = userAuth?.Identity?.IsAuthenticated,
+                    Claims = userAuth.Claims.Select(x => new { x.Type, x.Value })
+                                            .GroupBy(x => x.Type)
+                                            .ToDictionary(c => c.Key, func)
                 }
             });
         }
 
 
+        private Func<IGrouping<string, object>, object> func = (c) => (c.Count() > 1) ? c.ToList() : c.FirstOrDefault();
+
     }
-
-
-
 }

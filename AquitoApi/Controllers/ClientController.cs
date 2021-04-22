@@ -41,21 +41,21 @@ namespace AquitoApi.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] ClientCreacionDTO vehicleCreacionDTO)
         {
-            return await Post<ClientCreacionDTO, Vehicle, ClientDTO>(vehicleCreacionDTO, "obtenerCliente");
+            return await Post<ClientCreacionDTO, Client, ClientDTO>(vehicleCreacionDTO, "obtenerCliente");
         }
 
         //Metodo Put
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(int id, [FromBody] ClientCreacionDTO vehicleCreacionDTO)
         {
-            return await Put<ClientCreacionDTO, Vehicle>(id, vehicleCreacionDTO);
+            return await Put<ClientCreacionDTO, Client>(id, vehicleCreacionDTO);
         }
 
         //Metodo Patch
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Patch(int id)
         {
-            return await Patch<Vehicle, ClientDTO>(id);
+            return await Patch<Client, ClientDTO>(id);
         }
     }
 }

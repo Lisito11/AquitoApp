@@ -1,4 +1,8 @@
 ﻿@page "/about"
+@inject HttpClient _http
+@inject ISnackbar _snackbar
+@inject NavigationManager _navigationManager
+@inject Tewr.Blazor.FileReader.IFileReaderService fileReader
 <MudGrid Spacing="3" Justify="Justify.Center">
     <MudItem>
         <MudCard>
@@ -13,5 +17,6 @@
     </MudItem>
 </MudGrid>
 @code {
+
 
 }

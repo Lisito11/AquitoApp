@@ -210,8 +210,6 @@
 </div>
 
 @code {
-
-
     private List<Typevehicle> _typevehicles;
     private List<Vehicle> _vehicles;
     private readonly string[] _marcasCarros = {
@@ -404,11 +402,43 @@
         _navigationManager.NavigateTo($"editar/{Id.ToString()}");
     }
 
-    void Deshabilitar(int Id)
+    async Task Deshabilitar(int Id, int status)
     {
-        //Logica para deshabilitar un carro y volver a cargar los vehiculos
-    }
+        string noDisponible = "0";
+        string disponible = "1";
+        string json;
+        HttpContent content;
 
+        switch (status) {
+            case 0:
+                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{disponible}\"" + "}]";
+                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+                var response = await _http.PatchAsync($"api/vehiculo/{Id}", content);
+
+                if (response.IsSuccessStatusCode) {
+                    _snackbar.Add($"Vehiculo habilitado", Severity.Success);
+                    _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
+                } else {
+                    _snackbar.Add($"Ha ocurrido un error al habilitar el vehiculo, intente de nuevo", Severity.Error);
+                }
+                break;
+            case 1:
+                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{noDisponible}\"" + "}]";
+                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+                var response2 = await _http.PatchAsync($"api/vehiculo/{Id}", content);
+                if (response2.IsSuccessStatusCode) {
+                    _snackbar.Add($"Vehiculo deshabilitado", Severity.Warning);
+                    _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
+                } else {
+                    _snackbar.Add($"Ha ocurrido un error al deshabilitar el vehiculo, intente de nuevo", Severity.Error);
+                }
+                break;
+            case 2:
+                _snackbar.Add($"El vehiculo no se puede deshabilitar porque esta reservado", Severity.Error);
+                break;
+            default:
+                break;
+        }
     }
     //Pendiente Pagina editar
 }

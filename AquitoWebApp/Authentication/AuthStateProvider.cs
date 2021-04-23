@@ -46,7 +46,7 @@ namespace AquitoWebApp.Authentication
 
             await _localStorage.SetItemAsync("claims", userLogged);
 
-            if (userLogged.IsAuthenticated)
+            if (userLogged.isAuthentication)
             {
 
                 List<Claim> claims = new List<Claim>();
@@ -65,14 +65,12 @@ namespace AquitoWebApp.Authentication
 
                     
                 }
- 
 
                 identity = new ClaimsIdentity(claims, "auth");
      
-
             }
 
-            return new AuthenticationState(new ClaimsPrincipal( new ClaimsIdentity(identity)));
+            return new AuthenticationState(new ClaimsPrincipal( (identity)));
         }
 
 
@@ -93,54 +91,12 @@ namespace AquitoWebApp.Authentication
         public async Task<UserAuth> GetCurrentUser()
         {
             
-            if (_currentUser != null && _currentUser.IsAuthenticated) return _currentUser;
+            if (_currentUser != null && _currentUser.isAuthentication) return _currentUser;
             _currentUser = (await _authService.GetCurrentUser()).Data;
             return _currentUser;
             
         }
 
-        private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
-        {
-            List<Claim> claims = new List<Claim>();
-            string payload = jwt.Split('.')[1];
-            var jsonBytes = ParseBase64WithoutPadding(payload);
-            var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
-
-            keyValuePairs.TryGetValue(ClaimTypes.Role, out object roles);
-
-            if (roles != null)
-            {
-                if (roles.ToString().Trim().StartsWith("["))
-                {
-                    string[] parsedRoles = JsonSerializer.Deserialize<string[]>(roles.ToString());
-
-                    foreach (var parsedRole in parsedRoles)
-                    {
-                        claims.Add(new Claim(ClaimTypes.Role, parsedRole));
-                    }
-                }
-                else
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, roles.ToString()));
-                }
-
-                keyValuePairs.Remove(ClaimTypes.Role);
-            }
-
-            claims.AddRange(keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString())));
-
-            return claims;
-        }
-
-        private byte[] ParseBase64WithoutPadding(string base64)
-        {
-            switch (base64.Length % 4)
-            {
-                case 2: base64 += "=="; break;
-                case 3: base64 += "="; break;
-            }
-            return Convert.FromBase64String(base64);
-        }
     }
 
 }

@@ -59,9 +59,6 @@ namespace AquitoApi
             .AddJwtBearer(options =>
             {
                 byte[] key = Encoding.ASCII.GetBytes(Configuration["AppSettings:Secret"]);
-
-                options.Authority = Configuration["AppSettings:Authority"];
-                options.Audience = Configuration["AppSettings:Audience"];
                 options.RequireHttpsMetadata = false;
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -88,6 +85,8 @@ namespace AquitoApi
                 c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             });
 
+            services.AddRazorPages();
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -101,7 +100,7 @@ namespace AquitoApi
                 app.UseHsts();
             }
 
-            app.UseCors(opciones => opciones.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+            app.UseCors("AllowOrigin");
 
             app.UseHttpsRedirection();
 

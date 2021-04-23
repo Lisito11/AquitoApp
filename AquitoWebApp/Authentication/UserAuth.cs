@@ -7,7 +7,7 @@ namespace AquitoWebApp.Authentication
 {
     public class UserAuth
     {
-        public bool IsAuthenticated { get; set; }
+        public bool isAuthentication { get; set; }
         public string UserName { get; set; }
         public Dictionary<string, object> Claims { get; set; }
     }

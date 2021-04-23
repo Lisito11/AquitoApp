@@ -97,7 +97,6 @@ namespace AquitoApi.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         [Route("userAuth")]
         public IActionResult UserAuth()
         {

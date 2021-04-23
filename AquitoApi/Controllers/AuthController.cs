@@ -34,6 +34,7 @@ namespace AquitoApi.Controllers
         // POST auth/login
         [HttpPost]
         [Route("login")]
+        [AllowAnonymous]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0037:Usar nombre de miembro inferido", Justification = "<pendiente>")]
         public async Task<IActionResult> LoginAsync([FromBody] AuthRequest model)
         {
@@ -84,6 +85,7 @@ namespace AquitoApi.Controllers
 
         [HttpPost]
         [Route("logout")]
+        [AllowAnonymous]
         public async Task<IActionResult> LogoutAsync()
         {
             await _signInManager.SignOutAsync();
@@ -95,7 +97,7 @@ namespace AquitoApi.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [AllowAnonymous]
         [Route("userAuth")]
         public IActionResult UserAuth()
         {

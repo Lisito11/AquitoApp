@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Logging;
 
 namespace AquitoApi
 {
@@ -33,6 +34,9 @@ namespace AquitoApi
 
         public void ConfigureServices(IServiceCollection services)
         {
+
+            IdentityModelEventSource.ShowPII = true; //To show detail of error and see the problem
+
             services.AddAutoMapper(typeof(Startup));
 
             services.AddDbContext<d2bc1ckqeusvkjContext>(options => options.UseNpgsql(Configuration.GetConnectionString("Dbconnection")));

@@ -65,8 +65,7 @@ namespace AquitoWebApp.Authentication
 
                     
                 }
-
-               
+ 
 
                 identity = new ClaimsIdentity(claims, "auth");
      

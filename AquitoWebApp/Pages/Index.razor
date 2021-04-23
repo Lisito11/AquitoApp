@@ -1,9 +1,11 @@
 ﻿@page "/"
+@attribute [Authorize]
 
 <MudGrid>
     <MudItem xs="12">
         <MudGrid Spacing="3" Justify="Justify.Center">
-            @foreach (var card in cardsPaginas) {
+            @foreach (var card in cardsPaginas)
+            {
                 <MudItem Class="m-4">
                     <MudLink Href="@card.Link" Underline="Underline.None" Class="text-center" Color="Color.Inherit">
                         <MudCard Style="height:120px; width:200px;">
@@ -23,7 +25,8 @@
     </MudItem>
 </MudGrid>
 @code{
-    private class CustomCard {
+    private class CustomCard
+    {
         public string Link { get; set; }
         public string Nombre { get; set; }
         public string Icono { get; set; }

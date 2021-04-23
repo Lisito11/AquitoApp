@@ -2,6 +2,8 @@
 @inject HttpClient Http
 @inject ISnackbar Snackbar
 @inject NavigationManager navigationManager
+@attribute [Authorize]
+
 <MudGrid Spacing="3" Justify="Justify.Center">
     <MudForm @ref="form" @bind-IsValid="@success">
         <MudItem xs="12">
@@ -15,16 +17,20 @@
                     <MudGrid Spacing="2" Justify="Justify.Center">
                         <MudItem xs="12" sm="6" md="6">
                             <MudSelect T="string" Label="Vehiculos Disponibles" @bind-Value="VehiculoSeleccionado">
-                                @if (vehiculos != null) {
-                                    @foreach (var vehiculo in vehiculos) {<MudSelectItem Value="@vehiculo.Id.ToString()"> @($"{vehiculo.Typevehicle.Namevehicle} {vehiculo.Brand} {vehiculo.Model} {vehiculo.Age}") </MudSelectItem>}
+                                @if (vehiculos != null)
+                                {
+                                    @foreach (var vehiculo in vehiculos)
+                                    {<MudSelectItem Value="@vehiculo.Id.ToString()"> @($"{vehiculo.Typevehicle.Namevehicle} {vehiculo.Brand} {vehiculo.Model} {vehiculo.Age}") </MudSelectItem>}
                                 }
                             </MudSelect>
                         </MudItem>
                         <MudItem xs="12" sm="6" md="6">
                             <MudSelect T="string" Label="Clientes" @bind-Value="ClienteSeleccionado">
-                                @if (clientes != null) {
+                                @if (clientes != null)
+                                {
 
-                                    @foreach (var cliente in clientes) {<MudSelectItem Value="@cliente.Id.ToString()"> @($"{cliente.Firstname} {cliente.Lastname}") </MudSelectItem>}
+                                    @foreach (var cliente in clientes)
+                                    {<MudSelectItem Value="@cliente.Id.ToString()"> @($"{cliente.Firstname} {cliente.Lastname}") </MudSelectItem>}
                                 }
                             </MudSelect>
                         </MudItem>
@@ -46,7 +52,8 @@
             </MudCard>
         </MudItem>
     </MudForm>
-    @if (success) {
+    @if (success)
+    {
         <MudItem>
             <MudCard>
                 <MudCardHeader>
@@ -99,12 +106,14 @@
     private List<Client> clientes;
 
 
-    protected override async Task OnInitializedAsync() {
+    protected override async Task OnInitializedAsync()
+    {
         vehiculos = await Http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo/disponible");
         clientes = await Http.GetFromJsonAsync<List<Client>>("api/client");
     }
 
-    private async Task<bool> GenerarFactura() {
+    private async Task<bool> GenerarFactura()
+    {
         Reservation.Clientid = int.Parse(ClienteSeleccionado);
         Reservation.Vehicleid = int.Parse(VehiculoSeleccionado);
         Vehicle = vehiculos.Where(x => x.Id == int.Parse(VehiculoSeleccionado)).FirstOrDefault();
@@ -114,10 +123,12 @@
         return success;
     }
 
-    private async Task Reservar() {
+    private async Task Reservar()
+    {
         Reservation.Totalpay = decimal.Parse(Pago);
         var reservacion = await Http.PostAsJsonAsync("api/reservacion", Reservation);
-        if (reservacion.IsSuccessStatusCode) {
+        if (reservacion.IsSuccessStatusCode)
+        {
             string statusNoDisponible = "2";
 
             string json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{statusNoDisponible}\"" + "}]";
@@ -125,11 +136,14 @@
             HttpContent content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
             var response = await Http.PatchAsync($"api/vehiculo/{VehiculoSeleccionado}", content);
 
-            if (response.IsSuccessStatusCode) {
+            if (response.IsSuccessStatusCode)
+            {
                 Snackbar.Add($"Se ha hecho la reserva correctamente!", Severity.Success);
                 navigationManager.NavigateTo("cobros");
             }
-        } else {
+        }
+        else
+        {
             Snackbar.Add($"Ha ocurrido un error, porfavor revisar los datos.", Severity.Error);
         }
     }

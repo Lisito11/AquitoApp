@@ -1,6 +1,7 @@
 ﻿@page "/cobros"
 
 @inject HttpClient Http
+@attribute [Authorize]
 
 
 @if (reservaciones != null)
@@ -85,18 +86,22 @@ else
 
         var response = await Http.PatchAsync($"api/reservacion/{id}", content);
 
-        if (response.IsSuccessStatusCode) {
+        if (response.IsSuccessStatusCode)
+        {
 
             Reservation reservation = await Http.GetFromJsonAsync<Reservation>($"api/reservacion/{id}");
 
-            if (reservation.Totalpay == 0) {
+            if (reservation.Totalpay == 0)
+            {
                 var statusPago = "2";
                 json = "{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{statusPago}\"" + "}]";
                 content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
                 response = await Http.PatchAsync($"api/reservacion/{id}", content);
 
                 //Pendiente agregar Snackbar de factura pagada correctamente
-            } else {
+            }
+            else
+            {
                 //Pendiente agregar Snackbar de factura que aun falta por pagar
             }
         }

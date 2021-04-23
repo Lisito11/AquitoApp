@@ -57,6 +57,7 @@ namespace AquitoApi
                 byte[] key = Encoding.ASCII.GetBytes(Configuration["AppSettings:Secret"]);
 
                 options.Authority = Configuration["AppSettings:Authority"];
+                options.Audience = Configuration["AppSettings:Audience"];
                 options.RequireHttpsMetadata = false;
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters

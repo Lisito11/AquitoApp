@@ -34,16 +34,42 @@ namespace AquitoWebApp.Authentication
 
             ClaimsIdentity identity = new ClaimsIdentity();
 
+            string token = await _localStorage.GetItemAsync<string>("token");
+            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+
+            if (String.IsNullOrEmpty(token))
+            {
+                return _authState;
+            }
+
             UserAuth userLogged = await GetCurrentUser();
+
+            await _localStorage.SetItemAsync("claims", userLogged);
 
             if (userLogged.IsAuthenticated)
             {
 
-                IEnumerable<Claim> claims = new[] {
-                    new Claim( ClaimTypes.Name, userLogged.UserName )
-                }.Concat(userLogged.Claims.Select(x => new Claim(x.Key, x.Value)));
+                List<Claim> claims = new List<Claim>();
 
-                identity = new ClaimsIdentity(claims, "Server authentication");
+                foreach (KeyValuePair<string, object> claim in userLogged.Claims)
+                {
+                    
+                    if(claim.Value is IEnumerable<string>)
+                    {  
+                        claims.AddRange(((List<string>)claim.Value).Select(value => new Claim(claim.Key, value) ));
+                    }
+                    else
+                    {
+                        claims.Add(new Claim(claim.Key, claim.Value.ToString()));
+                    }
+
+                    
+                }
+
+               
+
+                identity = new ClaimsIdentity(claims, "auth");
+     
 
             }
 

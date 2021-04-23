@@ -15,5 +15,6 @@ namespace AquitoApi.Helpers.Constants
     {
         public string Secret { get; set; }
         public string Authority { get; set; }
+        public string Issuer { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿@page "/vehiculos"
+@attribute [Authorize]
 @inject HttpClient _http
 @inject ISnackbar _snackbar
 @inject NavigationManager _navigationManager
@@ -20,8 +21,10 @@
                 <MudGrid Spacing="2">
                     <MudItem xs="12" sm="6" md="4">
                         <MudSelect T="string" Label="Tipo de vehiculo" Variant="_variant" Margin="_margin" Placeholder="Elige un tipo de vehiculo" @bind-Value="TipoVehiculoSeleccionado">
-                            @if (_typevehicles != null) {
-                                @foreach (var typevehicle in _typevehicles) {<MudSelectItem Value="@typevehicle.Id.ToString()"> @typevehicle.Namevehicle </MudSelectItem>}
+                            @if (_typevehicles != null)
+                            {
+                                @foreach (var typevehicle in _typevehicles)
+                                {<MudSelectItem Value="@typevehicle.Id.ToString()"> @typevehicle.Namevehicle </MudSelectItem>}
                             }
                         </MudSelect>
                     </MudItem>
@@ -36,7 +39,8 @@
                 <MudGrid Spacing="2">
                     <MudItem xs="12" sm="6" md="4">
                         <MudSelect T="string" Label="Año" Variant="Variant.Outlined" @bind-Value="AgeSeleccionado" Margin="_margin">
-                            @foreach (var age in _ages) {<MudSelectItem Value="@age"> @age </MudSelectItem>}
+                            @foreach (var age in _ages)
+                            {<MudSelectItem Value="@age"> @age </MudSelectItem>}
                         </MudSelect>
                     </MudItem>
                     <MudItem xs="12" sm="6" md="4">
@@ -72,7 +76,8 @@
                 <MudGrid Spacing="2">
                     <MudItem xs="12" sm="6" md="4">
                         <MudSelect T="string" Label="Color" Variant="Variant.Outlined" @bind-Value="ColorSeleccionado" Margin="_margin">
-                            @foreach (var color in _colors) {<MudSelectItem Value="@color"> @color </MudSelectItem>}
+                            @foreach (var color in _colors)
+                            {<MudSelectItem Value="@color"> @color </MudSelectItem>}
                         </MudSelect>
                     </MudItem>
                     <MudItem xs="12" sm="6" md="4">
@@ -132,7 +137,8 @@
                             Subir Imagen
                         </MudButton>
                     </MudItem>
-                    @if (!string.IsNullOrWhiteSpace(message)) {
+                    @if (!string.IsNullOrWhiteSpace(message))
+                    {
                         <MudItem xs="12" sm="12" md="12">
                             <img class="img-fluid img-thumbnail" src="@UrlImage" />
                         </MudItem>
@@ -273,69 +279,85 @@
     private bool _resetValueOnEmptyText;
     private bool _coerceText;
 
-    protected override async Task OnInitializedAsync() {
+    protected override async Task OnInitializedAsync()
+    {
 
         _typevehicles = await _http.GetFromJsonAsync<List<Typevehicle>>("api/tipovehiculo");
 
         _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
 
         var ageActual = int.Parse((DateTime.Now.Year + 1).ToString());
-        for (var i = 0; i < 100; i++) {
+        for (var i = 0; i < 100; i++)
+        {
             _ages.Add(ageActual.ToString());
             ageActual--;
         }
 
     }
 
-    private async Task<IEnumerable<string>> Search(string value) {
+    private async Task<IEnumerable<string>> Search(string value)
+    {
         return string.IsNullOrEmpty(value) ? _marcasCarros : _marcasCarros.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
-    void OnMapClick(Radzen.GoogleMapClickEventArgs args) {
+    void OnMapClick(Radzen.GoogleMapClickEventArgs args)
+    {
         Latitud = args.Position.Lat;
         Longitud = args.Position.Lng;
     }
 
-    private async Task UploadFile() {
-        if (fileStream != null) {
+    private async Task UploadFile()
+    {
+        if (fileStream != null)
+        {
             var content = new MultipartFormDataContent();
             content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data");
             var sc = new StreamContent(fileStream, (int)fileStream.Length);
             content.Add(sc, "file", fileName);
 
             var imagen = await _http.PostAsync("api/image/upload", content);
-            if (imagen.IsSuccessStatusCode) {
+            if (imagen.IsSuccessStatusCode)
+            {
                 var body = await imagen.Content.ReadAsStringAsync();
                 var resultado = JObject.Parse(body);
                 message = resultado["message"].ToString();
                 UrlImage = resultado["imageURL"].ToString();
                 _snackbar.Add(message, Severity.Info);
-            } else {
+            }
+            else
+            {
                 _snackbar.Add($"Ha ocurrido un error, por favor revisar la imagen.", Severity.Error);
             }
-        } else {
+        }
+        else
+        {
             _snackbar.Add($"Primero selecciona una imagen.", Severity.Warning);
         }
 
     }
 
-    async Task OpenFile() {
+    async Task OpenFile()
+    {
         var file = (await fileReader.CreateReference(inputReference).EnumerateFilesAsync()).FirstOrDefault();
 
-        if (file == null) {
+        if (file == null)
+        {
             return;
         }
 
         var fileInfo = await file.ReadFileInfoAsync();
         fileName = fileInfo.Name;
 
-        using (var ms = await file.CreateMemoryStreamAsync((int)fileInfo.Size)) {
+        using (var ms = await file.CreateMemoryStreamAsync((int)fileInfo.Size))
+        {
             fileStream = new MemoryStream(ms.ToArray());
         }
     }
 
-    private async Task RegistrarVehiculo() {
-        Vehicle _vehicle = new() {
+    private async Task RegistrarVehiculo()
+    {
+        Vehicle _vehicle = new()
+        {
             Brand = MarcaSeleccionada,
             Model = ModeloSeleccionado,
             Age = int.Parse(AgeSeleccionado),
@@ -353,7 +375,8 @@
         };
         var vehiculoCreado = await _http.PostAsJsonAsync("api/vehiculo", _vehicle);
 
-        if (vehiculoCreado.IsSuccessStatusCode) {
+        if (vehiculoCreado.IsSuccessStatusCode)
+        {
             MarcaSeleccionada = "";
             ModeloSeleccionado = "";
             AgeSeleccionado = "";
@@ -369,51 +392,22 @@
             _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
 
 
-        } else {
+        }
+        else
+        {
             _snackbar.Add($"Ha ocurrido un error, por favor revisar los datos.", Severity.Error);
         }
     }
 
-    void Editar(int Id) {
+    void Editar(int Id)
+    {
         _navigationManager.NavigateTo($"editar/{Id.ToString()}");
     }
 
-    async Task Deshabilitar(int Id, int status) {
-        string noDisponible = "0";
-        string disponible = "1";
-        string json;
-        HttpContent content;
-
-        switch (status) {
-            case 0:
-                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{disponible}\"" + "}]";
-                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
-                var response = await _http.PatchAsync($"api/vehiculo/{Id}", content);
-
-                if (response.IsSuccessStatusCode) {
-                    _snackbar.Add($"Vehiculo habilitado", Severity.Success);
-                    _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
-                } else {
-                    _snackbar.Add($"Ha ocurrido un error al habilitar el vehiculo, intente de nuevo", Severity.Error);
-                }
-                break;
-            case 1:
-                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{noDisponible}\"" + "}]";
-                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
-                var response2 = await _http.PatchAsync($"api/vehiculo/{Id}", content);
-                if (response2.IsSuccessStatusCode) {
-                    _snackbar.Add($"Vehiculo deshabilitado", Severity.Warning);
-                    _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
-                } else {
-                    _snackbar.Add($"Ha ocurrido un error al deshabilitar el vehiculo, intente de nuevo", Severity.Error);
-                }
-                break;
-            case 2:
-                _snackbar.Add($"El vehiculo no se puede deshabilitar porque esta reservado", Severity.Error);
-                break;
-            default:
-                break;
-        }
+    void Deshabilitar(int Id)
+    {
+        //Logica para deshabilitar un carro y volver a cargar los vehiculos
+    }
 
     }
     //Pendiente Pagina editar

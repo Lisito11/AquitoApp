@@ -25,11 +25,13 @@ namespace AquitoWebApp.Services
     public class AuthService : IAuthService
     {
         private readonly HttpClient _http;
+        private readonly ILocalStorageService _localStorage;
 
 
-        public AuthService(HttpClient http)
+        public AuthService(HttpClient http, ILocalStorageService localStorageService)
         {
             _http = http;
+            _localStorage = localStorageService;
         }
 
         public async Task<BaseResponse<UserAuth>> GetCurrentUser()
@@ -45,13 +47,27 @@ namespace AquitoWebApp.Services
 
             HttpResponseMessage result = await _http.PostAsJsonAsync("api/auth/login", user);
             if (result.StatusCode == System.Net.HttpStatusCode.BadRequest) throw new Exception(await result.Content.ReadAsStringAsync());
+
             result.EnsureSuccessStatusCode();
+
+             BaseResponse<UserLoggedInViewModel> resultContent = await result.Content.ReadFromJsonAsync<BaseResponse<UserLoggedInViewModel>>();
+
+            await _localStorage.SetItemAsync("token", resultContent.Data?.Token);
+
+            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", resultContent.Data?.Token);
+
+
         }
 
         public async Task Logout()
         {
             HttpResponseMessage result = await _http.PostAsync("api/auth/logout", null);
+   
             result.EnsureSuccessStatusCode();
+
+            await _localStorage.RemoveItemAsync("token");
+
+            _http.DefaultRequestHeaders.Authorization = null;
         }
 
 

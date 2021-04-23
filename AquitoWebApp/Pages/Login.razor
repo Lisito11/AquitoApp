@@ -1,6 +1,6 @@
 @page "/auth/login"
 @layout EmptyLayout
-@inject AuthStateProvider _authStateProvider
+@inject AuthenticationStateProvider _authStateProvider
 @inject NavigationManager NavManager
 
 <div style="max-width: 400px;">
@@ -16,21 +16,21 @@
                 <MudTextField Label="Email" @bind-Value="model.Email" For="@(() => model.Email)" />
 
                 <MudTextField Label="Contraseña" Class="mt-3" @bind-Value="model.Password" For="@(() => model.Password)"
-                    InputType="InputType.Password" />
+                              InputType="InputType.Password" />
             </MudCardContent>
             <MudCardActions>
                 <MudButton ButtonType="ButtonType.Submit" FullWidth Variant="Variant.Filled" Color="Color.Primary"
-                    Class="ml-auto">Login</MudButton>
+                           Class="ml-auto">Login</MudButton>
             </MudCardActions>
 
             <MudCardContent>
                 @if (isLoading && !success)
                 {
-                    
+
                     <div>
                         <MudProgressCircular Color="Color.Info" Class="mx-auto" Indeterminate="true" />
                     </div>
-                    
+
                 }
                 else if (!success)
                 {
@@ -41,7 +41,7 @@
 
                 @if (String.IsNullOrEmpty(ErrorAuthMessage) && showAuthError)
                 {
-                    <MudAlert Severity="Severity.Error" >
+                    <MudAlert Severity="Severity.Error">
                         @ErrorAuthMessage
                     </MudAlert>
                 }
@@ -67,11 +67,12 @@
 
         try
         {
-            await _authStateProvider.UserLogin(model);
+            await ((AuthStateProvider)_authStateProvider).UserLogin(model);
             NavManager.NavigateTo("/");
             success = true;
         }
-        catch(Exception ex) {
+        catch (Exception ex)
+        {
             showAuthError = true;
             ErrorAuthMessage = ex.Message;
         }

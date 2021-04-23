@@ -169,21 +169,37 @@
                 <MudTh>Deshabilitar</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Marca">@((context.Brand) == null? "" : context.Brand)</MudTd>
-                <MudTd DataLabel="Modelo">@((context.Model) == null? "" : context.Model)</MudTd>
-                <MudTd DataLabel="Año">@((context.Age) == null? "" : context.Age)</MudTd>
-                <MudTd DataLabel="Color">@((context.Color) == null? "" : context.Color)</MudTd>
-                <MudTd DataLabel="Tipo">@((context.Typevehicle.Namevehicle) == null? "" : context.Typevehicle.Namevehicle)</MudTd>
-                <MudTd DataLabel="Precio"> @((context.Priceday) == null? "" : $"RD${context.Priceday}")</MudTd>
-                <MudTd DataLabel="Capacidad(Kg)">@((context.Weightcapacity) == null? "" : $"{context.Weightcapacity}Kg")</MudTd>
-                <MudTd DataLabel="Pasajeros">@((context.Passengers) == null? "" : context.Passengers)</MudTd>
-                <MudTd DataLabel="Matricula">@((context.Matricula) == null? "" : context.Matricula)</MudTd>
-                <MudTd DataLabel="Seguro">@((context.Securitynum) == null? "" : context.Securitynum)</MudTd>
-                @*<MudTd DataLabel="Imagen"><MudNavLink Href="@((context.Vehiclepic) == null? "" : context.Vehiclepic)"/>Ver imagen</MudTd>*@
-                <MudTd DataLabel="Editar"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => Editar(context.Id)"></MudIconButton></MudTd>
-                <MudTd DataLabel="Deshabilitar"><MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="() => Deshabilitar(context.Id)"></MudIconButton></MudTd>
-            </RowTemplate>
-        </MudTable>
+                @if (context.Status == 0) {
+                    <MudTd Class="alert-danger" DataLabel="Marca">@((context.Brand) == null ? "" : context.Brand)</MudTd>
+                    <MudTd Class="alert-danger" DataLabel="Modelo">@((context.Model) == null ? "" : context.Model)</MudTd>
+                    <MudTd Class="alert-danger" DataLabel="Año">@((context.Age) == null ? "" : context.Age)</MudTd>
+                    <MudTd Class="alert-danger" DataLabel="Color">@((context.Color) == null ? "" : context.Color)</MudTd>
+                    <MudTd Class="alert-danger" DataLabel="Tipo">@((context.Typevehicle.Namevehicle) == null ? "" : context.Typevehicle.Namevehicle)</MudTd>
+                    <MudTd Class="alert-danger" DataLabel="Precio"> @((context.Priceday) == null ? "" : $"RD${context.Priceday}")</MudTd>
+                    <MudTd Class="alert-danger" DataLabel="Capacidad(Kg)">@((context.Weightcapacity) == null ? "" : $"{context.Weightcapacity}Kg")</MudTd>
+                    <MudTd Class="alert-danger" DataLabel="Pasajeros">@((context.Passengers) == null ? "" : context.Passengers)</MudTd>
+                    <MudTd Class="alert-danger" DataLabel="Matricula">@((context.Matricula) == null ? "" : context.Matricula)</MudTd>
+                    <MudTd Class="alert-danger" DataLabel="Seguro">@((context.Securitynum) == null ? "" : context.Securitynum)</MudTd>
+                    @*<MudTd DataLabel="Imagen"><MudNavLink Href="@((context.Vehiclepic) == null? "" : context.Vehiclepic)"/>Ver imagen</MudTd>*@
+                    <MudTd DataLabel="Editar"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => Editar(context.Id)"></MudIconButton></MudTd>
+                    <MudTd DataLabel="Deshabilitar"><MudIconButton Icon="@Icons.Material.Filled.Check" OnClick="() => Deshabilitar(context.Id, context.Status.Value)"></MudIconButton></MudTd>
+                } else {
+                    <MudTd DataLabel="Marca">@((context.Brand) == null ? "" : context.Brand)</MudTd>
+                    <MudTd DataLabel="Modelo">@((context.Model) == null ? "" : context.Model)</MudTd>
+                    <MudTd DataLabel="Año">@((context.Age) == null ? "" : context.Age)</MudTd>
+                    <MudTd DataLabel="Color">@((context.Color) == null ? "" : context.Color)</MudTd>
+                    <MudTd DataLabel="Tipo">@((context.Typevehicle.Namevehicle) == null ? "" : context.Typevehicle.Namevehicle)</MudTd>
+                    <MudTd DataLabel="Precio"> @((context.Priceday) == null ? "" : $"RD${context.Priceday}")</MudTd>
+                    <MudTd DataLabel="Capacidad(Kg)">@((context.Weightcapacity) == null ? "" : $"{context.Weightcapacity}Kg")</MudTd>
+                    <MudTd DataLabel="Pasajeros">@((context.Passengers) == null ? "" : context.Passengers)</MudTd>
+                    <MudTd DataLabel="Matricula">@((context.Matricula) == null ? "" : context.Matricula)</MudTd>
+                    <MudTd DataLabel="Seguro">@((context.Securitynum) == null ? "" : context.Securitynum)</MudTd>
+                    @*<MudTd DataLabel="Imagen"><MudNavLink Href="@((context.Vehiclepic) == null? "" : context.Vehiclepic)"/>Ver imagen</MudTd>*@
+                    <MudTd DataLabel="Editar"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => Editar(context.Id)"></MudIconButton></MudTd>
+                    <MudTd DataLabel="Deshabilitar"><MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="() => Deshabilitar(context.Id, context.Status.Value)"></MudIconButton></MudTd>
+                }
+            </RowTemplate>           
+            </MudTable>
     </MudPaper>
 </div>
 
@@ -213,6 +229,8 @@
         "Fiat",
         "Skoda",
         "Changan",
+        "Astondoa",
+        "Cranchi",
     };
     private readonly List<string> _ages = new();
     private readonly string[] _colors = { "Negro",
@@ -360,10 +378,43 @@
         _navigationManager.NavigateTo($"editar/{Id.ToString()}");
     }
 
-    void Deshabilitar(int Id) {
-        //Logica para deshabilitar un carro y volver a cargar los vehiculos
-    }
+    async Task Deshabilitar(int Id, int status) {
+        string noDisponible = "0";
+        string disponible = "1";
+        string json;
+        HttpContent content;
 
+        switch (status) {
+            case 0:
+                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{disponible}\"" + "}]";
+                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+                var response = await _http.PatchAsync($"api/vehiculo/{Id}", content);
+
+                if (response.IsSuccessStatusCode) {
+                    _snackbar.Add($"Vehiculo habilitado", Severity.Success);
+                    _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
+                } else {
+                    _snackbar.Add($"Ha ocurrido un error al habilitar el vehiculo, intente de nuevo", Severity.Error);
+                }
+                break;
+            case 1:
+                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{noDisponible}\"" + "}]";
+                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+                var response2 = await _http.PatchAsync($"api/vehiculo/{Id}", content);
+                if (response2.IsSuccessStatusCode) {
+                    _snackbar.Add($"Vehiculo deshabilitado", Severity.Warning);
+                    _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
+                } else {
+                    _snackbar.Add($"Ha ocurrido un error al deshabilitar el vehiculo, intente de nuevo", Severity.Error);
+                }
+                break;
+            case 2:
+                _snackbar.Add($"El vehiculo no se puede deshabilitar porque esta reservado", Severity.Error);
+                break;
+            default:
+                break;
+        }
+
+    }
     //Pendiente Pagina editar
-    //Pendiente Logica para deshabilitar
 }

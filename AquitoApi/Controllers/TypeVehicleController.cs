@@ -1,6 +1,7 @@
 ﻿using AquitoApi.DTOs.TypeVehicle;
 using AquitoApi.Entities;
 using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -43,9 +44,9 @@ namespace AquitoApi.Controllers {
         }
 
         //Metodo Patch
-        [HttpDelete("{id:int}")]
-        public async Task<ActionResult> Patch(int id) {
-            return await Patch<Typevehicle, TypevehicleDTO>(id);
+        [HttpPatch("{id:int}")]
+        public async Task<ActionResult> Patch(int id, [FromBody] JsonPatchDocument<Typevehicle> patchDoc) {
+            return await Patch<Typevehicle, TypevehicleDTO>(id, patchDoc);
         }
 
     }

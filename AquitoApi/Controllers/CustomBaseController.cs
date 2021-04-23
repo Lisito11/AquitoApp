@@ -1,5 +1,6 @@
 ﻿using AquitoApi.Entities;
 using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -63,23 +64,26 @@ namespace AquitoApi.Controllers {
         }
 
         // Metodo patch para editar un campo en especifico de un registro
-        protected async Task<ActionResult> Patch<TEntidad, TDTO>(int id) where TDTO : class where TEntidad : class, IId {
+        protected async Task<ActionResult> Patch<TEntidad, TDTO>(int id, JsonPatchDocument<TEntidad> patchDoc) where TDTO : class where TEntidad : class, IId {
 
-            var entidadDB = await context.Set<TEntidad>().FirstOrDefaultAsync(x => x.Id == id);
 
-            if (entidadDB == null) {
+            if (patchDoc == null) {
+                return BadRequest();
+            }
+
+            var entidadEdit = await context.Set<TEntidad>().FirstOrDefaultAsync(x => x.Id == id);
+
+            if (entidadEdit == null) {
                 return NotFound();
             }
 
-            var dto = mapper.Map<TDTO>(entidadDB);
+            patchDoc.ApplyTo(entidadEdit, ModelState);
 
-            var isValid = TryValidateModel(dto);
+            var isValid = TryValidateModel(entidadEdit);
 
             if (!isValid) {
                 return BadRequest(ModelState);
             }
-
-            mapper.Map(dto, entidadDB);
 
             await context.SaveChangesAsync();
 

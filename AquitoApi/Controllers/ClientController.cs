@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace AquitoApi.Controllers
 {
@@ -52,10 +53,10 @@ namespace AquitoApi.Controllers
         }
 
         //Metodo Patch
-        [HttpDelete("{id:int}")]
-        public async Task<ActionResult> Patch(int id)
+        [HttpPatch("{id:int}")]
+        public async Task<ActionResult> Patch(int id, JsonPatchDocument<Client> patchDoc)
         {
-            return await Patch<Client, ClientDTO>(id);
+            return await Patch<Client, ClientDTO>(id, patchDoc);
         }
     }
 }

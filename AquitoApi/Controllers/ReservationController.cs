@@ -1,6 +1,7 @@
 ﻿using AquitoApi.DTOs.Reservation;
 using AquitoApi.Entities;
 using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -60,10 +61,10 @@ namespace AquitoApi.Controllers
         }
 
         //Metodo Patch
-        [HttpDelete("{id:int}")]
-        public async Task<ActionResult> Patch(int id)
+        [HttpPatch("{id:int}")]
+        public async Task<ActionResult> Patch(int id, JsonPatchDocument<Reservation> patchDoc)
         {
-            return await Patch<Reservation, ReservationDTO>(id);
+            return await Patch<Reservation, ReservationDTO>(id, patchDoc);
         }
     }
 }

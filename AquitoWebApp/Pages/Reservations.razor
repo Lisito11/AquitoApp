@@ -168,7 +168,7 @@
         if (!String.IsNullOrEmpty(VehiculoSeleccionado)) {
             Vehicle vehicle = await Http.GetFromJsonAsync<Vehicle>($"api/vehiculo/{VehiculoSeleccionado}");
             //Vehicle vehicle = vehiculos.Where(x => x.Id == int.Parse(VehiculoSeleccionado)).FirstOrDefault();
-            reservaciones = vehicle.Reservations.Where(x => x.Status == 1 && x.Enddate.Value > DateTime.Today).ToList();
+            reservaciones = vehicle.Reservations.Where(x => (x.Status == 1 || x.Status == 2) && x.Enddate.Value > DateTime.Today).ToList();
         }
         success = false;
 

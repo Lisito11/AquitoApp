@@ -46,7 +46,7 @@
                                 <MudText Typo="Typo.body2">Se debe: @($"Se debe RD${(factura.Vehicle.Priceday * (factura.Enddate.Value.Day - factura.Startdate.Value.Day)) -factura.Totalpay}.")</MudText>
                             </MudCardContent>
                             <MudCardActions>
-                                @if (factura.Status == 1) {
+                                @if (factura.Status == 1 || factura.Status == 3) {
                                     <MudTextField @bind-Value="Pago" Label="Pagar factura" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
                                     <MudTooltip Text="Pagar factura">
                                         <MudFab Icon="@Icons.Material.Filled.Payment" Color="Color.Secondary" @onclick="() => RealizarPago(factura.Id, factura.Totalpay)" />

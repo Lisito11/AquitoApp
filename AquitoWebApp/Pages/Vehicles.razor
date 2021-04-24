@@ -278,8 +278,30 @@
 
     protected override async Task OnInitializedAsync()
     {
-
+        string status;
+        string json;
+        HttpContent content;
         _typevehicles = await _http.GetFromJsonAsync<List<Typevehicle>>("api/tipovehiculo");
+
+        _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
+
+        foreach (var vehicle in _vehicles) {
+            //Vehicle vehiculo = await _http.GetFromJsonAsync<Vehicle>($"api/vehiculo/{vehicle.Id}");
+            Vehicle vehiculo = _vehicles.Where(x => x.Id == vehicle.Id).FirstOrDefault();
+            List<Reservation> reservaciones = vehicle.Reservations.Where(x => (x.Status == 1 || x.Status == 2) && x.Enddate.Value > DateTime.Today).ToList();
+            if (reservaciones.Count > 0) {
+                status = "2";
+                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{status}\"" + "}]";
+                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+                await _http.PatchAsync($"api/vehiculo/{vehicle.Id}", content);
+            } else {
+                status = "1";
+                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{status}\"" + "}]";
+                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+                await _http.PatchAsync($"api/vehiculo/{vehicle.Id}", content);
+            }
+
+        }
 
         _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
 
@@ -433,7 +455,7 @@
                 }
                 break;
             case 2:
-                _snackbar.Add($"El vehiculo no se puede deshabilitar porque esta reservado", Severity.Error);
+                _snackbar.Add($"El vehiculo no se puede deshabilitar porque tiene reservaciones pendiente", Severity.Error);
                 break;
             default:
                 break;

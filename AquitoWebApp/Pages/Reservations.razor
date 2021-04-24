@@ -4,56 +4,76 @@
 @inject NavigationManager navigationManager
 @attribute [Authorize]
 
+<h1 class="text-center">Gestión de Reservas</h1>
+<MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
 <MudGrid Spacing="3" Justify="Justify.Center">
-    <MudForm @ref="form" @bind-IsValid="@success">
-        <MudItem xs="12">
-            <MudCard>
-                <MudCardHeader>
-                    <CardHeaderContent>
-                        <MudText Typo="Typo.h6">Reservación</MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent>
-                    <MudGrid Spacing="2" Justify="Justify.Center">
-                        <MudItem xs="12" sm="6" md="6">
-                            <MudSelect T="string" Label="Vehiculos Disponibles" @bind-Value="VehiculoSeleccionado">
-                                @if (vehiculos != null)
-                                {
-                                    @foreach (var vehiculo in vehiculos)
-                                    {<MudSelectItem Value="@vehiculo.Id.ToString()"> @($"{vehiculo.Typevehicle.Namevehicle} {vehiculo.Brand} {vehiculo.Model} {vehiculo.Age}") </MudSelectItem>}
-                                }
-                            </MudSelect>
-                        </MudItem>
-                        <MudItem xs="12" sm="6" md="6">
-                            <MudSelect T="string" Label="Clientes" @bind-Value="ClienteSeleccionado">
-                                @if (clientes != null)
-                                {
+    <MudItem>
+        <MudForm @ref="form" @bind-IsValid="@success">
+            <MudItem xs="12">
+                <MudCard>
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">Reservación</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudGrid Spacing="2" Justify="Justify.Center">
+                            <MudItem xs="12" sm="8" md="8">
+                                <MudSelect T="string" Label="Vehiculos Disponibles" @bind-Value="VehiculoSeleccionado" SelectedValuesChanged="ObtenerDisponibles">
+                                    @if (vehiculos != null) {
+                                        @foreach (var vehiculo in vehiculos) {<MudSelectItem Value="@vehiculo.Id.ToString()"> @($"{vehiculo.Typevehicle.Namevehicle} {vehiculo.Brand} {vehiculo.Model} {vehiculo.Age}") </MudSelectItem>}
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem xs="12" sm="4" md="4">
+                                <MudSelect T="string" Label="Clientes" @bind-Value="ClienteSeleccionado">
+                                    @if (clientes != null) {
 
-                                    @foreach (var cliente in clientes)
-                                    {<MudSelectItem Value="@cliente.Id.ToString()"> @($"{cliente.Firstname} {cliente.Lastname}") </MudSelectItem>}
-                                }
-                            </MudSelect>
+                                        @foreach (var cliente in clientes) {<MudSelectItem Value="@cliente.Id.ToString()"> @($"{cliente.Firstname}") </MudSelectItem>}
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                        </MudGrid>
+                        <MudGrid Spacing="2" Justify="Justify.Center">
+                            <MudItem xs="12" sm="12" md="12">
+                                <MudDateRangePicker MinDate="DateTime.Today" Label="Fechas de reservación" @bind-DateRange="_dateRange" />
+                            </MudItem>
+                        </MudGrid>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudItem xs="12" sm="12" md="12">
+                            <MudButton FullWidth="true" OnClick="@GenerarFactura" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Generar Factura</MudButton>
                         </MudItem>
-                    </MudGrid>
-                    <MudGrid Spacing="2" Justify="Justify.Center">
-                        <MudItem xs="12" sm="6" md="6">
-                            <MudDatePicker @bind-Date="Reservation.Startdate" Label="Fecha de inicio" DisableToolbar="true" Editable="true" />
-                        </MudItem>
-                        <MudItem xs="12" sm="6" md="6">
-                            <MudDatePicker @bind-Date="Reservation.Enddate" Label="Fecha de entrega" DisableToolbar="true" Editable="true" />
-                        </MudItem>
-                    </MudGrid>
-                </MudCardContent>
-                <MudCardActions>
-                    <MudItem xs="12" sm="12" md="12">
-                        <MudButton OnClick="@GenerarFactura" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Generar Factura</MudButton>
-                    </MudItem>
-                </MudCardActions>
-            </MudCard>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        </MudForm>
+
+    </MudItem>
+    @if (reservaciones != null) {
+        <MudItem xs="6" sm="6" md="6">
+            <MudItem xs="12">
+                <MudCard>
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">Futuras Reservaciones</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        @if (reservaciones.Count > 0) {
+                            @foreach (var reservacion in reservaciones) {
+                                <MudItem>
+                                    <MudChip Color="Color.Warning">@reservacion.Startdate.Value.ToString("yyyy-MM-dd")</MudChip>
+                                    <MudChip Color="Color.Warning">@reservacion.Enddate.Value.ToString("yyyy-MM-dd")</MudChip>
+                                </MudItem>
+                            }
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
         </MudItem>
-    </MudForm>
-    @if (success)
-    {
+    }
+    @if (success) {
         <MudItem>
             <MudCard>
                 <MudCardHeader>
@@ -66,17 +86,17 @@
                     </CardHeaderContent>
                     <CardHeaderActions>
                         <MudText Typo="Typo.h6">Cliente</MudText>
-                        <MudText Typo="Typo.body1">@Client.Firstname</MudText>
-                        <MudText Typo="Typo.body2">@Client.Cedula</MudText>
+                        <MudText Typo="Typo.body1">@clientFactura.Firstname</MudText>
+                        <MudText Typo="Typo.body2">@clientFactura.Cedula</MudText>
                     </CardHeaderActions>
                 </MudCardHeader>
-                <MudCardMedia Image="@Vehicle.Vehiclepic" Height="250" />
+                <MudCardMedia @bind-Image="@vehicleFactura.Vehiclepic" Height="250" />
                 <MudCardContent>
-                    <MudText Typo="Typo.body2">Descripción: @($"El vehiculo se alquirá es un {Vehicle.Typevehicle.Namevehicle}, el modelo es {Vehicle.Model}, matricula {Vehicle.Matricula}.")</MudText>
+                    <MudText Typo="Typo.body2">Descripción: @($"El vehiculo se alquirá es un {vehicleFactura.Typevehicle.Namevehicle}, el modelo es {vehicleFactura.Model}, matricula {vehicleFactura.Matricula}.")</MudText>
                     <br />
-                    <MudText Typo="Typo.body2">Dias alquilados: @($"El {Vehicle.Typevehicle.Namevehicle} se alquirá durante {Reservation.Enddate.Value.Day - Reservation.Startdate.Value.Day} días.")</MudText>
+                    <MudText Typo="Typo.body2">Dias alquilados: @($"El {vehicleFactura.Typevehicle.Namevehicle} se alquirá durante {Reservation.Enddate.Value.Day - Reservation.Startdate.Value.Day} días.")</MudText>
                     <br />
-                    <MudText Typo="Typo.body2">El precio por dia: @($"El precio por dia del {Vehicle.Typevehicle.Namevehicle} es RD${Vehicle.Priceday}.")</MudText>
+                    <MudText Typo="Typo.body2">El precio por dia: @($"El precio por dia del {vehicleFactura.Typevehicle.Namevehicle} es RD${vehicleFactura.Priceday}.")</MudText>
 
                 </MudCardContent>
                 <MudCardActions>
@@ -94,41 +114,72 @@
     bool success;
     MudForm form;
     string MensajeError(string field) => $"{field} debe introducirse!";
-    private Vehicle Vehicle { get; set; }
+    private Vehicle vehicleFactura;
     private string VehiculoSeleccionado { get; set; }
     private string ClienteSeleccionado { get; set; }
     private string Pago { get; set; }
-    private Client Client { get; set; }
+    private Client clientFactura;
     private Reservation Reservation = new Reservation();
-    private DateTime FechaInicio { get; set; }
-    private DateTime FechaFin { get; set; }
     private List<Vehicle> vehiculos;
     private List<Client> clientes;
+    DateRange _dateRange = new DateRange(DateTime.Now.Date, DateTime.Now.AddDays(1).Date);
+    List<Reservation> reservaciones;
+    MyDateRange range;
 
 
-    protected override async Task OnInitializedAsync()
-    {
-        vehiculos = await Http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo/disponible");
+    protected override async Task OnInitializedAsync() {
+        vehiculos = await Http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
         clientes = await Http.GetFromJsonAsync<List<Client>>("api/client");
     }
 
-    private async Task<bool> GenerarFactura()
-    {
-        Reservation.Clientid = int.Parse(ClienteSeleccionado);
-        Reservation.Vehicleid = int.Parse(VehiculoSeleccionado);
-        Vehicle = vehiculos.Where(x => x.Id == int.Parse(VehiculoSeleccionado)).FirstOrDefault();
-        Client = clientes.Where(x => x.Id == int.Parse(ClienteSeleccionado)).FirstOrDefault();
-        Pago = (Vehicle.Priceday.Value * (Reservation.Enddate.Value.Day - Reservation.Startdate.Value.Day)).ToString();
-        success = true;
-        return success;
+    private async Task<bool> GenerarFactura() {
+        if (!String.IsNullOrEmpty(ClienteSeleccionado) && !String.IsNullOrEmpty(VehiculoSeleccionado)) {
+            foreach (var reservacion in reservaciones) {
+                range = new MyDateRange(reservacion.Startdate.Value, reservacion.Enddate.Value);
+                bool inRangeInicio = range.WithInRange(_dateRange.Start.Value);
+                bool inRangeFin = range.WithInRange(_dateRange.End.Value);
+                if (inRangeInicio || inRangeFin) {
+                    Snackbar.Add($"Seleccione un rango de fechas Disponibles", Severity.Error);
+                    success = false;
+                    return success;
+                }
+            }
+            Reservation.Startdate = _dateRange.Start.Value;
+            Reservation.Enddate = _dateRange.End.Value;
+            Reservation.Clientid = int.Parse(ClienteSeleccionado);
+            Reservation.Vehicleid = int.Parse(VehiculoSeleccionado);
+            vehicleFactura = vehiculos.Where(x => x.Id == int.Parse(VehiculoSeleccionado)).FirstOrDefault();
+            clientFactura = clientes.Where(x => x.Id == int.Parse(ClienteSeleccionado)).FirstOrDefault();
+            Pago = (vehicleFactura.Priceday.Value * (Reservation.Enddate.Value.Day - Reservation.Startdate.Value.Day)).ToString();
+            success = true;
+            return success;
+        } else {
+            Snackbar.Add($"Completa todos los campos", Severity.Error);
+            success = false;
+            return success;
+        }
+
+
+
+
     }
 
-    private async Task Reservar()
-    {
+    private async Task ObtenerDisponibles() {
+        if (!String.IsNullOrEmpty(VehiculoSeleccionado)) {
+            Vehicle vehicle = await Http.GetFromJsonAsync<Vehicle>($"api/vehiculo/{VehiculoSeleccionado}");
+            //Vehicle vehicle = vehiculos.Where(x => x.Id == int.Parse(VehiculoSeleccionado)).FirstOrDefault();
+            reservaciones = vehicle.Reservations.Where(x => (x.Status == 1 || x.Status == 2) && x.Enddate.Value > DateTime.Today).ToList();
+        }
+        success = false;
+
+    }
+
+
+    private async Task Reservar() {
         Reservation.Totalpay = decimal.Parse(Pago);
+        Reservation.Status = 1;
         var reservacion = await Http.PostAsJsonAsync("api/reservacion", Reservation);
-        if (reservacion.IsSuccessStatusCode)
-        {
+        if (reservacion.IsSuccessStatusCode) {
             string statusNoDisponible = "2";
 
             string json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{statusNoDisponible}\"" + "}]";
@@ -136,14 +187,11 @@
             HttpContent content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
             var response = await Http.PatchAsync($"api/vehiculo/{VehiculoSeleccionado}", content);
 
-            if (response.IsSuccessStatusCode)
-            {
+            if (response.IsSuccessStatusCode) {
                 Snackbar.Add($"Se ha hecho la reserva correctamente!", Severity.Success);
                 navigationManager.NavigateTo("cobros");
             }
-        }
-        else
-        {
+        } else {
             Snackbar.Add($"Ha ocurrido un error, porfavor revisar los datos.", Severity.Error);
         }
     }

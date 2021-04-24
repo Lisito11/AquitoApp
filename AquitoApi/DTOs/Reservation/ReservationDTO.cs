@@ -9,9 +9,6 @@ namespace AquitoApi.DTOs.Reservation {
     public class ReservationDTO: ReservationCreacionDTO {
         public int Id { get; set; }
         public virtual ClientDTO Client { get; set; }
-        public virtual VehicleDTO Vehicle { get; set; }
-
-        
-
+        public virtual VehicleReservacionDTO Vehicle { get; set; }
     }
 }

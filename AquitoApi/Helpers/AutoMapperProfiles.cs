@@ -17,9 +17,11 @@ namespace AquitoApi.Helpers {
             CreateMap<ClientCreacionDTO, Client>();
 
             CreateMap<Vehicle, VehicleDTO>().ReverseMap();
+            CreateMap<Vehicle, VehicleReservacionDTO>().ReverseMap();
             CreateMap<VehicleCreacionDTO, Vehicle>();
 
             CreateMap<Typevehicle, TypevehicleDTO>().ReverseMap();
+            CreateMap<Typevehicle, TypeVehicleVehicleDTO>().ReverseMap();
             CreateMap<TypevehicleCreacionDTO, Typevehicle>();
 
             CreateMap<Reservation, ReservationDTO>().ReverseMap();

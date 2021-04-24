@@ -1,16 +1,15 @@
-﻿@page "/vehiculos"
+﻿@page "/vehiculos/editar/{id}"
 @attribute [Authorize]
 @inject HttpClient _http
 @inject ISnackbar _snackbar
 @inject NavigationManager _navigationManager
 @inject Tewr.Blazor.FileReader.IFileReaderService fileReader
-
 <h1 class="text-center">Gestión de Vehiculos</h1>
-<MudNavLink Class="d-flex justify-start py-2 px-1 ml-4" Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
+<MudNavLink Class="d-flex justify-start py-2 px-1 ml-4" Href="/vehiculos" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
 <div class="mx-auto" style="max-width: 1300px;">
     <MudPaper Class="pa-10 ma-2" Elevation="2">
-        <MudText Typo="Typo.h6"><strong>Registrar Vehículos</strong></MudText>
-        <MudExpansionPanel IsExpanded="true">
+        <MudText Typo="Typo.h6"><strong>Editar Vehículo</strong></MudText>
+        <MudExpansionPanel>
             <TitleContent>
                 <div class="d-flex pl-5">
                     <MudIcon Icon="@Icons.Material.Filled.DirectionsCar" Style=" color: #3f51b5" class="mr-3"> </MudIcon>
@@ -21,15 +20,12 @@
                 <MudGrid Spacing="2">
                     <MudItem xs="12" sm="6" md="4">
                         <MudSelect T="string" Label="Tipo de vehiculo" Variant="_variant" Margin="_margin" Placeholder="Elige un tipo de vehiculo" @bind-Value="TipoVehiculoSeleccionado">
-                            @if (_typevehicles != null)
-                            {
-                                @foreach (var typevehicle in _typevehicles)
-                                {<MudSelectItem Value="@typevehicle.Id.ToString()"> @typevehicle.Namevehicle </MudSelectItem>}
-                            }
+                            @if (_typevehicles != null) {
+                                @foreach (var typevehicle in _typevehicles) {<MudSelectItem Value="@typevehicle.Id.ToString()"> @typevehicle.Namevehicle </MudSelectItem>}}
                         </MudSelect>
                     </MudItem>
                     <MudItem xs="12" sm="6" md="4">
-                        <MudAutocomplete T="string" Label="Marca" @bind-Value="MarcaSeleccionada" Variant="_variant" SearchFunc="@Search" ResetValueOnEmptyText="@_resetValueOnEmptyText" CoerceText="@_coerceText" Dense="true" Placeholder="Elige una marca" Margin="_margin" />
+                        <MudAutocomplete T="string" Label="Marca" Text="@MarcaSeleccionada" @bind-Value="MarcaSeleccionada" Variant="_variant" SearchFunc="@Search" ResetValueOnEmptyText="@_resetValueOnEmptyText" CoerceText="@_coerceText" Dense="true" Placeholder="Elige una marca" Margin="_margin" />
                     </MudItem>
                     <MudItem xs="12" sm="6" md="4">
                         <MudTextField @bind-Value="ModeloSeleccionado" Label="Modelo" Variant="_variant" Placeholder="Escribe el modelo" Margin="_margin" />
@@ -39,8 +35,7 @@
                 <MudGrid Spacing="2">
                     <MudItem xs="12" sm="6" md="4">
                         <MudSelect T="string" Label="Año" Variant="Variant.Outlined" @bind-Value="AgeSeleccionado" Margin="_margin">
-                            @foreach (var age in _ages)
-                            {<MudSelectItem Value="@age"> @age </MudSelectItem>}
+                            @foreach (var age in _ages) {<MudSelectItem Value="@age"> @age </MudSelectItem>}
                         </MudSelect>
                     </MudItem>
                     <MudItem xs="12" sm="6" md="4">
@@ -76,8 +71,7 @@
                 <MudGrid Spacing="2">
                     <MudItem xs="12" sm="6" md="4">
                         <MudSelect T="string" Label="Color" Variant="Variant.Outlined" @bind-Value="ColorSeleccionado" Margin="_margin">
-                            @foreach (var color in _colors)
-                            {<MudSelectItem Value="@color"> @color </MudSelectItem>}
+                            @foreach (var color in _colors) {<MudSelectItem Value="@color"> @color </MudSelectItem>}
                         </MudSelect>
                     </MudItem>
                     <MudItem xs="12" sm="6" md="4">
@@ -132,16 +126,15 @@
                                    Variant="_variant"
                                    Color="Color.Primary"
                                    StartIcon="@Icons.Filled.CloudUpload"
+                                   for="vehiculopic"
                                    FullWidth="true">
                             Subir Imagen
                         </MudButton>
                     </MudItem>
-                    @if (!string.IsNullOrWhiteSpace(message))
-                    {
+                    @if (!string.IsNullOrWhiteSpace(message)) {
                         <MudItem xs="12" sm="12" md="12">
                             <img class="img-fluid img-thumbnail" src="@UrlImage" />
-                        </MudItem>
-                    }
+                        </MudItem>}
                 </MudGrid>
             </ChildContent>
         </MudExpansionPanel>
@@ -149,66 +142,16 @@
         <MudGrid>
             <MudItem xs="12">
                 <MudCardActions>
-                    <MudButton @onclick="RegistrarVehiculo" ButtonType="ButtonType.Submit" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary" Class="m-auto">Registrar Vehiculo</MudButton>
+                    <MudButton @onclick="RegistrarVehiculo" ButtonType="ButtonType.Submit" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary" Class="m-auto">Editar Vehiculo</MudButton>
                 </MudCardActions>
             </MudItem>
         </MudGrid>
     </MudPaper>
 </div>
-<div class="mx-auto" style="max-width: 1300px;">
-    <MudPaper Class="pa-10 ma-2" Elevation="2">
-        <MudText Typo="Typo.h6"><strong>Vehículos Registrados</strong></MudText>
-        <MudTable Items="@_vehicles" Hover="@true" Striped="@true" Dense="true">
-            <HeaderContent>
-                <MudTh>Marca</MudTh>
-                <MudTh>Modelo </MudTh>
-                <MudTh>Año</MudTh>
-                <MudTh>Color</MudTh>
-                <MudTh>Tipo</MudTh>
-                <MudTh>Precio</MudTh>
-                <MudTh>Capacidad(Kg)</MudTh>
-                <MudTh>Pasajeros</MudTh>
-                <MudTh>Matricula</MudTh>
-                <MudTh>Seguro</MudTh>
-                <MudTh>Editar</MudTh>
-                <MudTh>Deshabilitar</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                @if (context.Status == 0) {
-                    <MudTd Class="alert-danger" DataLabel="Marca">@((context.Brand) == null ? "" : context.Brand)</MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Modelo">@((context.Model) == null ? "" : context.Model)</MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Año">@((context.Age) == null ? "" : context.Age)</MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Color">@((context.Color) == null ? "" : context.Color)</MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Tipo">@((context.Typevehicle.Namevehicle) == null ? "" : context.Typevehicle.Namevehicle)</MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Precio"> @((context.Priceday) == null ? "" : $"RD${context.Priceday}")</MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Capacidad(Kg)">@((context.Weightcapacity) == null ? "" : $"{context.Weightcapacity}Kg")</MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Pasajeros">@((context.Passengers) == null ? "" : context.Passengers)</MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Matricula">@((context.Matricula) == null ? "" : context.Matricula)</MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Seguro">@((context.Securitynum) == null ? "" : context.Securitynum)</MudTd>
-                    @*<MudTd DataLabel="Imagen"><MudNavLink Href="@((context.Vehiclepic) == null? "" : context.Vehiclepic)"/>Ver imagen</MudTd>*@
-                    <MudTd DataLabel="Editar"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => Editar(context.Id)"></MudIconButton></MudTd>
-                    <MudTd DataLabel="Deshabilitar"><MudIconButton Icon="@Icons.Material.Filled.Check" OnClick="() => Deshabilitar(context.Id, context.Status.Value)"></MudIconButton></MudTd>
-                } else {
-                    <MudTd DataLabel="Marca">@((context.Brand) == null ? "" : context.Brand)</MudTd>
-                    <MudTd DataLabel="Modelo">@((context.Model) == null ? "" : context.Model)</MudTd>
-                    <MudTd DataLabel="Año">@((context.Age) == null ? "" : context.Age)</MudTd>
-                    <MudTd DataLabel="Color">@((context.Color) == null ? "" : context.Color)</MudTd>
-                    <MudTd DataLabel="Tipo">@((context.Typevehicle.Namevehicle) == null ? "" : context.Typevehicle.Namevehicle)</MudTd>
-                    <MudTd DataLabel="Precio"> @((context.Priceday) == null ? "" : $"RD${context.Priceday}")</MudTd>
-                    <MudTd DataLabel="Capacidad(Kg)">@((context.Weightcapacity) == null ? "" : $"{context.Weightcapacity}Kg")</MudTd>
-                    <MudTd DataLabel="Pasajeros">@((context.Passengers) == null ? "" : context.Passengers)</MudTd>
-                    <MudTd DataLabel="Matricula">@((context.Matricula) == null ? "" : context.Matricula)</MudTd>
-                    <MudTd DataLabel="Seguro">@((context.Securitynum) == null ? "" : context.Securitynum)</MudTd>
-                    @*<MudTd DataLabel="Imagen"><MudNavLink Href="@((context.Vehiclepic) == null? "" : context.Vehiclepic)"/>Ver imagen</MudTd>*@
-                    <MudTd DataLabel="Editar"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => Editar(context.Id)"></MudIconButton></MudTd>
-                    <MudTd DataLabel="Deshabilitar"><MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="() => Deshabilitar(context.Id, context.Status.Value)"></MudIconButton></MudTd>
-                }
-            </RowTemplate>           
-            </MudTable>
-    </MudPaper>
-</div>
-
 @code {
+    [Parameter]
+    public string Id { get; set; }
+
     private List<Typevehicle> _typevehicles;
     private List<Vehicle> _vehicles;
     private readonly string[] _marcasCarros = {
@@ -259,12 +202,15 @@
     public string AgeSeleccionado { get; set; }
     public string ColorSeleccionado { get; set; }
     public int Pasajeros { get; set; }
+    public int Status { get; set; }
     public string MarcaSeleccionada { get; set; }
+    public string Marca { get; set; }
     public string ModeloSeleccionado { get; set; }
     public string UrlImage { get; set; } = null;
     public double Latitud { get; set; } = 18.617612;
     public double Longitud { get; set; } = -68.7085308;
 
+    Vehicle vehicle = new();
     string fileName = string.Empty;
     Stream fileStream = null;
     ElementReference inputReference;
@@ -276,107 +222,84 @@
     private bool _resetValueOnEmptyText;
     private bool _coerceText;
 
-    protected override async Task OnInitializedAsync()
-    {
-        string status;
-        string json;
-        HttpContent content;
+    protected override async Task OnInitializedAsync() {
+
         _typevehicles = await _http.GetFromJsonAsync<List<Typevehicle>>("api/tipovehiculo");
-
-        _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
-
-        foreach (var vehicle in _vehicles) {
-            //Vehicle vehiculo = await _http.GetFromJsonAsync<Vehicle>($"api/vehiculo/{vehicle.Id}");
-            Vehicle vehiculo = _vehicles.Where(x => x.Id == vehicle.Id).FirstOrDefault();
-            List<Reservation> reservaciones = vehicle.Reservations.Where(x => (x.Status == 1 || x.Status == 2) && x.Enddate.Value > DateTime.Today).ToList();
-            if (reservaciones.Count > 0) {
-                status = "2";
-                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{status}\"" + "}]";
-                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
-                await _http.PatchAsync($"api/vehiculo/{vehicle.Id}", content);
-            } else {
-                status = "1";
-                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{status}\"" + "}]";
-                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
-                await _http.PatchAsync($"api/vehiculo/{vehicle.Id}", content);
-            }
-
-        }
-
         _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
 
         var ageActual = int.Parse((DateTime.Now.Year + 1).ToString());
-        for (var i = 0; i < 100; i++)
-        {
+        for (var i = 0; i < 100; i++) {
             _ages.Add(ageActual.ToString());
             ageActual--;
         }
 
+        vehicle = await _http.GetFromJsonAsync<Vehicle>($"api/vehiculo/{Id}");
+
+        MarcaSeleccionada = vehicle.Brand != null ? vehicle.Brand : "";
+        ModeloSeleccionado = vehicle.Model != null ? vehicle.Model : "";
+        AgeSeleccionado = vehicle.Age.ToString() != null ? vehicle.Age.ToString() : "";
+        ColorSeleccionado = vehicle.Color != null ? vehicle.Color : "";
+        PrecioPorDia = vehicle.Priceday.HasValue == true ? vehicle.Priceday.Value : 0;
+        TipoVehiculoSeleccionado = vehicle.Typevehicleid.ToString() != null ? vehicle.Typevehicleid.ToString() : "";
+        CapacidadCarga = vehicle.Weightcapacity.HasValue == true ? vehicle.Weightcapacity.Value : 0;
+        Pasajeros = vehicle.Passengers.HasValue == true ? vehicle.Passengers.Value : 0;
+        Matricula = vehicle.Matricula != null ? vehicle.Matricula : "";
+        NumeroSeguro = vehicle.Securitynum != null ? vehicle.Securitynum : "";
+        UrlImage = vehicle.Vehiclepic != null ? vehicle.Vehiclepic : "";
+        Latitud = vehicle.Latitude.HasValue == true ? double.Parse(vehicle.Latitude.Value.ToString()) : 18.617612;
+        Longitud = vehicle.Longitude.HasValue == true ? double.Parse(vehicle.Longitude.Value.ToString()) : -68.7085308;
+        Status = vehicle.Status.HasValue == true ? vehicle.Status.Value : 1;
     }
 
-    private async Task<IEnumerable<string>> Search(string value)
-    {
+    private async Task<IEnumerable<string>> Search(string value) {
         return string.IsNullOrEmpty(value) ? _marcasCarros : _marcasCarros.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
-    void OnMapClick(Radzen.GoogleMapClickEventArgs args)
-    {
+    void OnMapClick(Radzen.GoogleMapClickEventArgs args) {
         Latitud = args.Position.Lat;
         Longitud = args.Position.Lng;
     }
 
-    private async Task UploadFile()
-    {
-        if (fileStream != null)
-        {
+    private async Task UploadFile() {
+        if (fileStream != null) {
             var content = new MultipartFormDataContent();
             content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data");
             var sc = new StreamContent(fileStream, (int)fileStream.Length);
             content.Add(sc, "file", fileName);
 
             var imagen = await _http.PostAsync("api/image/upload", content);
-            if (imagen.IsSuccessStatusCode)
-            {
+            if (imagen.IsSuccessStatusCode) {
                 var body = await imagen.Content.ReadAsStringAsync();
                 var resultado = JObject.Parse(body);
                 message = resultado["message"].ToString();
                 UrlImage = resultado["imageURL"].ToString();
                 _snackbar.Add(message, Severity.Info);
-            }
-            else
-            {
+            } else {
                 _snackbar.Add($"Ha ocurrido un error, por favor revisar la imagen.", Severity.Error);
             }
-        }
-        else
-        {
+        } else {
             _snackbar.Add($"Primero selecciona una imagen.", Severity.Warning);
         }
 
     }
 
-    async Task OpenFile()
-    {
+    async Task OpenFile() {
         var file = (await fileReader.CreateReference(inputReference).EnumerateFilesAsync()).FirstOrDefault();
 
-        if (file == null)
-        {
+        if (file == null) {
             return;
         }
 
         var fileInfo = await file.ReadFileInfoAsync();
         fileName = fileInfo.Name;
 
-        using (var ms = await file.CreateMemoryStreamAsync((int)fileInfo.Size))
-        {
+        using (var ms = await file.CreateMemoryStreamAsync((int)fileInfo.Size)) {
             fileStream = new MemoryStream(ms.ToArray());
         }
     }
 
-    private async Task RegistrarVehiculo()
-    {
-        Vehicle _vehicle = new()
-        {
+    private async Task RegistrarVehiculo() {
+        Vehicle _vehicle = new() {
             Brand = MarcaSeleccionada,
             Model = ModeloSeleccionado,
             Age = int.Parse(AgeSeleccionado),
@@ -390,75 +313,15 @@
             Vehiclepic = UrlImage,
             Latitude = decimal.Parse(Latitud.ToString()),
             Longitude = decimal.Parse(Longitud.ToString()),
-            Status = 1
+            Status = Status
         };
-        var vehiculoCreado = await _http.PostAsJsonAsync("api/vehiculos", _vehicle);
+        var vehiculoCreado = await _http.PutAsJsonAsync($"api/vehiculo/{Id}", _vehicle);
 
-        if (vehiculoCreado.IsSuccessStatusCode)
-        {
-            MarcaSeleccionada = "";
-            ModeloSeleccionado = "";
-            AgeSeleccionado = "";
-            ColorSeleccionado = "";
-            PrecioPorDia = 0;
-            TipoVehiculoSeleccionado = "";
-            CapacidadCarga = 0;
-            Pasajeros = 0;
-            Matricula = "";
-            NumeroSeguro = "";
-            UrlImage = "";
-            _snackbar.Add($"El vehiculo se ha registrado correctamente.", Severity.Success);
-            _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
-
-
-        }
-        else
-        {
+        if (vehiculoCreado.IsSuccessStatusCode) {
+            _snackbar.Add($"El vehiculo se ha editado correctamente.", Severity.Success);
+            _navigationManager.NavigateTo("vehiculos");
+        } else {
             _snackbar.Add($"Ha ocurrido un error, por favor revisar los datos.", Severity.Error);
-        }
-    }
-
-    void Editar(int Id)
-    {
-        _navigationManager.NavigateTo($"vehiculos/editar/{Id.ToString()}");
-    }
-
-    async Task Deshabilitar(int Id, int status)
-    {
-        string noDisponible = "0";
-        string disponible = "1";
-        string json;
-        HttpContent content;
-
-        switch (status) {
-            case 0:
-                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{disponible}\"" + "}]";
-                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
-                var response = await _http.PatchAsync($"api/vehiculo/{Id}", content);
-
-                if (response.IsSuccessStatusCode) {
-                    _snackbar.Add($"Vehiculo habilitado", Severity.Success);
-                    _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
-                } else {
-                    _snackbar.Add($"Ha ocurrido un error al habilitar el vehiculo, intente de nuevo", Severity.Error);
-                }
-                break;
-            case 1:
-                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{noDisponible}\"" + "}]";
-                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
-                var response2 = await _http.PatchAsync($"api/vehiculo/{Id}", content);
-                if (response2.IsSuccessStatusCode) {
-                    _snackbar.Add($"Vehiculo deshabilitado", Severity.Warning);
-                    _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
-                } else {
-                    _snackbar.Add($"Ha ocurrido un error al deshabilitar el vehiculo, intente de nuevo", Severity.Error);
-                }
-                break;
-            case 2:
-                _snackbar.Add($"El vehiculo no se puede deshabilitar porque tiene reservaciones pendiente", Severity.Error);
-                break;
-            default:
-                break;
         }
     }
 }

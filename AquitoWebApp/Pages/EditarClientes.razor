@@ -1,11 +1,11 @@
-﻿@page "/clientes"
+﻿@page "/clientes/editar/{id}"
 @attribute [Authorize]
 @inject HttpClient _http
 @inject ISnackbar _snackbar
 @inject NavigationManager _navigationManager
 @inject Tewr.Blazor.FileReader.IFileReaderService fileReader
 
-<h1 class="text-center">Gestión de Cliente</h1>
+<h1 class="text-center">Gestion de Cliente</h1>
 <MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
 <div class="mx-auto" style="max-width: 1300px;">
     <MudPaper Class="pa-10 ma-2" Elevation="2">
@@ -76,70 +76,34 @@
                         </MudGrid>
                     </MudItem>
                     <MudItem xs="12" sm="12" md="4">
-                        <MudSelect T="string" Label="Tipo de sangre" Variant=" Variant.Outlined"  @bind-Value="TipoBlood" Dense="true" Class="px-14.5px py-12.5px">
+                        <MudSelect T="string" Label="Tipo de sangre" Variant=" Variant.Outlined" @bind-Value="TipoBlood" Dense="true" Class="px-14.5px py-12.5px">
                             @foreach (var sangre in _tipoSangres) {<MudSelectItem Value="@sangre"> @sangre </MudSelectItem>}
                         </MudSelect>
                     </MudItem>
                 </MudGrid>
-</ChildContent>
+            </ChildContent>
         </MudExpansionPanel>
 
         <MudGrid>
             <MudItem xs="12">
                 <MudCardActions>
-                    <MudButton @onclick="RegistrarCliente" ButtonType="ButtonType.Submit" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary" Class="m-auto">Registrar Cliente</MudButton>
+                    <MudButton @onclick="RegistrarCliente" ButtonType="ButtonType.Submit" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary" Class="m-auto">Editar Cliente</MudButton>
                 </MudCardActions>
             </MudItem>
         </MudGrid>
     </MudPaper>
 </div>
-<div class="mx-auto" style="max-width: 1300px;">
-    <MudPaper Class="pa-10 ma-2" Elevation="2">
-        <MudText Typo="Typo.h6"><strong>Clientes Registrados</strong></MudText>
-        <MudTable Items="@_clientes" Hover="@true" Striped="@true" Dense="true">
-            <HeaderContent>
-                <MudTh>Foto Cliente</MudTh>
-                <MudTh>Cedula</MudTh>
-                <MudTh>Nombre </MudTh>
-                <MudTh>Apellido</MudTh>
-                <MudTh>Correo</MudTh>
-                <MudTh>Nacionalidad</MudTh>
-                <MudTh>Sangre</MudTh>
-                <MudTh>Licencia</MudTh>
-                <MudTh>Editar</MudTh>
-                <MudTh>Deshabilitar</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                @if (context.Status == 0) {
-                    <MudTd Class="alert-danger" DataLabel="Cliente"><MudAvatar Image="@((context.Userpic) == null ? "" : context.Userpic)">@((context.Userpic) == null ? "L" : "" )</MudAvatar></MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Cedula">@((context.Cedula) == null ? "" : context.Cedula)</MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Nombre">@((context.Firstname) == null ? "" : context.Firstname)</MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Apellido">@((context.Lastname) == null ? "" : context.Lastname)</MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Email">@((context.Email) == null ? "" : context.Email)</MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Nacionalidad"> @((context.Nacionality) == null ? "" : context.Nacionality)</MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Sangre">@((context.Typeblood) == null ? "" : context.Typeblood)</MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Licencia">@((context.Licence) == null ? "" : context.Licence)</MudTd>
-                    <MudTd DataLabel="Editar"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => Editar(context.Id)"></MudIconButton></MudTd>
-                    <MudTd DataLabel="Deshabilitar"><MudIconButton Icon="@Icons.Material.Filled.Check" OnClick="() => Deshabilitar(context.Id, context.Status.Value)"></MudIconButton></MudTd> } 
-                else {
-                    <MudTd DataLabel="Cliente"><MudAvatar Image="@((context.Userpic) == null ? "" : context.Userpic)"></MudAvatar></MudTd>
-                    <MudTd DataLabel="Cedula">@((context.Cedula) == null ? "" : context.Cedula)</MudTd>
-                    <MudTd DataLabel="Nombre">@((context.Firstname) == null ? "" : context.Firstname)</MudTd>
-                    <MudTd DataLabel="Apellido">@((context.Lastname) == null ? "" : context.Lastname)</MudTd>
-                    <MudTd DataLabel="Email">@((context.Email) == null ? "" : context.Email)</MudTd>
-                    <MudTd DataLabel="Nacionalidad"> @((context.Nacionality) == null ? "" : context.Nacionality)</MudTd>
-                    <MudTd DataLabel="Sangre">@((context.Typeblood) == null ? "" : context.Typeblood)</MudTd>
-                    <MudTd DataLabel="Licencia">@((context.Licence) == null ? "" : context.Licence)</MudTd>
-                    <MudTd DataLabel="Editar"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => Editar(context.Id)"></MudIconButton></MudTd>
-                    <MudTd DataLabel="Deshabilitar"><MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="() => Deshabilitar(context.Id, context.Status.Value)"></MudIconButton></MudTd>}
-            </RowTemplate>
-        </MudTable>
-    </MudPaper>
-</div>
+
+
+
+
+
+
+
 
 @code {
-
-    private List<Client> _clientes;
+    [Parameter]
+    public string Id { get; set; }
 
     public string Cedula { get; set; }
     public string FirstName { get; set; }
@@ -151,6 +115,7 @@
     public string UserPic { get; set; }
     public string UrlImage { get; set; }
     public string LicencePic { get; set; }
+    public int Status { get; set; }
 
     private List<string> _tipoSangres = new List<string>() { "O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-" };
 
@@ -166,10 +131,23 @@
     private readonly Variant _variant = Variant.Outlined;
     private readonly Adornment _adornment = Adornment.End;
 
-    protected override async Task OnInitializedAsync() {
-        _clientes = await _http.GetFromJsonAsync<List<Client>>("api/client");
-    }
+    private Client _cliente;
 
+    protected override async Task OnInitializedAsync() {
+        _cliente = await _http.GetFromJsonAsync<Client>($"api/client/{Id}");
+
+        Cedula = _cliente.Cedula != null ? _cliente.Cedula : "";
+        FirstName = _cliente.Firstname != null ? _cliente.Firstname : "";
+        LastName = _cliente.Lastname != null ? _cliente.Lastname : "";
+        Email = _cliente.Email != null ? _cliente.Email : "";
+        Licencia = _cliente.Licence != null ? _cliente.Licence : "";
+        Nacionality = _cliente.Nacionality != null ? _cliente.Nacionality : "";
+        TipoBlood = _cliente.Typeblood != null ? _cliente.Typeblood : "";
+        UserPic = _cliente.Userpic != null ? _cliente.Userpic : "";
+        LicencePic = _cliente.Licencepic != null ? _cliente.Licencepic : "";
+        Status = _cliente.Status.HasValue == true ? _cliente.Status.Value : 1;
+
+    }
     private async Task UploadFile(int id) {
         //id = 1 -> Userpic
         //id = 2 -> Licenciapic
@@ -243,67 +221,17 @@
             Typeblood = TipoBlood,
             Userpic = UserPic,
             Licencepic = LicencePic,
-            Status = 1
+            Status = Status
         };
-        var clienteCreado = await _http.PostAsJsonAsync("api/client", _cliente);
+        var clienteCreado = await _http.PutAsJsonAsync($"api/client/{Id}", _cliente);
 
         if (clienteCreado.IsSuccessStatusCode) {
-            Cedula = "";
-            FirstName = "";
-            LastName = "";
-            Email = "";
-            Licencia = "";
-            Nacionality = "";
-            TipoBlood = "";
-            UserPic = "";
-            LicencePic = "";
-            _snackbar.Add($"El cliente se ha registrado correctamente.", Severity.Success);
-            _clientes = await _http.GetFromJsonAsync<List<Client>>("api/client");
+            _snackbar.Add($"El cliente se ha editado correctamente.", Severity.Success);
+            _navigationManager.NavigateTo("clientes");
 
         } else {
             _snackbar.Add($"Ha ocurrido un error, por favor revisar los datos.", Severity.Error);
         }
     }
 
-    void Editar(int Id) {
-        _navigationManager.NavigateTo($"clientes/editar/{Id.ToString()}");
-    }
-
-    async Task Deshabilitar(int Id, int status) {
-        string noDisponible = "0";
-        string disponible = "1";
-        string json;
-        HttpContent content;
-
-        switch (status) {
-            case 0:
-                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{disponible}\"" + "}]";
-                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
-                var response = await _http.PatchAsync($"api/client/{Id}", content);
-
-                if (response.IsSuccessStatusCode) {
-                    _snackbar.Add($"Cliente habilitado", Severity.Success);
-                    _clientes = await _http.GetFromJsonAsync<List<Client>>("api/client");
-                } else {
-                    _snackbar.Add($"Ha ocurrido un error al habilitar el cliente, intente de nuevo", Severity.Error);
-                }
-                break;
-            case 1:
-                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{noDisponible}\"" + "}]";
-                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
-                var response2 = await _http.PatchAsync($"api/client/{Id}", content);
-                if (response2.IsSuccessStatusCode) {
-                    _snackbar.Add($"Cliente deshabilitado", Severity.Warning);
-                    _clientes = await _http.GetFromJsonAsync<List<Client>>("api/client");
-                } else {
-                    _snackbar.Add($"Ha ocurrido un error al deshabilitar el cliente, intente de nuevo", Severity.Error);
-                }
-                break;
-            default:
-                break;
-        }
-
-    }
-
 }
-

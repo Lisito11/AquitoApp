@@ -25,6 +25,9 @@
     </MudItem>
 </MudGrid>
 @code{
+
+    protected override bool ShouldRender() => true; // Pequeña Optimizacion
+
     private class CustomCard
     {
         public string Link { get; set; }

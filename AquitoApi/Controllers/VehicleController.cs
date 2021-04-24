@@ -23,7 +23,7 @@ namespace AquitoApi.Controllers {
         //Metodo Get
         [HttpGet]
         public async Task<ActionResult<List<VehicleDTO>>> Get() {
-            var Vehiculo = await context.Vehicles.Include(x => x.Typevehicle).ToListAsync();
+            var Vehiculo = await context.Vehicles.Include(x => x.Typevehicle).Include(x=> x.Reservations).ToListAsync();
             return mapper.Map<List<VehicleDTO>>(Vehiculo);
         }
 
@@ -53,7 +53,7 @@ namespace AquitoApi.Controllers {
         //Metodo Get(id)
         [HttpGet("{id:int}", Name = "obtenerVehiculo")]
         public async Task<ActionResult<VehicleDTO>> Get(int id) {
-            Vehicle vehiculo = await context.Vehicles.Include(x => x.Typevehicle).FirstOrDefaultAsync(x => x.Id == id);
+            Vehicle vehiculo = await context.Vehicles.Include(x => x.Typevehicle).Include(x => x.Reservations).FirstOrDefaultAsync(x => x.Id == id);
             return mapper.Map<VehicleDTO>(vehiculo);
         }
 

@@ -2,15 +2,14 @@
 
 @inject HttpClient Http
 @attribute [Authorize]
+<h1 class="text-center">Gestión de Cobros</h1>
+<MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
 
-
-@if (reservaciones != null)
-{
+@if (reservaciones != null) {
     <MudGrid>
         <MudItem xs="12">
             <MudGrid Spacing="3" Justify="Justify.Center">
-                @foreach (var factura in reservaciones)
-                {
+                @foreach (var factura in reservaciones) {
                     <MudItem>
                         <MudCard>
                             <MudCardHeader>
@@ -46,8 +45,7 @@
                                 <MudText Typo="Typo.body2">Se debe: @($"Se debe RD${(factura.Vehicle.Priceday * (factura.Enddate.Value.Day - factura.Startdate.Value.Day)) -factura.Totalpay}.")</MudText>
                             </MudCardContent>
                             <MudCardActions>
-                                @if (factura.Status == 1)
-                                {
+                                @if (factura.Status == 1) {
                                     <MudTextField @bind-Value="Pago" Label="Pagar factura" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
                                     <MudTooltip Text="Pagar factura">
                                         <MudFab Icon="@Icons.Material.Filled.Payment" Color="Color.Secondary" @onclick="() => RealizarPago(factura.Id, factura.Totalpay)" />
@@ -60,9 +58,7 @@
             </MudGrid>
         </MudItem>
     </MudGrid>
-}
-else
-{
+} else {
     <MudText>Cargando... espera</MudText>
 }
 
@@ -72,13 +68,11 @@ else
 
     public decimal Pago { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
+    protected override async Task OnInitializedAsync() {
         reservaciones = await Http.GetFromJsonAsync<List<Reservation>>("api/reservacion");
     }
 
-    private async Task RealizarPago(int id, decimal? total)
-    {
+    private async Task RealizarPago(int id, decimal? total) {
         var resto = total - Pago;
 
         string json = "{\"op\": \"replace\",\"path\": \"/totalpay\",\"value\":" + $"\"{resto}\"" + "}]";
@@ -86,22 +80,18 @@ else
 
         var response = await Http.PatchAsync($"api/reservacion/{id}", content);
 
-        if (response.IsSuccessStatusCode)
-        {
+        if (response.IsSuccessStatusCode) {
 
             Reservation reservation = await Http.GetFromJsonAsync<Reservation>($"api/reservacion/{id}");
 
-            if (reservation.Totalpay == 0)
-            {
+            if (reservation.Totalpay == 0) {
                 var statusPago = "2";
                 json = "{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{statusPago}\"" + "}]";
                 content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
                 response = await Http.PatchAsync($"api/reservacion/{id}", content);
 
                 //Pendiente agregar Snackbar de factura pagada correctamente
-            }
-            else
-            {
+            } else {
                 //Pendiente agregar Snackbar de factura que aun falta por pagar
             }
         }

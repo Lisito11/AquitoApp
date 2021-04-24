@@ -1,19 +1,159 @@
 ﻿@page "/configuracion"
 @attribute [Authorize]
+@inject HttpClient _http
+@inject ISnackbar _snackbar
+@inject NavigationManager _navigationManager
 
-<MudGrid Spacing="3" Justify="Justify.Center">
-    <MudItem>
-        <MudCard>
-            <MudCardContent>
-                <MudText Typo="Typo.h6">Configuración</MudText>
-                <MudText Typo="Typo.body2">Aqui vamos a poder registrar un tipo de vehiculo y otras cositas... :)</MudText>
-            </MudCardContent>
-            <MudCardActions>
-                <MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack">Regresar</MudNavLink>
-            </MudCardActions>
-        </MudCard>
-    </MudItem>
-</MudGrid>
+<h1 class="text-center">Gestion tipos de vehiculos</h1>
+<MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
+<div class="mx-auto" style="max-width: 1300px;">
+    <MudPaper Class="pa-10 ma-2" Elevation="2">
+        <MudText Typo="Typo.h6"><strong>Registrar</strong></MudText>
+        <MudExpansionPanel Style="max-width: 1000px" IsExpanded="true" HideIcon="true">
+            <TitleContent>
+                <div class="d-flex pl-5">
+                    <MudIcon Icon="@Icons.Material.Outlined.People" Style=" color: #3f51b5" class="mr-3"> </MudIcon>
+                    <MudText><strong>Nombre del tipo de vehiculo</strong></MudText>
+                </div>
+            </TitleContent>
+            <ChildContent>
+                <MudGrid Spacing="2">
+                    <MudItem xs="12" sm="12" md="6">
+                        <MudTextField Margin="_margin" T="string" @bind-Value="NombreTipoVehiculo" Label="Tipo de vehiculo" Variant="_variant" HelperText="Ingrese el nombre del tipo de vehiculo"></MudTextField>
+                    </MudItem>
+                </MudGrid>
+            </ChildContent>
+        </MudExpansionPanel>
+        <MudGrid>
+            <MudItem xs="12">
+                <MudCardActions>
+                    @if (editado) {
+                    <MudButton @onclick="EditarTipo" ButtonType="ButtonType.Submit" FullWidth="true" Variant="Variant.Filled" Color="Color.Secondary" Class="m-auto">Editar Tipo Vehiculo</MudButton>
+                    } else {
+                        <MudButton @onclick="RegistrarTipoVehiculo" ButtonType="ButtonType.Submit" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary" Class="m-auto">Registrar Tipo Vehiculo</MudButton>
+                    }
+                </MudCardActions>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+</div>
+<div class="mx-auto" style="max-width: 1300px;">
+    <MudPaper Class="pa-10 ma-2" Elevation="2">
+        <MudText Typo="Typo.h6"><strong>Tipos de vehiculos registrados</strong></MudText>
+        <MudTable Items="@typevehicles" Hover="@true" Striped="@true" Dense="true">
+            <HeaderContent>
+                <MudTh>Nombre</MudTh>
+                <MudTh>Status</MudTh>              
+                <MudTh>Editar</MudTh>              
+                <MudTh>Deshabilitar</MudTh>              
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd Class="@((context.Status) == 1 ? "" : "alert-danger")" DataLabel="Nombre">@((context.Namevehicle) == null ? "" : context.Namevehicle)</MudTd>
+                <MudTd Class="@((context.Status) == 1 ? "" : "alert-danger")" DataLabel="Status">@((context.Status) == 1 ? "Habilitado" : "Deshabilitado")</MudTd>
+                <MudTd DataLabel="Editar"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => Editar(context.Id)"></MudIconButton></MudTd>
+                <MudTd DataLabel="Deshabilitar"><MudIconButton Icon="@((context.Status) == 1 ? Icons.Material.Filled.Cancel :Icons.Material.Filled.Check)" OnClick="() => Deshabilitar(context.Id, context.Status.Value)"></MudIconButton></MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudPaper>
+</div>
+
 @code {
+    private readonly Margin _margin = Margin.Dense;
+    private readonly Variant _variant = Variant.Outlined;
+    private readonly Adornment _adornment = Adornment.End;
+
+    public string NombreTipoVehiculo { get; set; }
+    public string IdTipoVehiculo { get; set; }
+    List<Typevehicle> typevehicles;
+    bool editado = false;
+    protected override async Task OnInitializedAsync() {
+        typevehicles = await _http.GetFromJsonAsync<List<Typevehicle>>("api/tipovehiculo");
+    }
+
+    private async Task RegistrarTipoVehiculo() {
+        if (!String.IsNullOrEmpty(NombreTipoVehiculo)) {
+            Typevehicle typevehicle = new Typevehicle() {
+                Namevehicle = NombreTipoVehiculo,
+                Status = 1
+            };
+
+            var typevehicleCreado = await _http.PostAsJsonAsync("api/tipovehiculo", typevehicle);
+
+            if (typevehicleCreado.IsSuccessStatusCode) {
+                NombreTipoVehiculo = "";
+                _snackbar.Add($"El tipo de vehiculo se ha registrado correctamente.", Severity.Success);
+                typevehicles = await _http.GetFromJsonAsync<List<Typevehicle>>("api/tipovehiculo");
+
+            } else {
+                _snackbar.Add($"Ha ocurrido un error, por favor revisar los datos.", Severity.Error);
+            }
+        }
+
+
+    }
+
+
+
+    async Task EditarTipo() {
+        if (!String.IsNullOrEmpty(NombreTipoVehiculo)) {
+            string json;
+            HttpContent content;
+            json = "[{\"op\": \"replace\",\"path\": \"/namevehicle\",\"value\":" + $"\"{NombreTipoVehiculo}\"" + "}]";
+            content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+
+            var response = await _http.PatchAsync($"api/tipovehiculo/{IdTipoVehiculo}", content);
+
+            if (response.IsSuccessStatusCode) {
+                _snackbar.Add($"Tipo de vehiculo editado correctamente", Severity.Success);
+                typevehicles = await _http.GetFromJsonAsync<List<Typevehicle>>("api/tipovehiculo");
+                editado = false;
+                NombreTipoVehiculo = "";
+                IdTipoVehiculo = "";
+                StateHasChanged();
+            }
+        }
+    }
+
+    async Task Editar(int Id) {
+        Typevehicle typevehiculeEdit = await _http.GetFromJsonAsync<Typevehicle>($"api/tipovehiculo/{Id}");
+        NombreTipoVehiculo = typevehiculeEdit.Namevehicle;
+        IdTipoVehiculo = typevehiculeEdit.Id.ToString();
+        editado = true;
+        StateHasChanged();
+    }
+    async Task Deshabilitar(int Id, int status) {
+        string noDisponible = "0";
+        string disponible = "1";
+        string json;
+        HttpContent content;
+        switch (status) {
+            case 0:
+                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{disponible}\"" + "}]";
+                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+                var response = await _http.PatchAsync($"api/tipovehiculo/{Id}", content);
+
+                if (response.IsSuccessStatusCode) {
+                    _snackbar.Add($"Tipo de vehiculo habilitado", Severity.Success);
+                    typevehicles = await _http.GetFromJsonAsync<List<Typevehicle>>("api/tipovehiculo");
+                } else {
+                    _snackbar.Add($"Ha ocurrido un error al habilitar el tipo de vehiculo, intente de nuevo", Severity.Error);
+                }
+                break;
+            case 1:
+                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{noDisponible}\"" + "}]";
+                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+                var response2 = await _http.PatchAsync($"api/tipovehiculo/{Id}", content);
+                if (response2.IsSuccessStatusCode) {
+                    _snackbar.Add($"Tipo de vehiculo deshabilitado", Severity.Warning);
+                    typevehicles = await _http.GetFromJsonAsync<List<Typevehicle>>("api/tipovehiculo");
+                } else {
+                    _snackbar.Add($"Ha ocurrido un error al deshabilitar tipo de vehiculo, intente de nuevo", Severity.Error);
+                }
+                break;
+            default:
+                break;
+        }
+
+    }
 
 }

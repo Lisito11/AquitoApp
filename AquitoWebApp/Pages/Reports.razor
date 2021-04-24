@@ -1,64 +1,146 @@
 ﻿@page "/reportes"
 @attribute [Authorize]
-@inject HttpClient Http
+@inject HttpClient _http
+@inject ISnackbar _snackbar
+@inject NavigationManager _navigationManager
+<h1 class="text-center">Reportes</h1>
+<MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
 
-@if (show)
-{
-    <div class="modal" tabindex="-1" style="display:block;">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="row">
-                        <div id="title_modal" class="col-md-12">
-                            <h5 class="modal-title" > @elVehiculo.Typevehicle.Namevehicle @elVehiculo.Brand modelo @elVehiculo.Model</h5>
+<div class="mx-auto" style="max-width: 1300px;">
+    <MudPaper Elevation="2">
+        <MudText Typo="Typo.h6"><strong>Listado de vehículos disponible en x rango de fecha</strong></MudText>
+
+        <MudGrid Spacing="1" Justify="Justify.SpaceAround">
+            <MudItem xs="12" sm="7" md="7">
+                <MudDateRangePicker MinDate="DateTime.Today" Label="Fechas de reservación" @bind-DateRange="_dateRange" PickerVariant="PickerVariant.Static" />
+            </MudItem>
+            <MudItem xs="12" sm="5" md="5">
+                <MudGrid Justify="Justify.Center">
+                    <MudItem xs="12" sm="12" md="12">
+                        <MudTable Items="@_vehiclesDisponible" Hover="@true" Striped="@true" Dense="true">
+                            <HeaderContent>
+                                <MudTh>Foto</MudTh>
+                                <MudTh>Tipo</MudTh>
+                                <MudTh>Marca</MudTh>
+                                <MudTh>Modelo </MudTh>
+                                <MudTh>Año</MudTh>
+                                <MudTh>Color  </MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="Foto"><MudAvatar Image="@((context.Vehiclepic) == null ? "" : context.Vehiclepic)"></MudAvatar></MudTd>
+                                <MudTd DataLabel="Tipo">@((context.Typevehicle.Namevehicle) == null ? "" : context.Typevehicle.Namevehicle)</MudTd>
+                                <MudTd DataLabel="Marca">@((context.Brand) == null ? "" : context.Brand)</MudTd>
+                                <MudTd DataLabel="Modelo">@((context.Model) == null ? "" : context.Model)</MudTd>
+                                <MudTd DataLabel="Año">@((context.Age) == null ? "" : context.Age)</MudTd>
+                                <MudTd DataLabel="Color  ">@((context.Color) == null ? "" : context.Color)</MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="12">
+                        <MudButton FullWidth="true" OnClick="@ObtenerVehiculosDisponibles" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.CalendarToday" Color="Color.Primary">Ver vehiculos disponibles</MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+        </MudGrid>
+        @*TODO LOS COMPONENTES DEL REPORTE AQUI ADENTRO (LISANNY)*@
+
+
+
+    </MudPaper>
+</div>
+
+<div class="mx-auto" style="max-width: 1300px;">
+    <MudPaper Class="pa-10 ma-2" Elevation="2">
+        <MudText Typo="Typo.h6"><strong>Clientes que deben</strong></MudText>
+
+
+
+        @*TODO LOS COMPONENTES DEL REPORTE AQUI ADENTRO (ROY)*@
+
+
+
+    </MudPaper>
+</div>
+
+<div class="mx-auto" style="max-width: 1300px;">
+    <MudPaper Class="pa-10 ma-2" Elevation="2">
+        <MudText Typo="Typo.h6"><strong>Listado de beneficios por vehículos</strong></MudText>
+
+        @*TODO LOS COMPONENTES DEL REPORTE AQUI ADENTRO (Jose)*@
+
+
+
+    </MudPaper>
+</div>
+
+<div class="mx-auto" style="max-width: 1300px;">
+    <MudPaper Class="pa-10 ma-2" Elevation="2">
+        <MudText Typo="Typo.h6"><strong>Ver vehículos en Mapa</strong></MudText>
+        @if (show)
+        {
+            <div class="modal" tabindex="-1" style="display:block;">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="row">
+                                <div id="title_modal" class="col-md-12">
+                                    <h5 class="modal-title"> @elVehiculo.Typevehicle.Namevehicle @elVehiculo.Brand modelo @elVehiculo.Model</h5>
+                                </div>
+                                <div class="col-md-12">
+                                    <img src="@elVehiculo.Vehiclepic" class="card-img-top img_modal" alt="...">
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-12">
-                            <img src="@elVehiculo.Vehiclepic"  class="card-img-top img_modal" alt="...">
+                        <div class="modal-body">
+                            <h5 class="modal_text">Matricula: @elVehiculo.Matricula</h5>
+                            <h6 class="modal_text">Precio diario: @elVehiculo.Priceday</h6>
+                            <h6 class="modal_text">Capacidad: @elVehiculo.Weightcapacity</h6>
+                            <h6 class="modal_text">Color: @elVehiculo.Color</h6>
+                            <h6 class="modal_text">Año: @elVehiculo.Age</h6>
+                            <br />
+
+
+                            @foreach (Reservation cita in citas)
+                            {
+                                <h5 class="modal_text">Cita: </h5>
+                                <h6 class="modal_text">Cliente: @cita.Client.Firstname @cita.Client.Lastname</h6>
+                                <h6 class="modal_text">Fecha de reserva: @cita.Startdate hasta @cita.Enddate</h6>
+                            }
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="close">Close</button>
                         </div>
                     </div>
                 </div>
-                <div class="modal-body">
-                    <h5 class="modal_text">Matricula: @elVehiculo.Matricula</h5>
-                    <h6 class="modal_text">Precio diario: @elVehiculo.Priceday</h6>
-                    <h6 class="modal_text">Capacidad: @elVehiculo.Weightcapacity</h6>
-                    <h6 class="modal_text">Color: @elVehiculo.Color</h6>
-                    <h6 class="modal_text">Año: @elVehiculo.Age</h6>
-                    <br />
-
-
-                    @foreach (Reservation cita in citas)
-                    {
-                        <h5 class="modal_text">Cita: </h5>
-                        <h6 class="modal_text">Cliente: @cita.Client.Firstname @cita.Client.Lastname</h6>
-                        <h6 class="modal_text">Fecha de reserva: @cita.Startdate hasta @cita.Enddate</h6>
-                    }
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="close">Close</button>
-                </div>
             </div>
-        </div>
-    </div>
-}
+        }
 
-<MudButton OnClick="@Modo" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">@modoName</MudButton>
-<br />
-@if (modoMapa)
-{
-    <MudGrid>
-        <MudItem xs="12">
-            <RadzenGoogleMap style="height: 600px;" Zoom=@zoom Center=@(new Radzen.GoogleMapPosition() { Lat = 18.6176122, Lng = -68.7085308 }) MapClick=@OnMapClick MarkerClick=@OnMarkerClick>
-                <Markers>
-                    @foreach (var vehiculo in vehiculos)
-                    {
-                        <RadzenGoogleMapMarker Title="@vehiculo.Id.ToString()" Label="@vehiculo.Brand" Position=@(new Radzen.GoogleMapPosition() { Lat = double.Parse(vehiculo.Latitude.Value.ToString()), Lng = double.Parse(vehiculo.Longitude.Value.ToString()) }) />
-                    }
-                </Markers>
-            </RadzenGoogleMap>
-        </MudItem>
-    </MudGrid>
-}
+        @*<MudButton OnClick="@Modo" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">@modoName</MudButton>*@
+        <MudGrid>
+            <MudItem xs="12">
+                <RadzenGoogleMap style="height: 600px;" Zoom=@zoom Center=@(new Radzen.GoogleMapPosition() { Lat = 18.6176122, Lng = -68.7085308 }) MapClick=@OnMapClick MarkerClick=@OnMarkerClick>
+                    <Markers>
+                        @foreach (var vehiculo in vehiculos)
+                        {
+                            <RadzenGoogleMapMarker Title="@vehiculo.Id.ToString()" Label="@vehiculo.Brand" Position=@(new Radzen.GoogleMapPosition() { Lat = double.Parse(vehiculo.Latitude.Value.ToString()), Lng = double.Parse(vehiculo.Longitude.Value.ToString()) }) />
+                        }
+                    </Markers>
+                </RadzenGoogleMap>
+            </MudItem>
+        </MudGrid>
+
+
+
+        @*TODO LOS COMPONENTES DEL REPORTE AQUI ADENTRO (Eimy)*@
+
+
+
+
+    </MudPaper>
+</div>
+
+
 @code {
     string modoName = "Modo Mapa";
     bool modoMapa = false;
@@ -70,23 +152,88 @@
     const int pendientePado = 2;
     const int pendienteNoPagado = 1;
     private List<Reservation> citas;
-
     private List<Vehicle> vehiculos = new List<Vehicle>();
 
-    private void Modo()
-    {
-        if (modoMapa)
-        {
-            modoName = "Modo Mapa";
-            modoMapa = false;
-        }
-        else
-        {
-            modoMapa = true;
-            modoName = "Modo Lista";
-        }
 
+    DateRange _dateRange = new DateRange(DateTime.Now.Date, DateTime.Now.AddDays(1).Date);
+    MyDateRange range;
+    Vehicle vehiculoSeleccionado = new Vehicle();
+    private List<Vehicle> _vehicles;
+    private List<Vehicle> _vehiclesDisponible;
+    private List<Reservation> _reservaciones;
+    public string IdVehiculoSeleccionado { get; set; }
+
+    protected override async Task OnInitializedAsync() {
+        _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
+        _vehiclesDisponible = _vehicles;
+        vehiculos = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
     }
+
+
+    private async Task ObtenerProximasCitas() {
+        if (!String.IsNullOrEmpty(IdVehiculoSeleccionado)) {
+            Vehicle _vehicle = await _http.GetFromJsonAsync<Vehicle>($"api/vehiculo/{IdVehiculoSeleccionado}/proximascitas");
+            _reservaciones = _vehicle.Reservations.ToList();
+        }
+    }
+
+
+    private async Task ObtenerVehiculosDisponibles() {
+        _vehiclesDisponible = new List<Vehicle>();
+        DateTime fechaInicio = _dateRange.Start.Value;
+        DateTime fechaFin = _dateRange.End.Value;
+
+        range = new MyDateRange(fechaInicio, fechaFin);
+
+        foreach (var vehiculo in _vehicles) {
+            var vehiculoDisponible = vehiculo.Reservations.Where(
+            vh =>
+                (
+                    (vh.Status == 1 || vh.Status == 2)
+                    &&
+                    (vh.Enddate.Value > DateTime.Today)
+                    &&
+                    !(
+                     (range.WithInRange(vh.Startdate.Value) && (vh.Startdate.Value.Day - _dateRange.Start.Value.Day) > 2) || (!range.WithInRange(vh.Startdate.Value))
+                     ||
+                     (range.WithInRange(vh.Enddate.Value) && (vh.Enddate.Value.Day - _dateRange.End.Value.Day) > 2) || (!range.WithInRange(vh.Enddate.Value))
+                    )
+                )
+
+            /* || 
+             (
+                  (vh.Status == 1 || vh.Status == 2) 
+                 && 
+                  (vh.Enddate.Value > DateTime.Today) 
+                 && 
+                 (
+                  !range.WithInRange(vh.Startdate.Value) 
+                  && 
+                  !range.WithInRange(vh.Enddate.Value)
+                 )
+             )*/
+            ).ToList();
+
+            if (vehiculoDisponible.Count == 0) {
+                _vehiclesDisponible.Add(vehiculo);
+            }
+
+        }
+    }
+    //private void Modo()
+    //{
+    //    if (modoMapa)
+    //    {
+    //        modoName = "Modo Mapa";
+    //        modoMapa = false;
+    //    }
+    //    else
+    //    {
+    //        modoMapa = true;
+    //        modoName = "Modo Lista";
+    //    }
+
+    //}
 
     void OnMapClick(Radzen.GoogleMapClickEventArgs args)
     {
@@ -100,19 +247,13 @@
         card(id);
     }
 
-
-    protected override async Task OnInitializedAsync()
-    {
-        vehiculos = await Http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
-    }
-
     private async Task card(int id)
     {
-        elVehiculo = await Http.GetFromJsonAsync<Vehicle>($"api/vehiculo/{id}");
+        elVehiculo = await _http.GetFromJsonAsync<Vehicle>($"api/vehiculo/{id}");
         citas = elVehiculo.Reservations.Where(x => x.Status == pendienteNoPagado || x.Status == pendientePado).Take(3).ToList();
-        foreach(var cita in citas)
+        foreach (var cita in citas)
         {
-            cita.Client = await Http.GetFromJsonAsync<Client>($"api/client/{cita.Clientid}");
+            cita.Client = await _http.GetFromJsonAsync<Client>($"api/client/{cita.Clientid}");
         }
 
         show = true;
@@ -122,4 +263,6 @@
     {
         show = false;
     }
+
+
 }

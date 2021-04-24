@@ -2,6 +2,8 @@
 
 @inject HttpClient Http
 @attribute [Authorize]
+@inject ISnackbar _snackbar
+
 <h1 class="text-center">Gestión de Cobros</h1>
 <MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
 
@@ -11,7 +13,7 @@
             <MudGrid Spacing="3" Justify="Justify.Center">
                 @foreach (var factura in reservaciones) {
                     <MudItem>
-                        <MudCard>
+                        <MudCard> 
                             <MudCardHeader>
                                 <CardHeaderAvatar>
                                     <MudAvatar Color="@(factura.Status == 2 ? Color.Success : Color.Error)">$</MudAvatar>
@@ -19,7 +21,6 @@
                                 <CardHeaderContent>
                                     <MudText Typo="Typo.h5">AQUITO</MudText>
                                     <MudText Typo="Typo.body1">Creado por Admin</MudText>
-                                    @*<MudText Typo="Typo.body1">@factura.Useraquito.Firstname</MudText>*@
                                     <MudText Typo="Typo.body2">@factura.Startdate.Value.ToString("yyyy-MM-dd")</MudText>
                                 </CardHeaderContent>
                                 <CardHeaderActions>
@@ -67,15 +68,25 @@
     private List<Reservation> reservaciones;
 
     public decimal Pago { get; set; }
+    public decimal TotalApagar { get; set; }
 
     protected override async Task OnInitializedAsync() {
         reservaciones = await Http.GetFromJsonAsync<List<Reservation>>("api/reservacion");
     }
 
     private async Task RealizarPago(int id, decimal? total) {
-        var resto = total - Pago;
+        Reservation factura = await Http.GetFromJsonAsync<Reservation>($"api/reservacion/{id}");
+        decimal valorActual = factura.Totalpay.Value;
+        string TotalFactura = (valorActual + Pago).ToString().Replace(",", ".");
+        decimal? Total = factura.Vehicle.Priceday * (factura.Enddate.Value.Day - factura.Startdate.Value.Day);
 
-        string json = "{\"op\": \"replace\",\"path\": \"/totalpay\",\"value\":" + $"\"{resto}\"" + "}]";
+        if (decimal.Parse(TotalFactura) > Total) {
+            TotalFactura = Total.Value.ToString().Replace(",", ".");
+        }
+        Console.WriteLine(valorActual);
+        Console.WriteLine(Pago);
+        Console.WriteLine(TotalFactura);
+        string json = "[{\"op\": \"replace\",\"path\": \"/totalpay\",\"value\":" + $"\"{TotalFactura}\"" + "}]";
         HttpContent content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
 
         var response = await Http.PatchAsync($"api/reservacion/{id}", content);
@@ -83,19 +94,24 @@
         if (response.IsSuccessStatusCode) {
 
             Reservation reservation = await Http.GetFromJsonAsync<Reservation>($"api/reservacion/{id}");
+            decimal seDebe = ((reservation.Vehicle.Priceday * (reservation.Enddate.Value.Day - reservation.Startdate.Value.Day)) - reservation.Totalpay).Value;
 
-            if (reservation.Totalpay == 0) {
-                var statusPago = "2";
-                json = "{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{statusPago}\"" + "}]";
+            if (seDebe == 0) {
+                string statusPago = "2";
+                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{statusPago}\"" + "}]";
                 content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
                 response = await Http.PatchAsync($"api/reservacion/{id}", content);
-
-                //Pendiente agregar Snackbar de factura pagada correctamente
+                _snackbar.Add($"Factura pagada correctamente.", Severity.Success);
+                reservaciones = await Http.GetFromJsonAsync<List<Reservation>>("api/reservacion");
             } else {
-                //Pendiente agregar Snackbar de factura que aun falta por pagar
+                _snackbar.Add($"Factura pendiente.", Severity.Warning);
+                reservaciones = await Http.GetFromJsonAsync<List<Reservation>>("api/reservacion");
             }
+        } else {
+            _snackbar.Add($"Ha ocurrido un error al pagar la factura", Severity.Error);
+
         }
 
-
+        Pago = 0;
     }
 }

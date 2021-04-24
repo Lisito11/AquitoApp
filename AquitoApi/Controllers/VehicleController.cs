@@ -28,8 +28,15 @@ namespace AquitoApi.Controllers {
         }
 
         // get para traer los vehiculos con 3 o menos proximas citas
-        [HttpGet("proximascitas")]
+        [HttpGet("todasproximascitas")]
         public async Task<ActionResult<List<VehicleDTO>>> GetCitas() {
+            var vehiculo = await context.Vehicles.Include(x => x.Typevehicle).Include(x => x.Reservations.Where(x => (x.Status == 1 || x.Status == 2) && x.Enddate.Value > DateTime.Today)).ToListAsync();
+            return mapper.Map<List<VehicleDTO>>(vehiculo);
+        }
+
+        // get para traer los vehiculos  proximas citas
+        [HttpGet("proximascitas")]
+        public async Task<ActionResult<List<VehicleDTO>>> GetAllCitas() {
             var vehiculo = await context.Vehicles.Include(x => x.Typevehicle).Include(x => x.Reservations.Where(x => (x.Status == 1 || x.Status == 2) && x.Enddate.Value > DateTime.Today).Take(3)).ToListAsync();
             return mapper.Map<List<VehicleDTO>>(vehiculo);
         }

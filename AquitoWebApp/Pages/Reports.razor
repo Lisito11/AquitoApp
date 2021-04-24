@@ -7,10 +7,41 @@
 <MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
 
 <div class="mx-auto" style="max-width: 1300px;">
-    <MudPaper Class="pa-10 ma-2" Elevation="2">
-        <MudText Typo="Typo.h6"><strong>Listado de vehículos disponible en x rango de fecha</strong></MudText> 
+    <MudPaper Elevation="2">
+        <MudText Typo="Typo.h6"><strong>Listado de vehículos disponible en x rango de fecha</strong></MudText>
 
-
+        <MudGrid Spacing="1" Justify="Justify.SpaceAround">
+            <MudItem xs="12" sm="7" md="7">
+                <MudDateRangePicker MinDate="DateTime.Today" Label="Fechas de reservación" @bind-DateRange="_dateRange" PickerVariant="PickerVariant.Static" />
+            </MudItem>
+            <MudItem xs="12" sm="5" md="5">
+                <MudGrid Justify="Justify.Center">
+                    <MudItem xs="12" sm="12" md="12">
+                        <MudTable Items="@_vehiclesDisponible" Hover="@true" Striped="@true" Dense="true">
+                            <HeaderContent>
+                                <MudTh>Foto</MudTh>
+                                <MudTh>Tipo</MudTh>
+                                <MudTh>Marca</MudTh>
+                                <MudTh>Modelo </MudTh>
+                                <MudTh>Año</MudTh>
+                                <MudTh>Color  </MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="Foto"><MudAvatar Image="@((context.Vehiclepic) == null ? "" : context.Vehiclepic)"></MudAvatar></MudTd>
+                                <MudTd DataLabel="Tipo">@((context.Typevehicle.Namevehicle) == null ? "" : context.Typevehicle.Namevehicle)</MudTd>
+                                <MudTd DataLabel="Marca">@((context.Brand) == null ? "" : context.Brand)</MudTd>
+                                <MudTd DataLabel="Modelo">@((context.Model) == null ? "" : context.Model)</MudTd>
+                                <MudTd DataLabel="Año">@((context.Age) == null ? "" : context.Age)</MudTd>
+                                <MudTd DataLabel="Color  ">@((context.Color) == null ? "" : context.Color)</MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="12">
+                        <MudButton FullWidth="true" OnClick="@ObtenerVehiculosDisponibles" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.CalendarToday" Color="Color.Primary">Ver vehiculos disponibles</MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+        </MudGrid>
         @*TODO LOS COMPONENTES DEL REPORTE AQUI ADENTRO (LISANNY)*@
 
 
@@ -59,13 +90,20 @@
 
 
 @code {
-
+    DateRange _dateRange = new DateRange(DateTime.Now.Date, DateTime.Now.AddDays(1).Date);
+    MyDateRange range;
+    Vehicle vehiculoSeleccionado = new Vehicle();
     private List<Vehicle> _vehicles;
+    private List<Vehicle> _vehiclesDisponible;
     private List<Reservation> _reservaciones;
     public string IdVehiculoSeleccionado { get; set; }
+
     protected override async Task OnInitializedAsync() {
         _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
+        _vehiclesDisponible = _vehicles;
+
     }
+
 
     private async Task ObtenerProximasCitas() {
         if (!String.IsNullOrEmpty(IdVehiculoSeleccionado)) {
@@ -74,4 +112,47 @@
         }
     }
 
+
+    private async Task ObtenerVehiculosDisponibles() {
+        _vehiclesDisponible = new List<Vehicle>();
+        DateTime fechaInicio = _dateRange.Start.Value;
+        DateTime fechaFin = _dateRange.End.Value;
+
+        range = new MyDateRange(fechaInicio, fechaFin);
+
+        foreach (var vehiculo in _vehicles) {
+            var vehiculoDisponible = vehiculo.Reservations.Where(
+            vh =>
+                (
+                    (vh.Status == 1 || vh.Status == 2)
+                    &&
+                    (vh.Enddate.Value > DateTime.Today)
+                    &&
+                    !(
+                     (range.WithInRange(vh.Startdate.Value) && (vh.Startdate.Value.Day - _dateRange.Start.Value.Day) > 2) || (!range.WithInRange(vh.Startdate.Value))
+                     ||
+                     (range.WithInRange(vh.Enddate.Value) && (vh.Enddate.Value.Day - _dateRange.End.Value.Day) > 2) || (!range.WithInRange(vh.Enddate.Value))
+                    )
+                )
+
+            /* || 
+             (
+                  (vh.Status == 1 || vh.Status == 2) 
+                 && 
+                  (vh.Enddate.Value > DateTime.Today) 
+                 && 
+                 (
+                  !range.WithInRange(vh.Startdate.Value) 
+                  && 
+                  !range.WithInRange(vh.Enddate.Value)
+                 )
+             )*/
+            ).ToList();
+
+            if (vehiculoDisponible.Count == 0) {
+                _vehiclesDisponible.Add(vehiculo);
+            }
+
+        }
+    }
 }

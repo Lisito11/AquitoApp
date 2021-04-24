@@ -1,18 +1,77 @@
 ﻿@page "/reportes"
 @attribute [Authorize]
-<MudGrid Spacing="3" Justify="Justify.Center">
-    <MudItem>
-        <MudCard>
-            <MudCardContent>
-                <MudText Typo="Typo.h6">Reportes</MudText>
-                <MudText Typo="Typo.body2">Aqui vamos a poder ver los vehiculos que ya tenemos, nuestros clientes y otras cositas... :)</MudText>
-            </MudCardContent>
-            <MudCardActions>
-                <MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack">Regresar</MudNavLink>
-            </MudCardActions>
-        </MudCard>
-    </MudItem>
-</MudGrid>
+@inject HttpClient _http
+@inject ISnackbar _snackbar
+@inject NavigationManager _navigationManager
+<h1 class="text-center">Reportes</h1>
+<MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
+
+<div class="mx-auto" style="max-width: 1300px;">
+    <MudPaper Class="pa-10 ma-2" Elevation="2">
+        <MudText Typo="Typo.h6"><strong>Listado de vehículos disponible en x rango de fecha</strong></MudText> 
+
+
+        @*TODO LOS COMPONENTES DEL REPORTE AQUI ADENTRO (LISANNY)*@
+
+
+
+    </MudPaper>
+</div>
+
+<div class="mx-auto" style="max-width: 1300px;">
+    <MudPaper Class="pa-10 ma-2" Elevation="2">
+        <MudText Typo="Typo.h6"><strong>Clientes que deben</strong></MudText>
+
+
+
+        @*TODO LOS COMPONENTES DEL REPORTE AQUI ADENTRO (ROY)*@
+
+
+
+    </MudPaper>
+</div>
+
+<div class="mx-auto" style="max-width: 1300px;">
+    <MudPaper Class="pa-10 ma-2" Elevation="2">
+        <MudText Typo="Typo.h6"><strong>Listado de beneficios por vehículos</strong></MudText>
+
+
+        @*TODO LOS COMPONENTES DEL REPORTE AQUI ADENTRO (Jose)*@
+
+
+
+    </MudPaper>
+</div>
+
+<div class="mx-auto" style="max-width: 1300px;">
+    <MudPaper Class="pa-10 ma-2" Elevation="2">
+        <MudText Typo="Typo.h6"><strong>Ver vehículos en Mapa</strong></MudText>
+
+
+
+        @*TODO LOS COMPONENTES DEL REPORTE AQUI ADENTRO (Eimy)*@
+
+
+
+
+    </MudPaper>
+</div>
+
+
 @code {
+
+    private List<Vehicle> _vehicles;
+    private List<Reservation> _reservaciones;
+    public string IdVehiculoSeleccionado { get; set; }
+    protected override async Task OnInitializedAsync() {
+        _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
+    }
+
+    private async Task ObtenerProximasCitas() {
+        if (!String.IsNullOrEmpty(IdVehiculoSeleccionado)) {
+            Vehicle _vehicle = await _http.GetFromJsonAsync<Vehicle>($"api/vehiculo/{IdVehiculoSeleccionado}/proximascitas");
+            _reservaciones = _vehicle.Reservations.ToList();
+        }
+    }
 
 }

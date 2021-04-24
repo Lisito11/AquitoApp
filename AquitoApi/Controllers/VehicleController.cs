@@ -27,6 +27,12 @@ namespace AquitoApi.Controllers {
             return mapper.Map<List<VehicleDTO>>(Vehiculo);
         }
 
+        // get para traer los vehiculos con 3 o menos proximas citas
+        [HttpGet("proximascitas")]
+        public async Task<ActionResult<List<VehicleDTO>>> GetCitas() {
+            var vehiculo = await context.Vehicles.Include(x => x.Typevehicle).Include(x => x.Reservations.Where(x => (x.Status == 1 || x.Status == 2) && x.Enddate.Value > DateTime.Today).Take(3)).ToListAsync();
+            return mapper.Map<List<VehicleDTO>>(vehiculo);
+        }
         //Metodo Get para traer los vehiculos que estan disponibles
         [HttpGet("disponible")]
         public async Task<ActionResult<List<VehicleDTO>>> GetActiveVehicle() {
@@ -56,6 +62,14 @@ namespace AquitoApi.Controllers {
             Vehicle vehiculo = await context.Vehicles.Include(x => x.Typevehicle).Include(x => x.Reservations).FirstOrDefaultAsync(x => x.Id == id);
             return mapper.Map<VehicleDTO>(vehiculo);
         }
+
+        //Metodo Get(id) endpoint para traer las 3 proximas citas
+        [HttpGet("{id:int}/proximascitas")]
+        public async Task<ActionResult<VehicleDTO>> GetCita(int id) {
+            Vehicle vehiculo = await context.Vehicles.Include(x => x.Typevehicle).Include(x => x.Reservations.Where(x => (x.Status == 1 || x.Status == 2) && x.Enddate.Value > DateTime.Today).Take(3)).FirstOrDefaultAsync(x => x.Id == id);
+            return mapper.Map<VehicleDTO>(vehiculo);
+        }
+
 
         //Metodo Post
         [HttpPost]

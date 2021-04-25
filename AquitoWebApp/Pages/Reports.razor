@@ -105,8 +105,8 @@
                     {
                         <tr>
                             <td>@vehiculo.Brand</td>
-                            <td>@vehiculo.Status</td>
-                            <td>@(vehiculo.Priceday) </td> 
+                            <td>@(vehiculo.Reservations.Count())</td>
+                            <td>$ @(vehiculo.Reservations.Sum(c => c.Totalpay)) </td> 
                         </tr>
                     }
 

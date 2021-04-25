@@ -10,7 +10,9 @@
         <MudButton OnClick="Logout"  Variant="Variant.Outlined" Color="Color.Primary" Class="mr-2" StartIcon="@Icons.Material.Filled.Logout">
             Logout
         </MudButton>   
-        <MudAvatar Color="Color.Primary">A</MudAvatar>
+        <MudAvatar Color="Color.Primary">
+            <MudIcon Icon="@Icons.Material.Filled.Person" />
+        </MudAvatar>
     </MudAppBar>
     <MudDrawer @bind-Open="@open" Elevation="1" Variant="@DrawerVariant.Temporary">
         <img src="https://res.cloudinary.com/dlnyb1her/image/upload/v1618456469/aquito-imagenes/u0rd2z7ohcgwecqwdnf9.png" />

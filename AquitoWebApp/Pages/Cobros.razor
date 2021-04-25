@@ -107,9 +107,10 @@
                 _snackbar.Add($"Factura pendiente.", Severity.Warning);
                 reservaciones = await Http.GetFromJsonAsync<List<Reservation>>("api/reservacion");
             }
-        } else {
+        } 
+        else 
+        {
             _snackbar.Add($"Ha ocurrido un error al pagar la factura", Severity.Error);
-
         }
 
         Pago = 0;

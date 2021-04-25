@@ -26,15 +26,27 @@ namespace AquitoApi.Controllers
         [HttpGet]
         public async Task<ActionResult<List<ClientDTO>>> Get()
         {
-
-            return await Get<Client, ClientDTO>();
+            var usuario = await context.Clients.Include(x => x.Useraquito).Include(x => x.Reservations).ToListAsync();
+            return mapper.Map<List<ClientDTO>>(usuario);
+        }
+        //Metodo Get traer los clientes que deben
+        [HttpGet("deben")]
+        public async Task<ActionResult<List<ClientDTO>>> GetDeben() {
+            var usuario = await context.Clients.Include(x => x.Useraquito).Include(x => x.Reservations.Where(x => x.Status == 1 || x.Status == 3)).ToListAsync();
+            return mapper.Map<List<ClientDTO>>(usuario);
         }
 
-        //Metodo Get(id)
-        [HttpGet("{id:int}", Name = "obtenerCliente")]
-        public async Task<ActionResult<ClientDTO>> Get(int id)
+        //Metodo Get(id) traer un cliente que debe
+        [HttpGet("{id:int}/debe")]
+        public async Task<ActionResult<ClientDTO>> GetDebe(int id)
         {
-            Client usuario = await context.Clients.Include(x => x.Useraquito).FirstOrDefaultAsync(x => x.Id == id);
+            Client usuario = await context.Clients.Include(x => x.Useraquito).Include(x=> x.Reservations.Where(x => x.Status == 1 || x.Status == 3)).FirstOrDefaultAsync(x => x.Id == id);
+            return mapper.Map<ClientDTO>(usuario);
+        }
+
+        [HttpGet("{id:int}", Name = "obtenerCliente")]
+        public async Task<ActionResult<ClientDTO>> Get(int id) {
+            Client usuario = await context.Clients.Include(x => x.Useraquito).Include(x => x.Reservations).FirstOrDefaultAsync(x => x.Id == id);
             return mapper.Map<ClientDTO>(usuario);
         }
 

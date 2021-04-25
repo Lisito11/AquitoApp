@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Logging;
+using Blazored.Modal;
 
 namespace AquitoApi
 {
@@ -38,7 +39,7 @@ namespace AquitoApi
             IdentityModelEventSource.ShowPII = true; //To show detail of error and see the problem
 
             services.AddAutoMapper(typeof(Startup));
-
+            services.AddBlazoredModal();
             services.AddDbContext<d2bc1ckqeusvkjContext>(options => options.UseNpgsql(Configuration.GetConnectionString("Dbconnection")));
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));

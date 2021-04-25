@@ -1,22 +1,39 @@
 ﻿@page "/about"
 @inject HttpClient _http
-@inject ISnackbar _snackbar
-@inject NavigationManager _navigationManager
-@inject Tewr.Blazor.FileReader.IFileReaderService fileReader
+
+<h1 class="text-center">Acerca de nosotros</h1>
+<MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
 <MudGrid Spacing="3" Justify="Justify.Center">
     <MudItem>
-        <MudCard>
-            <MudCardContent>
-                <MudText Typo="Typo.h6">Acerca de nosotros</MudText>
-                <MudText Typo="Typo.body2">Aqui podran conocer al maravilloso equipo detras de esta plataforma y otras cositas... :)</MudText>
-            </MudCardContent>
-            <MudCardActions>
-                <MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack">Regresar</MudNavLink>
-            </MudCardActions>
-        </MudCard>
+        <MudTable Class="thead-dark" Items="@personas" Hover="true" Striped="true">
+            <HeaderContent>
+                <MudTh>Nombre</MudTh>
+                <MudTh>Email</MudTh>
+                <MudTh>Matricula</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Nombre">@context.Nombre</MudTd>
+                <MudTd DataLabel="Email">@context.Email</MudTd>
+                <MudTd DataLabel="Matricula">@context.Matricula</MudTd>
+            </RowTemplate>
+        </MudTable>
     </MudItem>
 </MudGrid>
+
+
 @code {
+    class Persona {
+        public string Nombre { get; set; }
+        public string Email { get; set; }
+        public string Matricula { get; set; }
+    }
+
+    List<Persona> personas = new List<Persona>() {
+        new Persona { Nombre = "Lisanny A. Peña G.", Email = "l.andrespg11@gmail.com", Matricula = "2019-7913"},
+        new Persona { Nombre = "Roy del Orbe", Email = "l.andrespg11@gmail.com", Matricula = "2019-7913" },
+        new Persona { Nombre = "Jose Rosario", Email = "l.andrespg11@gmail.com", Matricula = "2019-7913" },
+        new Persona { Nombre = "Eimy Olivo", Email = "l.andrespg11@gmail.com", Matricula = "2019-7913" },
+    };
 
 
 }

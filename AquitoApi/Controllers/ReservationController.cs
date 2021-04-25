@@ -41,6 +41,7 @@ namespace AquitoApi.Controllers
             var reservacion = await context.Reservations
                 .Include(x => x.Client)
                 .Include(x => x.Vehicle)
+
                 .ThenInclude(x => x.Typevehicle)
                 .FirstOrDefaultAsync(x => x.Id == id);
             return mapper.Map<ReservationDTO>(reservacion);

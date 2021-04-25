@@ -1,5 +1,6 @@
 ﻿using AquitoApi.Entities;
 using AquitoApi.Entities.Request;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,8 @@ namespace AquitoApi.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize("Admin")]
         public async Task<IActionResult> Create([FromBody] RoleRequest model)
         {
 

@@ -51,7 +51,7 @@ namespace AquitoApi.Controllers
 
             if (existingUser == null)
             {
-                res.Message = "Ese email no existe";
+                res.Message = "Este email no existe";
                 return Unauthorized(res);
             }
 

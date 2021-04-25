@@ -44,7 +44,6 @@ namespace AquitoWebApp.Authentication
 
             UserAuth userLogged = await GetCurrentUser();
 
-            await _localStorage.SetItemAsync("claims", userLogged);
 
             if (userLogged.isAuthentication)
             {

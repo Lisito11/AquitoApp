@@ -2,10 +2,12 @@
 @attribute [Authorize]
 @inject HttpClient Http
 
+
 <MudGrid>
     <MudItem xs="12">
         <MudGrid Spacing="3" Justify="Justify.Center">
-            @foreach (var card in cardsPaginas) {
+            @foreach (var card in cardsPaginas)
+            {
                 <MudItem Class="m-4">
                     <MudLink Href="@card.Link" Underline="Underline.None" Class="text-center" Color="Color.Inherit">
                         <MudCard Style="height:120px; width:200px;">
@@ -25,30 +27,28 @@
     </MudItem>
 </MudGrid>
 @code{
-<<<<<<< HEAD
-
-    protected override bool ShouldRender() => true; // Pequeña Optimizacion
-
-    private class CustomCard
-    {
-=======
     List<Vehicle> vehiculos;
     List<Reservation> reservaciones;
     Vehicle vehicle;
-    protected override async Task OnInitializedAsync() {
+    protected override async Task OnInitializedAsync()
+    {
         string status;
         string json;
         HttpContent content;
         vehiculos = await Http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
         reservaciones = await Http.GetFromJsonAsync<List<Reservation>>("api/reservacion");
-        foreach (var reservacion in reservaciones) {
+        foreach (var reservacion in reservaciones)
+        {
 
-            if (reservacion.Enddate < DateTime.Today && reservacion.Status == 2) {
+            if (reservacion.Enddate < DateTime.Today && reservacion.Status == 2)
+            {
                 status = "4";
                 json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{status}\"" + "}]";
                 content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
                 await Http.PatchAsync($"api/reservacion/{reservacion.Id}", content);
-            } else if (reservacion.Enddate < DateTime.Today && reservacion.Status == 1) {
+            }
+            else if (reservacion.Enddate < DateTime.Today && reservacion.Status == 1)
+            {
                 status = "3";
                 json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{status}\"" + "}]";
                 content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
@@ -57,8 +57,8 @@
         }
     }
 
-    private class CustomCard {
->>>>>>> aa633cfb9bd42fa07c4f5d2ead8b6c940f740e8e
+    private class CustomCard
+    {
         public string Link { get; set; }
         public string Nombre { get; set; }
         public string Icono { get; set; }
@@ -73,5 +73,5 @@
         new CustomCard { Link = "empleados", Nombre = "Empleados", Icono = Icons.Filled.AccountBox },
         new CustomCard { Link = "configuracion", Nombre = "Configuración", Icono = Icons.Filled.Settings },
         new CustomCard { Link = "about", Nombre = "Acerca de nosotros", Icono = Icons.Filled.ContactSupport },
-    };   
+    };
 }

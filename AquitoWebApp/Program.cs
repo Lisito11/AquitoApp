@@ -29,10 +29,10 @@ namespace AquitoWebApp
             builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddFileReaderService(o => o.UseWasmSharedBuffer = true);
-            builder.Services.AddBlazoredModal();
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://aquitoapp.herokuapp.com/") });
 
+            builder.Services.AddBlazoredModal();
             builder.Services.AddBlazoredLocalStorage();
 
             builder.Services.AddMudServices();

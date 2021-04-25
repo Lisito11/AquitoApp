@@ -25,14 +25,14 @@
     </NotFound>
 </Router>
 
-    @code {
-        MudTheme MyCustomTheme = new MudTheme()
+@code {
+    MudTheme MyCustomTheme = new MudTheme()
+    {
+        Palette = new Palette()
         {
-            Palette = new Palette()
-            {
-                Primary = Colors.Blue.Default,
-                Secondary = Colors.Green.Accent4,
-                AppbarBackground = Colors.Indigo.Default,
-            },
-        };
-    }
+            Primary = Colors.Blue.Default,
+            Secondary = Colors.Green.Accent4,
+            AppbarBackground = Colors.Indigo.Default,
+        },
+    };
+}

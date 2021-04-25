@@ -56,7 +56,6 @@ namespace AquitoWebApp.Services
 
             _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", resultContent.Data?.Token);
 
-
         }
 
         public async Task Logout()

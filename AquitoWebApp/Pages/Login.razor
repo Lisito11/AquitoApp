@@ -39,7 +39,7 @@
                     </MudAlert>
                 }
 
-                @if (String.IsNullOrEmpty(ErrorAuthMessage) && showAuthError)
+                @if (!String.IsNullOrEmpty(ErrorAuthMessage) && showAuthError)
                 {
                     <MudAlert Severity="Severity.Error">
                         @ErrorAuthMessage
@@ -75,6 +75,7 @@
         {
             showAuthError = true;
             ErrorAuthMessage = ex.Message;
+            Console.WriteLine(ex.Message);
         }
 
 

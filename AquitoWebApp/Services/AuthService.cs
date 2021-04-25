@@ -46,15 +46,23 @@ namespace AquitoWebApp.Services
         {
 
             HttpResponseMessage result = await _http.PostAsJsonAsync("api/auth/login", user);
-            if (result.StatusCode == System.Net.HttpStatusCode.BadRequest) throw new Exception(await result.Content.ReadAsStringAsync());
+
+            if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                throw new Exception((await result.Content.ReadFromJsonAsync<BaseResponse<UserLoggedInViewModel>>()).Message);
+            }
+                
 
             result.EnsureSuccessStatusCode();
 
              BaseResponse<UserLoggedInViewModel> resultContent = await result.Content.ReadFromJsonAsync<BaseResponse<UserLoggedInViewModel>>();
 
-            await _localStorage.SetItemAsync("token", resultContent.Data?.Token);
+           
+ 
+                await _localStorage.SetItemAsync("token", resultContent.Data?.Token);
 
-            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", resultContent.Data?.Token);
+                _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", resultContent.Data?.Token);
+   
 
         }
 

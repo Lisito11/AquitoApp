@@ -72,7 +72,7 @@
                     <MudTd DataLabel="Cedula">@context.Cedula</MudTd>
                     <MudTd DataLabel="Nombre">@context.Firstname</MudTd>
                     <MudTd DataLabel="Apellido">@context.Lastname</MudTd>
-                    <MudTd DataLabel="Monto"> $ @(Math.Round(context.MontoTotal)), 2)</MudTd>
+                    <MudTd DataLabel="Monto"> $@(Math.Round(context.MontoTotal ?? 0, 2))</MudTd>
                 </RowTemplate>
 
                 <PagerContent>

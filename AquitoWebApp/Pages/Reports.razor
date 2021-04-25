@@ -115,8 +115,6 @@
             </tbody>
         </MudSimpleTable>
 
-
-
     </MudPaper>
 </div>
 
@@ -162,8 +160,6 @@
                 </div>
             </div>
         }
-
-        @*<MudButton OnClick="@Modo" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">@modoName</MudButton>*@
         <MudGrid>
             <MudItem xs="12">
                 <RadzenGoogleMap style="height: 600px;" Zoom=@zoom Center=@(new Radzen.GoogleMapPosition() { Lat = 18.6176122, Lng = -68.7085308 }) MapClick=@OnMapClick MarkerClick=@OnMarkerClick>
@@ -176,14 +172,6 @@
                 </RadzenGoogleMap>
             </MudItem>
         </MudGrid>
-
-
-
-        @*TODO LOS COMPONENTES DEL REPORTE AQUI ADENTRO (Eimy)*@
-
-
-
-
     </MudPaper>
 </div>
 
@@ -200,8 +188,6 @@
         const int pendienteNoPagado = 1;
         private List<Reservation> citas;
         private List<Vehicle> vehiculos = new List<Vehicle>();
-
-
         DateRange _dateRange = new DateRange(DateTime.Now.Date, DateTime.Now.AddDays(1).Date);
         MyDateRange range;
         Vehicle vehiculoSeleccionado = new Vehicle();
@@ -237,15 +223,6 @@
            ?? Array.Empty<Client>().AsEnumerable();
     }
 
-
-    private async Task ObtenerProximasCitas() {
-        if (!String.IsNullOrEmpty(IdVehiculoSeleccionado)) {
-            Vehicle _vehicle = await _http.GetFromJsonAsync<Vehicle>($"api/vehiculo/{IdVehiculoSeleccionado}/proximascitas");
-            _reservaciones = _vehicle.Reservations.ToList();
-        }
-    }
-
-
     private async Task ObtenerVehiculosDisponibles() {
         _vehiclesDisponible = new List<Vehicle>();
         DateTime fechaInicio = _dateRange.Start.Value;
@@ -266,20 +243,7 @@
                      ||
                      (range.WithInRange(vh.Enddate.Value) && (vh.Enddate.Value.Day - _dateRange.End.Value.Day) > 2) || (!range.WithInRange(vh.Enddate.Value))
                     )
-                )
-
-            /* || 
-             (
-                  (vh.Status == 1 || vh.Status == 2) 
-                 && 
-                  (vh.Enddate.Value > DateTime.Today) 
-                 && 
-                 (
-                  !range.WithInRange(vh.Startdate.Value) 
-                  && 
-                  !range.WithInRange(vh.Enddate.Value)
-                 )
-             )*/
+                )      
             ).ToList();
 
             if (vehiculoDisponible.Count == 0) {
@@ -288,31 +252,17 @@
 
         }
     }
-    //private void Modo()
-    //{
-    //    if (modoMapa)
-    //    {
-    //        modoName = "Modo Mapa";
-    //        modoMapa = false;
-    //    }
-    //    else
-    //    {
-    //        modoMapa = true;
-    //        modoName = "Modo Lista";
-    //    }
-
-    //}
 
     void OnMapClick(Radzen.GoogleMapClickEventArgs args)
     {
         Console.WriteLine($"Map clicked at Lat: {args.Position.Lat}, Lng: {args.Position.Lng}");
     }
 
-    void OnMarkerClick(RadzenGoogleMapMarker marker)
+    private async Task OnMarkerClick(RadzenGoogleMapMarker marker)
     {
         //Console.WriteLine($"Map {marker.Title} marker clicked. Marker position -> Lat: {marker.Position.Lat}, Lng: {marker.Position.Lng}");
         id = Convert.ToInt32(marker.Title);
-        card(id);
+        await card(id);
     }
 
     private async Task card(int id)

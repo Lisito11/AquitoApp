@@ -113,7 +113,7 @@ namespace AquitoApi
             {
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
-                endpoints.MapFallbackToPage("index.html");
+               // endpoints.MapFallbackToPage("index.html");
             });
         }
     }

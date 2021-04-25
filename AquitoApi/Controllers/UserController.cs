@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using AquitoApi.Entities.Request;
 using PasantesBackendApi.Models.Response;
 using AquitoApi.Services;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace AquitoApi.Controllers
 {
@@ -116,12 +117,54 @@ namespace AquitoApi.Controllers
                 LastName = user.Lastname,
                 Phone = user.Phone,
                 Id = user.Id
+                       
             };
 
             return Ok(res);
 
         }
 
-       
+
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult> Get(int id) {
+            var usuario = await _context.Useraquitos.FirstOrDefaultAsync(x => x.Id == id);
+            return Ok(usuario);
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> Put(int id, [FromBody] Useraquito model) {
+            var entidad = model;
+            entidad.Id = id;
+            _context.Entry(entidad).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        //Metodo Patch
+        [HttpPatch("{id:int}")]
+        public async Task<ActionResult> Patch(int id, JsonPatchDocument<Useraquito> patchDoc) {
+
+            if (patchDoc == null) {
+                return BadRequest();
+            }
+
+            var entidadEdit = await _context.Set<Useraquito>().FirstOrDefaultAsync(x => x.Id == id);
+
+            if (entidadEdit == null) {
+                return NotFound();
+            }
+
+            patchDoc.ApplyTo(entidadEdit, ModelState);
+
+            var isValid = TryValidateModel(entidadEdit);
+
+            if (!isValid) {
+                return BadRequest(ModelState);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

@@ -1,0 +1,113 @@
+﻿@page "/empleados/editar/{id}"
+@attribute [Authorize]
+@inject HttpClient _http
+@inject ISnackbar _snackbar
+@inject NavigationManager _navigationManager
+<h1 class="text-center">Gestión de Empleados</h1>
+
+<MudNavLink Href="/empleados" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
+<div class="mx-auto" style="max-width: 1300px;">
+    <MudPaper Class="pa-10 ma-2" Elevation="2">
+        <MudText Typo="Typo.h6"><strong>Editar Empleados</strong></MudText>
+        <MudExpansionPanel Style="max-width: 1000px" IsExpanded="true" HideIcon="true">
+            <TitleContent>
+                <div class="d-flex pl-5">
+                    <MudIcon Icon="@Icons.Material.Outlined.People" Style=" color: #3f51b5" class="mr-3"> </MudIcon>
+                    <MudText><strong>Información Principal</strong></MudText>
+                </div>
+            </TitleContent>
+            <ChildContent>
+                <MudGrid Spacing="2">
+                    <MudItem xs="12" sm="12" md="6">
+                        <MudTextField Margin="_margin" T="string" @bind-Value="Firstname" Label="Nombres" Variant="_variant"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6">
+                        <MudTextField Margin="_margin" T="string" @bind-Value="Lastname" Label="Apellidos" Variant="_variant"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6">
+                        <MudTextField Margin="_margin" T="string" @bind-Value="Email" Label="Email" Variant="_variant"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6">
+                        <MudTextField Margin="_margin" T="string" @bind-Value="Phone" Label="Telefono" Variant="_variant"></MudTextField>
+                    </MudItem>
+                </MudGrid>
+            </ChildContent>
+        </MudExpansionPanel>
+
+        <MudGrid>
+            <MudItem xs="12">
+                <MudCardActions>
+                    <MudButton @onclick="EditEmployee" ButtonType="ButtonType.Submit" FullWidth="true" Variant="Variant.Filled" Color="Color.Secondary" Class="m-auto">Editar Empleado</MudButton>
+                </MudCardActions>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+</div>
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private readonly Margin _margin = Margin.Dense;
+    private readonly Variant _variant = Variant.Outlined;
+    private readonly Adornment _adornment = Adornment.End;
+
+    private Useraquito _empleado;
+
+    public string Firstname { get; set; }
+    public string Lastname { get; set; }
+    public string Email { get; set; }
+    public string Phone { get; set; }
+    public int Status { get; set; }
+
+    protected override async Task OnInitializedAsync() {
+        _empleado = await _http.GetFromJsonAsync<Useraquito>($"api/user/{Id}");
+        Firstname = _empleado.Firstname != null ? _empleado.Firstname : "";
+        Lastname = _empleado.Lastname != null ? _empleado.Lastname : "";
+        Email = _empleado.Email != null ? _empleado.Email : "";
+        Phone = _empleado.Phone != null ? _empleado.Phone : "";
+        Status = _empleado.Status.HasValue == true ? _empleado.Status.Value : 1;
+    }
+
+    async Task EditEmployee() {
+        if (!String.IsNullOrEmpty(Firstname) && !String.IsNullOrEmpty(Lastname) && !String.IsNullOrEmpty(Email) && !String.IsNullOrEmpty(Phone)) {
+            string json;
+            HttpContent content;
+            Useraquito _empleado = new() {
+                Firstname = Firstname,
+                Lastname = Lastname,
+                Email = Email,
+                Phone = Phone,
+                Status = Status
+            };
+
+            json = "[{\"op\": \"replace\",\"path\": \"/firstname\",\"value\":" + $"\"{_empleado.Firstname}\"" + "}," +
+                    "{\"op\": \"replace\",\"path\": \"/lastname\",\"value\":" + $"\"{_empleado.Lastname}\"" + "}," +
+                    "{\"op\": \"replace\",\"path\": \"/phone\",\"value\":" + $"\"{_empleado.Phone}\"" + "}," +
+                    "{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{_empleado.Status}\"" + "}," +
+                    "{\"op\": \"replace\",\"path\": \"/email\",\"value\":" + $"\"{_empleado.Email}\"" + "}]";
+
+            content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+
+            var response = await _http.PatchAsync($"api/user/{Id}", content);
+
+            if (response.IsSuccessStatusCode) {
+                _snackbar.Add($"Empleado Editado Correctamente", Severity.Success);
+                _navigationManager.NavigateTo("empleados");
+
+            } else {
+                _snackbar.Add($"Ha ocurrido un error al editar el empleado, intente de nuevo", Severity.Error);
+            }
+        } else {
+            _snackbar.Add($"Debe de llenar todos los campos", Severity.Error);
+        }
+
+
+
+
+
+    }
+
+
+}

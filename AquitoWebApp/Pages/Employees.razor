@@ -1,19 +1,170 @@
 ﻿@page "/empleados"
 @attribute [Authorize]
-<MudGrid Spacing="3" Justify="Justify.Center">
-    <MudItem>
-        <MudCard>
-            <MudCardContent>
-                <MudText Typo="Typo.h6">Empleados</MudText>
-                <MudText Typo="Typo.body2">Aqui vamos a poder administrar nuestros empleados, descontar de su sueldo y otras cositas... :)</MudText>
-            </MudCardContent>
-            <MudCardActions>
-                <MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack">Regresar</MudNavLink>
-            </MudCardActions>
-        </MudCard>
-    </MudItem>
-</MudGrid>
+@inject HttpClient _http
+@inject ISnackbar _snackbar
+@inject NavigationManager _navigationManager
+
+<h1 class="text-center">Gestión de Empleados</h1>
+<MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
+<div class="mx-auto" style="max-width: 1300px;">
+    <MudPaper Class="pa-10 ma-2" Elevation="2">
+        <MudText Typo="Typo.h6"><strong>Registrar Empleados</strong></MudText>
+        <MudExpansionPanel Style="max-width: 1000px" IsExpanded="true" HideIcon="true">
+            <TitleContent>
+                <div class="d-flex pl-5">
+                    <MudIcon Icon="@Icons.Material.Outlined.People" Style=" color: #3f51b5" class="mr-3"> </MudIcon>
+                    <MudText><strong>Información Principal</strong></MudText>
+                </div>
+            </TitleContent>
+            <ChildContent>
+                <MudGrid Spacing="2">
+                    <MudItem xs="12" sm="12" md="6">
+                        <MudTextField Margin="_margin" T="string" @bind-Value="Firstname" Label="Nombres" Variant="_variant"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6">
+                        <MudTextField Margin="_margin" T="string" @bind-Value="Lastname" Label="Apellidos" Variant="_variant"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6">
+                        <MudTextField Margin="_margin" T="string" @bind-Value="Email" Label="Email" Variant="_variant"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6">
+                        <MudTextField Margin="_margin" T="string" @bind-Value="Phone" Label="Telefono" Variant="_variant"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6">
+                        <MudTextField Margin="_margin" T="string" @bind-Value="Username" Label="Username" Variant="_variant"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6">
+                        <MudTextField Margin="_margin" InputType="InputType.Password" T="string" @bind-Value="Password" Label="Contraseña" Variant="_variant"></MudTextField>
+                    </MudItem>
+                </MudGrid>
+            </ChildContent>
+        </MudExpansionPanel>
+
+        <MudGrid>
+            <MudItem xs="12">
+                <MudCardActions>
+                    <MudButton @onclick="RegistrarEmpleado" ButtonType="ButtonType.Submit" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary" Class="m-auto">Registrar Empleado</MudButton>
+                </MudCardActions>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+</div>
+<div class="mx-auto" style="max-width: 1300px;">
+    <MudPaper Class="pa-10 ma-2" Elevation="2">
+        <MudText Typo="Typo.h6"><strong>Empleados Registrados</strong></MudText>
+        <MudTable Items="@_empleados" Hover="@true" Striped="@true" Dense="true">
+            <HeaderContent>
+                <MudTh>Nombre</MudTh>
+                <MudTh>Apellido </MudTh>
+                <MudTh>Email</MudTh>
+                <MudTh>Telefono</MudTh>
+                <MudTh>Estado</MudTh>
+                <MudTh>Editar</MudTh>
+                <MudTh>Deshabilitar</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd Class="@((context.Status) == 1 ? "" : "alert-danger")" DataLabel="Nombre">@((context.Firstname) == null ? "" : context.Firstname)</MudTd>
+                <MudTd Class="@((context.Status) == 1 ? "" : "alert-danger")" DataLabel="Apellido">@((context.Lastname) == null ? "" : context.Lastname)</MudTd>
+                <MudTd Class="@((context.Status) == 1 ? "" : "alert-danger")" DataLabel="Email">@((context.Email) == null ? "" : context.Email)</MudTd>
+                <MudTd Class="@((context.Status) == 1 ? "" : "alert-danger")" DataLabel="Telefono">@((context.Phone) == null ? "" : context.Phone)</MudTd>
+                <MudTd Class="@((context.Status) == 1 ? "" : "alert-danger")" DataLabel="Estado">@((context.Status) == 1 ? "Habilitado" : "Deshabilitado")</MudTd>
+                <MudTd DataLabel="Editar"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => Editar(context.Id)"></MudIconButton></MudTd>
+                <MudTd DataLabel="Deshabilitar"><MudIconButton Icon="@((context.Status) == 1 ? Icons.Material.Filled.Cancel :Icons.Material.Filled.Check)" OnClick="() => Deshabilitar(context.Id, context.Status.Value)"></MudIconButton></MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudPaper>
+</div>
 
 @code {
+    private readonly Margin _margin = Margin.Dense;
+    private readonly Variant _variant = Variant.Outlined;
+    private readonly Adornment _adornment = Adornment.End;
+
+    private List<Useraquito> _empleados;
+
+    public string Firstname { get; set; }
+    public string Lastname { get; set; }
+    public string Email { get; set; }
+    public string Phone { get; set; }
+    public int Status { get; set; }
+    public string Role { get; set; }
+    public string Password { get; set; }
+    public string Username { get; set; }
+
+    protected override async Task OnInitializedAsync() {
+        _empleados = await _http.GetFromJsonAsync<List<Useraquito>>("api/user/users");
+    }
+
+
+    async Task RegistrarEmpleado() {
+        if (!String.IsNullOrEmpty(Firstname) && !String.IsNullOrEmpty(Lastname) && !String.IsNullOrEmpty(Email) && !String.IsNullOrEmpty(Phone) && !String.IsNullOrEmpty(Username) && !String.IsNullOrEmpty(Password)) {
+            Useraquito _empleado = new() {
+                Firstname = Firstname,
+                Lastname = Lastname,
+                Email = Email,
+                Role = "User",
+                Phone = Phone,
+                Username = Username,
+                Password = Password,
+                Status = 1
+            };
+            var empleadoCreado = await _http.PostAsJsonAsync("api/user/register", _empleado);
+
+            if (empleadoCreado.IsSuccessStatusCode) {
+                Lastname = "";
+                Firstname = "";
+                Email = "";
+                Phone = "";
+                Password = "";
+                Username = "";
+                _snackbar.Add($"El empleado se ha registrado correctamente.", Severity.Success);
+                _empleados = await _http.GetFromJsonAsync<List<Useraquito>>("api/user/users");
+            } else {
+                _snackbar.Add($"Ha ocurrido un error, por favor revisar los datos.", Severity.Error);
+                Console.WriteLine(empleadoCreado.Content);
+            }
+        } else {
+            _snackbar.Add($"Debe de llenar todos los campos", Severity.Error);
+        }
+    }
+
+    async Task Editar(int Id) {
+        _navigationManager.NavigateTo($"empleados/editar/{Id.ToString()}");
+    }
+
+    async Task Deshabilitar(int Id, int status) {
+        string noDisponible = "0";
+        string disponible = "1";
+        string json;
+        HttpContent content;
+        switch (status) {
+            case 0:
+                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{disponible}\"" + "}]";
+                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+                var response = await _http.PatchAsync($"api/user/{Id}", content);
+
+                if (response.IsSuccessStatusCode) {
+                    _snackbar.Add($"Empleado habilitado", Severity.Success);
+                    _empleados = await _http.GetFromJsonAsync<List<Useraquito>>("api/user/users");
+                } else {
+                    _snackbar.Add($"Ha ocurrido un error al habilitar el empleado, intente de nuevo", Severity.Error);
+                }
+                break;
+            case 1:
+                json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{noDisponible}\"" + "}]";
+                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+                var response2 = await _http.PatchAsync($"api/user/{Id}", content);
+                if (response2.IsSuccessStatusCode) {
+                    _snackbar.Add($"Empleado deshabilitado", Severity.Warning);
+                    _empleados = await _http.GetFromJsonAsync<List<Useraquito>>("api/user/users");
+                } else {
+                    _snackbar.Add($"Ha ocurrido un error al deshabilitar al empleado, intente de nuevo", Severity.Error);
+                }
+                break;
+            default:
+                break;
+        }
+
+    }
 
 }

@@ -392,7 +392,7 @@
             Longitude = decimal.Parse(Longitud.ToString()),
             Status = 1
         };
-        var vehiculoCreado = await _http.PostAsJsonAsync("api/vehiculos", _vehicle);
+        var vehiculoCreado = await _http.PostAsJsonAsync("api/vehiculo", _vehicle);
 
         if (vehiculoCreado.IsSuccessStatusCode)
         {
@@ -409,11 +409,10 @@
             UrlImage = "";
             _snackbar.Add($"El vehiculo se ha registrado correctamente.", Severity.Success);
             _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
-
-
         }
         else
         {
+            Console.WriteLine(vehiculoCreado.Content.ReadAsStringAsync());
             _snackbar.Add($"Ha ocurrido un error, por favor revisar los datos.", Severity.Error);
         }
     }

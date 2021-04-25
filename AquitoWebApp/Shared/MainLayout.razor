@@ -1,16 +1,19 @@
 ﻿@inherits LayoutComponentBase
+@inject AuthenticationStateProvider _authStateProvider
 
 <MudLayout>
     <MudAppBar Elevation="1" Dense="true">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
-            OnClick="@ToggleDrawer" />
+                       OnClick="@ToggleDrawer" />
         <MudText Typo="Typo.h5" Class="ml-3">Aquito</MudText>
         <MudAppBarSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" />
+        <MudButton OnClick="Logout"  Variant="Variant.Outlined" Color="Color.Primary" Class="mr-2" StartIcon="@Icons.Material.Filled.Logout">
+            Logout
+        </MudButton>   
+        <MudAvatar Color="Color.Primary">A</MudAvatar>
     </MudAppBar>
     <MudDrawer @bind-Open="@open" Elevation="1" Variant="@DrawerVariant.Temporary">
-        <img
-            src="https://res.cloudinary.com/dlnyb1her/image/upload/v1618456469/aquito-imagenes/u0rd2z7ohcgwecqwdnf9.png" />
+        <img src="https://res.cloudinary.com/dlnyb1her/image/upload/v1618456469/aquito-imagenes/u0rd2z7ohcgwecqwdnf9.png" />
         <NavMenu />
     </MudDrawer>
     <MudMainContent>
@@ -34,6 +37,19 @@
 </style>
 
 @code{
+
+    UserAuth User;
+
+    protected override async Task OnInitializedAsync()
+    {
+        User = await (((AuthStateProvider)_authStateProvider).GetCurrentUser());
+    }
+
+    private async Task Logout()
+    {
+        await ((AuthStateProvider)_authStateProvider).UserLogout();
+    }
+
     bool open = false;
 
     void ToggleDrawer()

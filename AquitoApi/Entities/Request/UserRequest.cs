@@ -32,5 +32,8 @@ namespace AquitoApi.Entities.Request
         [Required(ErrorMessage = "Phone es requerido.")]
         [Phone(ErrorMessage ="Phone no es valido")]
         public string Phone { get; set; }
+        public int Status { get; set; }
+
+
     }
 }

@@ -54,8 +54,7 @@ namespace AquitoApi.Controllers {
         }
 
         //Metodo Put para editar un registro completo
-        protected async Task<ActionResult> Put<TCreacion, TEntidad>
-            (int id, TCreacion creacionDTO) where TEntidad : class, IId {
+        protected async Task<ActionResult> Put<TCreacion, TEntidad> (int id, TCreacion creacionDTO) where TEntidad : class, IId {
             var entidad = mapper.Map<TEntidad>(creacionDTO);
             entidad.Id = id;
             context.Entry(entidad).State = EntityState.Modified;

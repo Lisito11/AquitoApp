@@ -53,33 +53,33 @@
 
 <div class="mx-auto" style="max-width: 1300px;">
     <MudPaper Class="pa-10 ma-2" Elevation="2">
-        <MudText Typo="Typo.h6"><strong>Clientes que deben</strong></MudText>
-
-
+        <MudText Typo="Typo.h6" Class="mb-2"><strong>Clientes que deben</strong></MudText>
 
         @*TODO LOS COMPONENTES DEL REPORTE AQUI ADENTRO (ROY)*@
-    <MudTable Items="@_debtorsClients" Hover="true" SortLabel="Sort By">
-        <HeaderContent>
+        @if (_debtorsClients != null)
+        {
+            <MudTable Items="@_debtorsClients" Hover="true" Striped SortLabel="Ordenar">
+                <HeaderContent>
+                    <MudTh><MudTableSortLabel SortBy="new Func<ClientTableViewModel, object>(x=>x.Id)">Id</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel SortBy="new Func<ClientTableViewModel, object>(x=>x.Cedula)">Cedula</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel SortBy="new Func<ClientTableViewModel, object>(x=>x.Firstname)">Nombre</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel SortBy="new Func<ClientTableViewModel, object>(x=>x.Lastname)">Apellido</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel SortBy="new Func<ClientTableViewModel, object>(x=>x.MontoTotal)">Monto Total Que Debe</MudTableSortLabel></MudTh>
+                </HeaderContent>
 
-            <MudTh><MudTableSortLabel SortBy="new Func<Client, object>(x=>x.Id)">Id</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<Client, object>(x=>x.Cedula)">Cedula</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<Client, object>(x=>x.Firstname)">Nombre</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<Client, object>(x=>x.Lastname)">Apellido</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<Client, object>(x=>x.Reservations.First().Startdate)">Monto</MudTableSortLabel></MudTh>
-        </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Nr">@context.Id</MudTd>
+                    <MudTd DataLabel="Cedula">@context.Cedula</MudTd>
+                    <MudTd DataLabel="Nombre">@context.Firstname</MudTd>
+                    <MudTd DataLabel="Apellido">@context.Lastname</MudTd>
+                    <MudTd DataLabel="Monto"> $ @(Math.Round(context.MontoTotal)), 2)</MudTd>
+                </RowTemplate>
 
-        <RowTemplate>
-            <MudTd DataLabel="Nr">@context.Id</MudTd>
-            <MudTd DataLabel="Cedula">@context.Cedula</MudTd>
-            <MudTd DataLabel="Nombre">@context.Firstname</MudTd>
-            <MudTd DataLabel="Apellido">@context.Lastname</MudTd>
-            <MudTd DataLabel="Monto">@context.Reservations</MudTd>
-        </RowTemplate>
-
-        <PagerContent>
-            <MudTablePager PageSizeOptions="new int[]{50, 100}" />
-        </PagerContent>
-    </MudTable>
+                <PagerContent>
+                    <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+                </PagerContent>
+            </MudTable>
+        }
 
 
 
@@ -189,38 +189,38 @@
 
 
 @code {
-        string modoName = "Modo Mapa";
-        bool modoMapa = false;
-        int zoom = 8;
-        bool show = false;
-        int id;
-        int citada = 0;
-        Vehicle elVehiculo;
-        const int pendientePado = 2;
-        const int pendienteNoPagado = 1;
-        private List<Reservation> citas;
-        private List<Vehicle> vehiculos = new List<Vehicle>();
+    string modoName = "Modo Mapa";
+    bool modoMapa = false;
+    int zoom = 8;
+    bool show = false;
+    int id;
+    int citada = 0;
+    Vehicle elVehiculo;
+    const int pendientePado = 2;
+    const int pendienteNoPagado = 1;
+    private List<Reservation> citas;
+    private List<Vehicle> vehiculos = new List<Vehicle>();
 
 
-        DateRange _dateRange = new DateRange(DateTime.Now.Date, DateTime.Now.AddDays(1).Date);
-        MyDateRange range;
-        Vehicle vehiculoSeleccionado = new Vehicle();
-        private List<Vehicle> _vehicles;
-        private List<Vehicle> _vehiclesDisponible;
-        private List<Reservation> _reservaciones;
-        private IEnumerable<Client> _debtorsClients; // Clientes deudores
-        public string IdVehiculoSeleccionado { get; set; }
+    DateRange _dateRange = new DateRange(DateTime.Now.Date, DateTime.Now.AddDays(1).Date);
+    MyDateRange range;
+    Vehicle vehiculoSeleccionado = new Vehicle();
+    private List<Vehicle> _vehicles;
+    private List<Vehicle> _vehiclesDisponible;
+    private List<Reservation> _reservaciones;
+    private IEnumerable<ClientTableViewModel> _debtorsClients; // Clientes deudores
+    public string IdVehiculoSeleccionado { get; set; }
 
-        protected override async Task OnInitializedAsync() {
+    protected override async Task OnInitializedAsync() {
 
-            Task[] tasks = new Task[]
-            {
+        Task[] tasks = new Task[]
+        {
                 GetAllDebTorsClientsAsync(),
                 GetVehicles()
-             };
+         };
 
 
-            await Task.WhenAll(tasks);
+        await Task.WhenAll(tasks);
 
     }
 
@@ -233,8 +233,18 @@
 
     private async Task GetAllDebTorsClientsAsync()
     {
-        _debtorsClients = await _http.GetFromJsonAsync<List<Client>>("api/client/deben")
-           ?? Array.Empty<Client>().AsEnumerable();
+        List<Client> clients = await _http.GetFromJsonAsync<List<Client>>("api/client/deben");
+
+
+        _debtorsClients = clients.Select(c => new ClientTableViewModel
+        {
+            Id = c.Id,
+            Cedula = c.Cedula,
+            Firstname = c.Firstname,
+            Lastname = c.Lastname,
+            MontoTotal = c.Reservations.Sum(r => r.Totalpay)
+        });
+
     }
 
 

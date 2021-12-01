@@ -9,7 +9,7 @@
 <MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
 
 
-<MudExpansionPanel Style="max-width: 1000px" IsExpanded="true">
+<MudExpansionPanel Style="max-width: 1000px" IsExpanded="false">
     <TitleContent>
         <div class="d-flex pl-5">
             <MudIcon Icon="@Icons.Material.Outlined.CalendarToday" Style=" color: #3f51b5" class="mr-3"> </MudIcon>
@@ -191,6 +191,22 @@
     </ChildContent>
 </MudExpansionPanel>
 
+<MudExpansionPanel Style="maxmax-width: 1000px" IsExpanded="false">
+    <TitleContent>
+        <div class="d-flex pl-5">
+            <MudIcon Icon="@Icons.Outlined.LibraryBooks" Style=" color: #3f51b5" class="mr-3"> </MudIcon>
+            <MudText><strong>Reportes Fiscales</strong></MudText>
+        </div>
+    </TitleContent>
+    <ChildContent>
+        <MudPaper>
+    <MudList Clickable="true">
+        <MudListItem Text="Factura 606 (Compras)" Icon="@Icons.Outlined.Assignment" />
+        <MudListItem Text="Factura 607 (Ventas)" Icon="@Icons.Outlined.Assignment" />
+    </MudList>
+</MudPaper>
+    </ChildContent>
+</MudExpansionPanel>
 
 
 

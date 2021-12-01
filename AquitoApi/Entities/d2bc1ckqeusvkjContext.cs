@@ -16,6 +16,10 @@ namespace AquitoApi.Entities {
         public virtual DbSet<Typevehicle> Typevehicles { get; set; }
         public virtual DbSet<Useraquito> Useraquitos { get; set; }
         public virtual DbSet<Vehicle> Vehicles { get; set; }
+        public virtual DbSet<Factura606> Factura606s { get; set; }
+        public virtual DbSet<Factura607> Factura607s { get; set; }
+        public virtual DbSet<FacturaDetalle606> FacturaDetalles606s { get; set; }
+        public virtual DbSet<FacturaDetalle607> FacturaDetalles607s { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
 
@@ -209,6 +213,115 @@ namespace AquitoApi.Entities {
                     .HasForeignKey(d => d.Useraquitoid)
                     .HasConstraintName("fk_useraquito_vehicle");
             });
+
+
+            modelBuilder.Entity<Factura606>(entity => {
+                entity.ToTable("factura606");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("factura606id")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Age).HasColumnName("age");
+
+                entity.Property(e => e.Mes).HasColumnName("mes");
+
+                entity.Property(e => e.Identification).HasColumnName("identification");
+
+                entity.Property(e => e.EmisionDate)
+                    .HasColumnType("date")
+                    .HasColumnName("emisiondate");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+            
+            });
+
+            modelBuilder.Entity<Factura607>(entity => {
+                entity.ToTable("factura607");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("factura607id")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Age).HasColumnName("age");
+
+                entity.Property(e => e.Mes).HasColumnName("mes");
+
+                entity.Property(e => e.Identification).HasColumnName("identification");
+
+                entity.Property(e => e.EmisionDate)
+                    .HasColumnType("date")
+                    .HasColumnName("emisiondate");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+            });
+
+            modelBuilder.Entity<FacturaDetalle606>(entity => {
+                entity.ToTable("detallefactura606id");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("factura606id")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Comprobante).HasColumnName("comprobantefiscal");
+
+                entity.Property(e => e.ComprobanteDate)
+                    .HasColumnType("date")
+                    .HasColumnName("datecomprobante");
+
+                entity.Property(e => e.TypeVenta)
+                    .HasMaxLength(300)
+                    .HasColumnName("tipoventa");
+
+                entity.Property(e => e.Monto).HasColumnName("monto");
+
+                entity.Property(e => e.Itbis).HasColumnName("itbis");
+
+                entity.Property(e => e.FormaPago)
+                   .HasMaxLength(300)
+                   .HasColumnName("formapago");
+
+                entity.Property(e => e.FechaPago)
+                   .HasColumnType("date")
+                   .HasColumnName("fechapago");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.HasOne(d => d.Factura606)
+                    .WithMany(p => p.FacturasDetalle606)
+                    .HasForeignKey(d => d.Factura606id)
+                    .HasConstraintName("fk_factura606_detallefactura606");
+            });
+
+            modelBuilder.Entity<FacturaDetalle607>(entity => {
+                entity.ToTable("detallefactura607id");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("factura607id")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Comprobante).HasColumnName("comprobantefiscal");
+
+                entity.Property(e => e.ComprobanteDate)
+                    .HasColumnType("date")
+                    .HasColumnName("datecomprobante");
+
+                entity.Property(e => e.TypeIncome)
+                    .HasMaxLength(300)
+                    .HasColumnName("tipoingreso");
+
+                entity.Property(e => e.Monto).HasColumnName("monto");
+
+                entity.Property(e => e.Itbis).HasColumnName("itbis");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.HasOne(d => d.Factura607)
+                    .WithMany(p => p.FacturasDetalle607)
+                    .HasForeignKey(d => d.Factura607id)
+                    .HasConstraintName("fk_factura607_detallefactura607");
+            });
+
 
             OnModelCreatingPartial(modelBuilder);
         }

@@ -289,7 +289,9 @@ namespace AquitoApi.Entities {
 
                 entity.HasOne(d => d.Factura606)
                     .WithMany(p => p.FacturasDetalle606)
-                    .HasForeignKey(d => d.Factura606id)
+                    
+                    .HasForeignKey(d => d.factura606id)
+                    
                     .HasConstraintName("fk_factura606_detallefactura606");
             });
 
@@ -318,7 +320,7 @@ namespace AquitoApi.Entities {
 
                 entity.HasOne(d => d.Factura607)
                     .WithMany(p => p.FacturasDetalle607)
-                    .HasForeignKey(d => d.Factura607id)
+                    .HasForeignKey(d => d.factura607id)
                     .HasConstraintName("fk_factura607_detallefactura607");
             });
 

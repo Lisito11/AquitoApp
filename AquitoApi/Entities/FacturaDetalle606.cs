@@ -13,7 +13,7 @@ namespace AquitoApi.Entities
         public decimal? Monto { get; set; }
         public decimal? Itbis { get; set; }
         public int? Status { get; set; }
-        public int? Factura606id { get; set; }
+        public int? factura606id { get; set; }
         public virtual Factura606 Factura606 { get; set; }
 
     }

@@ -1,4 +1,6 @@
-﻿namespace AquitoApi.DTOs.Facturas607
+﻿using System;
+
+namespace AquitoApi.DTOs.Facturas607
 {
     public class FacturaDetalle607CreacionDTO
     {

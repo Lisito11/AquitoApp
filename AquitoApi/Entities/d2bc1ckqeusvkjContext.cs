@@ -257,10 +257,10 @@ namespace AquitoApi.Entities {
             });
 
             modelBuilder.Entity<FacturaDetalle606>(entity => {
-                entity.ToTable("detallefactura606id");
+                entity.ToTable("detallefactura606");
 
                 entity.Property(e => e.Id)
-                    .HasColumnName("factura606id")
+                    .HasColumnName("detallefactura606id")
                     .UseIdentityAlwaysColumn();
 
                 entity.Property(e => e.Comprobante).HasColumnName("comprobantefiscal");
@@ -294,10 +294,10 @@ namespace AquitoApi.Entities {
             });
 
             modelBuilder.Entity<FacturaDetalle607>(entity => {
-                entity.ToTable("detallefactura607id");
+                entity.ToTable("detallefactura607");
 
                 entity.Property(e => e.Id)
-                    .HasColumnName("factura607id")
+                    .HasColumnName("detallefactura607id")
                     .UseIdentityAlwaysColumn();
 
                 entity.Property(e => e.Comprobante).HasColumnName("comprobantefiscal");

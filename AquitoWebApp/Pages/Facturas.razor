@@ -11,10 +11,170 @@
 @{
     if (Id == "6")
     {
-       <MudText Typo="Typo.h6" >Factura 606</MudText>
-        
-    }else if(Id == "7"){
-       <MudText Typo="Typo.h6" >Factura 607</MudText>
+        //FORMULARIO
+        <div class="mx-auto" style="max-width: 1300px;">
+            <MudPaper Class="pa-10 ma-2" Elevation="2">
+                <MudGrid Spacing="2">
+                    <MudItem xs="12" sm="12" md="4">
+                        <MudSelect T="string" Label="Tipo de Bienes y Servicios" Variant="_variant" Margin="_margin" Placeholder="Elige un tipo de bien o servicio" @bind-Value="TypeVenta">                     
+                            @foreach (var bien in _typeBienesServicios)
+                            {
+                                <MudSelectItem Value="@bien"> @bien </MudSelectItem>
+                            }                       
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="4">
+                        <MudTextField Margin="_margin" T="string" @bind-Value="Comprobante" Label="Comprobante Fiscal" Variant="_variant" HelperText="Ingrese el numero del comprobante fiscal"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="4">
+                        <MudSelect T="string" Label="Forma de pago" Variant="_variant" Margin="_margin" Placeholder="Elige un tipo de pago" @bind-Value="FormaPago">                     
+                            @foreach (var pago in typePago)
+                            {
+                                <MudSelectItem Value="@pago"> @pago </MudSelectItem>
+                            }                       
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="12" sm="6" md="6">
+                        <MudDatePicker Label="Fecha Comprobante Fiscal" Editable="true" @bind-Date="ComprobanteDate" Placeholder="Seleccione la fecha del comprobante" />
+                    </MudItem>
+
+                    <MudItem xs="12" sm="6" md="6">
+                        <MudDatePicker Label="Fecha Pago" Editable="true" @bind-Date="FechaPago" Placeholder="Seleccione la fecha de pago" />
+                    </MudItem>
+                    <MudItem xs="12" sm="6" md="6">
+                        <MudTextField @bind-Value="Monto"
+                                      Label="Monto Facturado"
+                                      Variant="_variant"
+                                      Adornment="_adornment"
+                                      AdornmentIcon="@Icons.Material.Filled.AttachMoney"
+                                      Margin="_margin">
+                        </MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="6" md="6">
+                        <MudTextField @bind-Value="Itbis"
+                                      Label="ITBIS"
+                                      Variant="_variant"
+                                      Adornment="_adornment"
+                                      AdornmentIcon="@Icons.Material.Filled.AttachMoney"
+                                      Margin="_margin">
+                        </MudTextField>
+                    </MudItem>
+                    <MudGrid>
+                        <MudItem xs="12">
+                            <MudCardActions>
+                                <MudButton @onclick="RegistrarDetalleFactura" ButtonType="ButtonType.Submit" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary" Class="m-auto">Crear registro</MudButton>
+                            </MudCardActions>
+                        </MudItem>
+                    </MudGrid>
+                </MudGrid>
+            </MudPaper>
+        </div>
+        //REGISTROS
+        <div class="mx-auto" style="max-width: 1300px;">
+            <MudPaper Class="pa-10 ma-2" Elevation="2">
+                <MudText Typo="Typo.h6"><strong>Factura 606</strong></MudText>
+                <MudTable Items="@detallefacturas606" Hover="@true" Striped="@true" Dense="true">
+                    <HeaderContent>
+                        <MudTh>Tipo Bienes y Servicios Comprados</MudTh>
+                        <MudTh>NCF</MudTh>
+                        <MudTh>Fecha Comprobante</MudTh>
+                        <MudTh>Forma Pago</MudTh>              
+                        <MudTh>Fecha Pago</MudTh>              
+                        <MudTh>Monto Facturado</MudTh>              
+                        <MudTh>ITBIS Facturado</MudTh>              
+                        <MudTh>Editar</MudTh>              
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Tipo Bienes y Servicios Comprados">@((context.TypeVenta) == null ? "" : context.TypeVenta)</MudTd>
+                        <MudTd DataLabel="NCF">@((context.Comprobante) == null ? "" : context.Comprobante)</MudTd>
+                        <MudTd DataLabel="Fecha Comprobante">@((context.ComprobanteDate) == null ? "" : context.ComprobanteDate.Value.ToString("yyyy-MM-dd"))</MudTd>
+                        <MudTd DataLabel="Forma Pago">@((context.FormaPago) == null ? "" : context.FormaPago)</MudTd>
+                        <MudTd DataLabel="Fecha Pago">@((context.FechaPago) == null ? "" : context.FechaPago.Value.ToString("yyyy-MM-dd"))</MudTd>
+                        <MudTd DataLabel="Monto Facturado">@((context.Monto) == null ? "" : context.Monto)</MudTd>
+                        <MudTd DataLabel="ITBIS Facturado">@((context.Itbis) == null ? "" : context.Itbis)</MudTd>
+                        <MudTd DataLabel="Editar"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => Editar(context.Id)"></MudIconButton></MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudPaper>
+        </div>
+    } else if (Id == "7") {
+        //FORMULARIO
+        <div class="mx-auto" style="max-width: 1300px;">
+            <MudPaper Class="pa-10 ma-2" Elevation="2">
+                <MudGrid Spacing="2">
+                    <MudItem xs="12" sm="12" md="6">
+                        <MudSelect T="string" Label="Tipo de Ingreso" Variant="_variant" Margin="_margin" Placeholder="Elige un tipo de ingreso" @bind-Value="TypeIncome">                     
+                            @foreach (var ingreso in typeIngreso)
+                            {
+                                <MudSelectItem Value="@ingreso"> @ingreso </MudSelectItem>
+                            }                       
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6">
+                        <MudTextField Margin="_margin" T="string" @bind-Value="Comprobante" Label="Comprobante Fiscal" Variant="_variant" HelperText="Ingrese el numero del comprobante fiscal"></MudTextField>
+                    </MudItem>
+
+                    <MudItem xs="12" sm="12" md="12">
+                        <MudDatePicker Label="Fecha Comprobante Fiscal" Editable="true" @bind-Date="ComprobanteDate" Placeholder="Seleccione la fecha del comprobante" />
+                    </MudItem>
+
+
+                    <MudItem xs="12" sm="6" md="6">
+                        <MudTextField @bind-Value="Monto"
+                                      Label="Monto Facturado"
+                                      Variant="_variant"
+                                      Adornment="_adornment"
+                                      AdornmentIcon="@Icons.Material.Filled.AttachMoney"
+                                      Margin="_margin">
+                        </MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="6" md="6">
+                        <MudTextField @bind-Value="Itbis"
+                                      Label="ITBIS"
+                                      Variant="_variant"
+                                      Adornment="_adornment"
+                                      AdornmentIcon="@Icons.Material.Filled.AttachMoney"
+                                      Margin="_margin">
+                        </MudTextField>
+                    </MudItem>
+                    <MudGrid>
+                        <MudItem xs="12">
+                            @if (editando) {
+                    <MudButton @onclick="EditarTipo" ButtonType="ButtonType.Submit" FullWidth="true" Variant="Variant.Filled" Color="Color.Secondary" Class="m-auto">Editar registro</MudButton>
+                    } else {
+                        <MudButton @onclick="RegistrarDetalleFactura" ButtonType="ButtonType.Submit" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary" Class="m-auto">Crear registro</MudButton>
+                    }
+                        </MudItem>
+                    </MudGrid>
+                </MudGrid>
+            </MudPaper>
+        </div>
+        //REGISTROS
+        <div class="mx-auto" style="max-width: 1300px;">
+            <MudPaper Class="pa-10 ma-2" Elevation="2">
+                <MudText Typo="Typo.h6"><strong>Factura 607</strong></MudText>
+                <MudTable Items="@detallefacturas607" Hover="@true" Striped="@true" Dense="true">
+                    <HeaderContent>
+                        <MudTh>Número Comprobante Fiscal</MudTh>
+                        <MudTh>Fecha Comprobante</MudTh>
+                        <MudTh>Tipo de Ingreso</MudTh>              
+                        <MudTh>Monto Facturado</MudTh>              
+                        <MudTh>ITBIS Facturado</MudTh>              
+                        <MudTh>Editar</MudTh>              
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="NCF">@((context.Comprobante) == null ? "" : context.Comprobante)</MudTd>
+                        <MudTd DataLabel="Fecha Comprobante">@((context.ComprobanteDate) == null ? "" : context.ComprobanteDate.Value.ToString("yyyy-MM-dd"))</MudTd>
+                        <MudTd DataLabel="Tipo de Ingreso">@((context.TypeIncome) == null ? "" : context.TypeIncome)</MudTd>
+                        <MudTd DataLabel="Monto Facturado">@((context.Monto) == null ? "" : context.Monto)</MudTd>
+                        <MudTd DataLabel="ITBIS Facturado">@((context.Itbis) == null ? "" : context.Itbis)</MudTd>
+                        <MudTd DataLabel="Editar"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => Editar(context.Id)"></MudIconButton></MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudPaper>
+            <MudButton @onclick="DescargarArchivo"  FullWidth="true" Variant="Variant.Outlined" Color="Color.Primary" Class="m-auto">Descargar Factura</MudButton>
+
+        </div>
     }
 }
 
@@ -29,19 +189,57 @@
     private readonly Margin _margin = Margin.Dense;
     private readonly Variant _variant = Variant.Outlined;
     private readonly Adornment _adornment = Adornment.End;
+    bool editando = false;
+    int editFT;
+
+    List<string> _typeBienesServicios = new List<string>() {
+        "01-GASTOS DE PERSONAL",
+        "02-GASTOS POR TRABAJOS, SUMINISTROS Y SERVICIOS",
+        "03-ARRENDAMIENTOS",
+        "04-GASTOS DE ACTIVOS FIJO",
+        "05-GASTOS DE REPRESENTACION",
+        "06-OTRAS DEDUCCIONES ADMITIDAS",
+        "07-GASTOS FINANCIEROS",
+        "08-GASTOS EXTRAORDINARIOS",
+        "09-COMPRAS Y GASTOS QUE FORMARAN PARTE DEL COSTO DE VENTA",
+        "10 -ADQUISICIONES DE ACTIVOS",
+        "11- GASTOS DE SEGUROS",
+    };
+
+    List<string> typePago = new List<string>() {
+        "01 - EFECTIVO",
+        "02 - CHEQUES/TRANSFERENCIAS/DEPÓSITO",
+        "03 - TARJETA CRÉDITO/DÉBITO",
+        "04 - COMPRA A CREDITO",
+        "05 -  PERMUTA",
+        "06 - NOTA DE CREDITO",
+        "07 - MIXTO"
+    };
+
+    List<string> typeIngreso = new List<string>() {
+        "01 - Ingresos por Operaciones (No Financieros)",
+        "02 - Ingresos Financieros",
+        "03 - Ingresos Extraordinarios",
+        "04 - Ingresos por Arrendamientos",
+        "05 - Ingresos por Venta de Activo Depreciable",
+        "06 - Otros Ingresos"
+    };
 
     Factura1 factura;
     List<DetalleFactura606> detallefacturas606;
     List<DetalleFactura607> detallefacturas607;
 
+    DetalleFactura607 editdetallefacturas607;
+    DetalleFactura606 editdetallefacturas606;
+
     public string Comprobante { get; set; }
-    public DateTime? ComprobanteDate { get; set; }
+    public DateTime? ComprobanteDate { get; set; } = DateTime.Today;
     public decimal? Monto { get; set; }
     public decimal? Itbis { get; set; }
 
     //Factura606
     public int? Factura606id { get; set; }
-    public DateTime? FechaPago { get; set; }
+    public DateTime? FechaPago { get; set; } = DateTime.Today;
     public string FormaPago { get; set; }
     public string TypeVenta { get; set; }
 
@@ -68,16 +266,16 @@
             if (Id == "6")
             {
                 DetalleFactura606 detalleft606 = new() {
-                Comprobante = Comprobante,
-                ComprobanteDate = ComprobanteDate,
-                FechaPago = FechaPago,
-                FormaPago = FormaPago,
-                TypeVenta = TypeVenta,
-                Monto = Monto,
-                Itbis = Itbis,
-                Factura606id = int.Parse(Ft),
-                Status = 1
-            };
+                        Comprobante = Comprobante,
+                        ComprobanteDate = ComprobanteDate,
+                        FechaPago = FechaPago,
+                        FormaPago = FormaPago,
+                        TypeVenta = TypeVenta,
+                        Monto = Monto,
+                        Itbis = Itbis,
+                        Factura606id = int.Parse(Ft),
+                        Status = 1
+                    };
 
                 var ft606 = await _http.PostAsJsonAsync("api/detallefactura606", detalleft606);
 
@@ -94,16 +292,16 @@
                     _snackbar.Add($"Ha ocurrido un error, por favor revisar los datos.", Severity.Error);
                 }
             }
-            else if (Id == "7"){
+            else if (Id == "7") {
                 DetalleFactura607 detalleft607 = new() {
-                Comprobante = Comprobante,
-                ComprobanteDate = ComprobanteDate,
-                Monto = Monto,
-                Itbis = Itbis,
-                TypeIncome = TypeIncome,
-                Factura607id = int.Parse(Ft),
-                Status = 1
-            };
+                        Comprobante = Comprobante,
+                        ComprobanteDate = ComprobanteDate,
+                        Monto = Monto,
+                        Itbis = Itbis,
+                        TypeIncome = TypeIncome,
+                        Factura607id = int.Parse(Ft),
+                        Status = 1
+                    };
 
                 var ft607 = await _http.PostAsJsonAsync("api/detallefactura607", detalleft607);
 
@@ -113,30 +311,137 @@
                     Itbis = 0;
                     TypeIncome = "";
                     _snackbar.Add($"Se ha agregado el registro correctamente.", Severity.Success);
-                detallefacturas607 = await _http.GetFromJsonAsync<List<DetalleFactura607>>($"api/detallefactura607/main/{Ft}");
+                    detallefacturas607 = await _http.GetFromJsonAsync<List<DetalleFactura607>>($"api/detallefactura607/main/{Ft}");
 
-            } else {
-                _snackbar.Add($"Ha ocurrido un error, por favor revisar los datos.", Severity.Error);
+                } else {
+                    _snackbar.Add($"Ha ocurrido un error, por favor revisar los datos.", Severity.Error);
                 }
 
             }
 
-            
-        }
 
+        }
 
     }
 
+    async Task Editar(int Idft) {
+
+        if  (Id == "6") { 
+            DetalleFactura606 detalleFactura = await _http.GetFromJsonAsync<DetalleFactura606>($"api/detallefactura606/{Idft}");
+            Comprobante = detalleFactura.Comprobante;
+            ComprobanteDate  = detalleFactura.ComprobanteDate;
+            Monto = detalleFactura.Monto;
+            Itbis = detalleFactura.Itbis;
+            FechaPago = detalleFactura.FechaPago;
+            FormaPago = detalleFactura.FormaPago;
+            TypeVenta = detalleFactura.TypeVenta;
+
+        } else if (Id == "7")
+        {
+            DetalleFactura607 detalleFactura = await _http.GetFromJsonAsync<DetalleFactura607>($"api/detallefactura607/{Idft}");
+            Comprobante = detalleFactura.Comprobante;
+            ComprobanteDate  = detalleFactura.ComprobanteDate;
+            Monto = detalleFactura.Monto;
+            Itbis = detalleFactura.Itbis;
+            TypeIncome = detalleFactura.TypeIncome;
+        }
+        editando = true;
+        editFT = Idft;
+        StateHasChanged();
+    }
+
+    async Task EditarTipo() {
+
+        if (!String.IsNullOrEmpty(Comprobante))
+        {
+
+            string json;
+            HttpContent content;
+
+            if (Id == "6") { 
+
+                DetalleFactura606 detalleft606 = new() {
+                        Comprobante = Comprobante,
+                        ComprobanteDate = ComprobanteDate,
+                        FechaPago = FechaPago,
+                        FormaPago = FormaPago,
+                        TypeVenta = TypeVenta,
+                        Monto = Monto,
+                        Itbis = Itbis,
+                    };
+                json = "[{\"op\": \"replace\",\"path\": \"/comprobante\",\"value\":" + $"\"{detalleft606.Comprobante}\"" + "}," +
+                    "{\"op\": \"replace\",\"path\": \"/comprobanteDate\",\"value\":" + $"\"{detalleft606.ComprobanteDate}\"" + "}," +
+                    "{\"op\": \"replace\",\"path\": \"/fechaPago\",\"value\":" + $"\"{detalleft606.FechaPago}\"" + "}," +
+                    "{\"op\": \"replace\",\"path\": \"/formaPago\",\"value\":" + $"\"{detalleft606.FormaPago}\"" + "}," +
+                    "{\"op\": \"replace\",\"path\": \"/monto\",\"value\":" + $"\"{detalleft606.Monto}\"" + "}," +
+                    "{\"op\": \"replace\",\"path\": \"/itbis\",\"value\":" + $"\"{detalleft606.Itbis}\"" + "}," +
+                    "{\"op\": \"replace\",\"path\": \"/typeVenta\",\"value\":" + $"\"{detalleft606.TypeVenta}\"" + "}]";
+
+                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+
+                var response = await _http.PatchAsync($"api/detallefactura606/{editFT}", content);
+
+                if (response.IsSuccessStatusCode) {
+                    _snackbar.Add($"Registro editado correctamente", Severity.Success);
+                    detallefacturas606 = await _http.GetFromJsonAsync<List<DetalleFactura606>>($"api/detallefactura606/main/{Ft}");
+                    Comprobante = "";
+                    ComprobanteDate = DateTime.Today;;
+                    FechaPago = DateTime.Today;
+                    FormaPago = "";
+                    TypeVenta = "";
+                    Monto = 0;
+                    Itbis = 0;
+
+                } else {
+                    _snackbar.Add($"Ha ocurrido un error al editar el registro, intente de nuevo", Severity.Error);
+                }
+
+            } else if (Id == "7") { 
+                DetalleFactura607 detalleft607 = new() {
+                        Comprobante = Comprobante,
+                        ComprobanteDate = ComprobanteDate,
+                        Monto = Monto,
+                        Itbis = Itbis,
+                        TypeIncome = TypeIncome,
+                    };
 
 
-    
+
+                json = "[{\"op\": \"replace\",\"path\": \"/comprobante\",\"value\":" + $"\"{detalleft607.Comprobante}\"" + "}," +
+                        "{\"op\": \"replace\",\"path\": \"/comprobanteDate\",\"value\":" + $"\"{detalleft607.ComprobanteDate}\"" + "}," +
+                        "{\"op\": \"replace\",\"path\": \"/monto\",\"value\":" + $"\"{detalleft607.Monto}\"" + "}," +
+                        "{\"op\": \"replace\",\"path\": \"/itbis\",\"value\":" + $"\"{detalleft607.Itbis}\"" + "}," +
+                        "{\"op\": \"replace\",\"path\": \"/typeIncome\",\"value\":" + $"\"{detalleft607.TypeIncome}\"" + "}]";
+
+                content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+
+                var response = await _http.PatchAsync($"api/detallefactura607/{editFT}", content);
+
+                if (response.IsSuccessStatusCode) {
+                    _snackbar.Add($"Registro editado correctamente", Severity.Success);
+                    detallefacturas607 = await _http.GetFromJsonAsync<List<DetalleFactura607>>($"api/detallefactura607/main/{Ft}");
+
+                    Comprobante = "";
+                    ComprobanteDate = DateTime.Today;
+                    TypeIncome = "";
+                    Monto = 0;
+                    Itbis = 0;
+
+                } else {
+                    _snackbar.Add($"Ha ocurrido un error al editar el registro, intente de nuevo", Severity.Error);
+                }
 
 
+            }
+        }else {
+            _snackbar.Add($"Debe de llenar todos los campos", Severity.Error);
+        }
+        editando = false;
+        StateHasChanged();
+    }
 
-
-
-
-
+    async Task DescargarArchivo() { 
+    }
 
 
     //CLASES
@@ -152,6 +457,7 @@
     }
     public class DetalleFactura606
     {
+        public int Id { get; set; }
         public string Comprobante { get; set; }
         public DateTime? ComprobanteDate { get; set; }
         public DateTime? FechaPago { get; set; }
@@ -164,6 +470,7 @@
     }
     public class DetalleFactura607
     {
+        public int Id { get; set; }
         public string Comprobante { get; set; }
         public DateTime? ComprobanteDate { get; set; }
         public string TypeIncome { get; set; }

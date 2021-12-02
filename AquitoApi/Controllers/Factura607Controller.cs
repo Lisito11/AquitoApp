@@ -28,6 +28,8 @@ namespace AquitoApi.Controllers
             return mapper.Map<List<Factura607DTO>>(facturas);
         }
 
+        
+
         [HttpGet("{id:int}", Name = "obtenerFactura607")]
         public async Task<ActionResult<Factura607DTO>> Get(int id)
         {

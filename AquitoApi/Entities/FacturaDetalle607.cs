@@ -6,7 +6,7 @@ namespace AquitoApi.Entities
     {
 
         public int Id { get; set; }
-        public int? Comprobante { get; set; }
+        public string Comprobante { get; set; }
         public DateTime? ComprobanteDate { get; set; }
         public string TypeIncome { get; set; }
         public decimal? Monto { get; set; }

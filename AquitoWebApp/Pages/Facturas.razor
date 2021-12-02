@@ -1,0 +1,74 @@
+﻿@page "/reportes/facturas/{id}/{ft}"
+@attribute [Authorize]
+@inject HttpClient _http
+@inject ISnackbar _snackbar
+@inject NavigationManager _navigationManager
+@using System.Linq
+
+<h1 class="text-center">Factura</h1>
+<MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
+
+@{
+    if (Id == "6")
+    {
+       <MudText Typo="Typo.h6" >Factura 606</MudText>
+        
+    }else if(Id == "7"){
+       <MudText Typo="Typo.h6" >Factura 606</MudText>
+    }
+}
+
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    [Parameter]
+    public string Ft { get; set; }
+
+    private readonly Margin _margin = Margin.Dense;
+    private readonly Variant _variant = Variant.Outlined;
+    private readonly Adornment _adornment = Adornment.End;
+    Factura factura;
+    List<DetalleFactura606> detallefacturas606;
+    List<DetalleFactura607> detallefacturas607;
+
+    protected override async Task OnInitializedAsync() {
+        factura = await _http.GetFromJsonAsync<Factura>($"api/factura60{Id}/{Ft}");
+        if (Id == "6")
+        {
+            detallefacturas606 = await _http.GetFromJsonAsync<List<DetalleFactura606>>($"api/detallefactura60{Id}/{Ft}");
+        }
+    }
+    public class Factura
+    {
+        public int Id { get; set; }
+        public string Age { get; set; }
+        public int? Mes { get; set; }
+        public string Identification { get; set; }
+        public int? Status { get; set; }
+        public DateTime? EmisionDate { get; set; }
+    }
+    public class DetalleFactura606
+    {
+        public int? Comprobante { get; set; }
+        public DateTime? ComprobanteDate { get; set; }
+        public DateTime? FechaPago { get; set; }
+        public string FormaPago { get; set; }
+        public string TypeVenta { get; set; }
+        public decimal? Monto { get; set; }
+        public decimal? Itbis { get; set; }
+        public int? Status { get; set; }
+        public int? Factura606id { get; set; }
+    }
+    public class DetalleFactura607
+    {
+        public int? Comprobante { get; set; }
+        public DateTime? ComprobanteDate { get; set; }
+        public string TypeIncome { get; set; }
+        public decimal? Monto { get; set; }
+        public decimal? Itbis { get; set; }
+        public int? Status { get; set; }
+        public int? Factura607id { get; set; }
+    }
+}

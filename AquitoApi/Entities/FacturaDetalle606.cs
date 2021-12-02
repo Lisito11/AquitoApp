@@ -5,7 +5,7 @@ namespace AquitoApi.Entities
     public partial class FacturaDetalle606 : IId
     {
         public int Id { get; set; }
-        public int? Comprobante { get; set; }
+        public string Comprobante { get; set; }
         public DateTime? ComprobanteDate { get; set; }
         public DateTime? FechaPago { get; set; }
         public string FormaPago { get; set; }

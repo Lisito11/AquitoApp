@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace AquitoApi.Controllers
 {
@@ -26,6 +27,14 @@ namespace AquitoApi.Controllers
         public async Task<ActionResult<List<FacturaDetalle606DTO>>> Get()
         {
             var facturas = await context.FacturaDetalles606s.ToListAsync();
+            return mapper.Map<List<FacturaDetalle606DTO>>(facturas);
+        }
+
+        //Metodo Get de una factura
+        [HttpGet("main/{id:int}")]
+        public async Task<ActionResult<List<FacturaDetalle606DTO>>> GetFacturas(int id)
+        {
+            var facturas = await context.FacturaDetalles606s.Where(x=> x.factura606id == id).ToListAsync();
             return mapper.Map<List<FacturaDetalle606DTO>>(facturas);
         }
 

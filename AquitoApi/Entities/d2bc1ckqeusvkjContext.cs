@@ -222,11 +222,11 @@ namespace AquitoApi.Entities {
                     .HasColumnName("factura606id")
                     .UseIdentityAlwaysColumn();
 
-                entity.Property(e => e.Age).HasColumnName("age");
+                entity.Property(e => e.Age).HasMaxLength(4).HasColumnName("age");
 
                 entity.Property(e => e.Mes).HasColumnName("mes");
 
-                entity.Property(e => e.Identification).HasColumnName("identification");
+                entity.Property(e => e.Identification).HasMaxLength(15).HasColumnName("identification");
 
                 entity.Property(e => e.EmisionDate)
                     .HasColumnType("date")
@@ -243,11 +243,11 @@ namespace AquitoApi.Entities {
                     .HasColumnName("factura607id")
                     .UseIdentityAlwaysColumn();
 
-                entity.Property(e => e.Age).HasColumnName("age");
+                entity.Property(e => e.Age).HasMaxLength(4).HasColumnName("age");
 
                 entity.Property(e => e.Mes).HasColumnName("mes");
 
-                entity.Property(e => e.Identification).HasColumnName("identification");
+                entity.Property(e => e.Identification).HasMaxLength(15).HasColumnName("identification");
 
                 entity.Property(e => e.EmisionDate)
                     .HasColumnType("date")
@@ -263,7 +263,7 @@ namespace AquitoApi.Entities {
                     .HasColumnName("detallefactura606id")
                     .UseIdentityAlwaysColumn();
 
-                entity.Property(e => e.Comprobante).HasColumnName("comprobantefiscal");
+                entity.Property(e => e.Comprobante).HasMaxLength(300).HasColumnName("comprobantefiscal");
 
                 entity.Property(e => e.ComprobanteDate)
                     .HasColumnType("date")
@@ -302,7 +302,7 @@ namespace AquitoApi.Entities {
                     .HasColumnName("detallefactura607id")
                     .UseIdentityAlwaysColumn();
 
-                entity.Property(e => e.Comprobante).HasColumnName("comprobantefiscal");
+                entity.Property(e => e.Comprobante).HasMaxLength(300).HasColumnName("comprobantefiscal");
 
                 entity.Property(e => e.ComprobanteDate)
                     .HasColumnType("date")

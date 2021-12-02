@@ -1,0 +1,117 @@
+﻿@inject ISnackbar Snackbar
+@inject HttpClient _http
+@inject NavigationManager navigationManager
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="mr-3 mb-n1"/>
+           Factura Fiscal
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudSelect T="string" Label="Año" Variant="Variant.Outlined" @bind-Value="AgeSeleccionado">
+                            @foreach (var age in _ages)
+                            {<MudSelectItem Value="@age"> @age </MudSelectItem>}
+                        </MudSelect>
+        <MudSelect T="string" Label="Mes" Variant="Variant.Outlined" @bind-Value="MesSeleccionado">
+            @foreach (var mes in meses)
+            {<MudSelectItem Value="@mes.Value"> @mes.Key </MudSelectItem>}
+        </MudSelect>
+        <MudTextField Value="@IdentificaSeleccionado" Label="Cedula o Pasaporte"/>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+       @* <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="Editar">Editar una factura</MudButton>*@
+        <MudButton Variant="Variant.Text"Color="Color.Primary" OnClick="Crear">Crear Factura</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+
+    public class Factura
+    {
+        public int Id { get; set; }
+        public string Age { get; set; }
+        public int? Mes { get; set; }
+        public string Identification { get; set; }
+        public int? Status { get; set; }
+        public DateTime? EmisionDate { get; set; }
+    }
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public int idfactura { get; set; }
+    public int? Age { get; set; }
+    public int Mes { get; set; }
+    public int? Identification { get; set; }
+    public int? Status { get; set; }
+    public DateTime? EmisionDate { get; set; }
+    private readonly List<string> _ages = new();
+    Dictionary<string, string> meses;
+    public string AgeSeleccionado { get; set; } = "2021";
+    public string MesSeleccionado { get; set; } = "Diciembre";
+    public string IdentificaSeleccionado { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        var ageActual = int.Parse((DateTime.Now.Year).ToString());
+        for (var i = 0; i < 100; i++)
+        {
+            _ages.Add(ageActual.ToString());
+            ageActual--;
+        }
+
+        meses = new Dictionary<string, string>();  
+        meses.Add("Enero", "1");  
+        meses.Add("Febrero", "2");  
+        meses.Add("Marzo", "3");  
+        meses.Add("Abril", "4");
+        meses.Add("Mayo", "5");
+        meses.Add("Junio", "6");
+        meses.Add("Julio", "7");
+        meses.Add("Agosto", "8");
+        meses.Add("Septiembre","9");
+        meses.Add("Octubre","10");
+        meses.Add("Noviembre","11");
+        meses.Add("Diciembre","12");
+
+
+
+    }
+
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    private void Editar()
+    {
+
+    }
+
+    private async Task Crear()
+    {
+        Factura factura = new Factura();
+        factura.EmisionDate = DateTime.Now.Date;
+        factura.Status = 1;
+        factura.Age = AgeSeleccionado;
+        factura.Identification = IdentificaSeleccionado;
+        factura.Mes = int.Parse(MesSeleccionado);
+
+        var facturaCreada = await _http.PostAsJsonAsync($"api/factura60{idfactura}", factura);
+        if (facturaCreada.IsSuccessStatusCode)
+        {
+            var fac = facturaCreada.Content.ReadFromJsonAsync<Factura>();
+            if (fac.IsCompletedSuccessfully)
+            {
+                navigationManager.NavigateTo($"reportes/facturas/{idfactura}/{fac.Result.Id}");     
+            }
+        }
+
+    }
+
+   
+
+    
+
+
+}

@@ -34,7 +34,12 @@ namespace AquitoApi.Controllers
             Factura606 factura = await context.Factura606s.Include(x => x.FacturasDetalle606).FirstOrDefaultAsync(x => x.Id == id);
             return mapper.Map<Factura606DTO>(factura);
         }
-
+        [HttpGet("search/{mes:int}/{age}", Name = "obtenerFt606")]
+        public async Task<ActionResult<Factura606DTO>> GetSearch(int mes, string age)
+        {
+            Factura606 factura = await context.Factura606s.FirstOrDefaultAsync(x => x.Mes == mes && x.Age == age);
+            return mapper.Map<Factura606DTO>(factura);
+        }
         //Metodo Post
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] Factura606CreacionDTO factura606CreacionDTO)

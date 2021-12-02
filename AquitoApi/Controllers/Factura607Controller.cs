@@ -37,6 +37,13 @@ namespace AquitoApi.Controllers
             return mapper.Map<Factura607DTO>(factura);
         }
 
+        [HttpGet("search/{mes:int}/{age}", Name = "obtenerFt607")]
+        public async Task<ActionResult<Factura607DTO>> GetSearch(int mes, string age)
+        {
+            Factura607 factura = await context.Factura607s.FirstOrDefaultAsync(x => x.Mes == mes && x.Age == age);
+            return mapper.Map<Factura607DTO>(factura);
+        }
+
         //Metodo Post
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] Factura607CreacionDTO factura607CreacionDTO)

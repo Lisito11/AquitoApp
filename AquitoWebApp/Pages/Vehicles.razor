@@ -375,45 +375,52 @@
 
     private async Task RegistrarVehiculo()
     {
-        Vehicle _vehicle = new()
+        if (String.IsNullOrEmpty(MarcaSeleccionada))
         {
-            Brand = MarcaSeleccionada,
-            Model = ModeloSeleccionado,
-            Age = int.Parse(AgeSeleccionado),
-            Color = ColorSeleccionado,
-            Priceday = PrecioPorDia,
-            Typevehicleid = int.Parse(TipoVehiculoSeleccionado),
-            Weightcapacity = CapacidadCarga,
-            Passengers = Pasajeros,
-            Matricula = Matricula,
-            Securitynum = NumeroSeguro,
-            Vehiclepic = UrlImage,
-            Latitude = decimal.Parse(Latitud.ToString()),
-            Longitude = decimal.Parse(Longitud.ToString()),
-            Status = 1
-        };
-        var vehiculoCreado = await _http.PostAsJsonAsync("api/vehiculo", _vehicle);
-
-        if (vehiculoCreado.IsSuccessStatusCode)
-        {
-            MarcaSeleccionada = "";
-            ModeloSeleccionado = "";
-            AgeSeleccionado = "";
-            ColorSeleccionado = "";
-            PrecioPorDia = 0;
-            TipoVehiculoSeleccionado = "";
-            CapacidadCarga = 0;
-            Pasajeros = 0;
-            Matricula = "";
-            NumeroSeguro = "";
-            UrlImage = "";
-            _snackbar.Add($"El vehiculo se ha registrado correctamente.", Severity.Success);
-            _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
+            _snackbar.Add($"Debe de completar todos los datos.", Severity.Error);
         }
         else
         {
-            Console.WriteLine(vehiculoCreado.Content.ReadAsStringAsync());
-            _snackbar.Add($"Ha ocurrido un error, por favor revisar los datos.", Severity.Error);
+            Vehicle _vehicle = new()
+                {
+                    Brand = MarcaSeleccionada,
+                    Model = ModeloSeleccionado,
+                    Age = int.Parse(AgeSeleccionado),
+                    Color = ColorSeleccionado,
+                    Priceday = PrecioPorDia,
+                    Typevehicleid = int.Parse(TipoVehiculoSeleccionado),
+                    Weightcapacity = CapacidadCarga,
+                    Passengers = Pasajeros,
+                    Matricula = Matricula,
+                    Securitynum = NumeroSeguro,
+                    Vehiclepic = UrlImage,
+                    Latitude = decimal.Parse(Latitud.ToString()),
+                    Longitude = decimal.Parse(Longitud.ToString()),
+                    Status = 1
+                };
+            var vehiculoCreado = await _http.PostAsJsonAsync("api/vehiculo", _vehicle);
+
+            if (vehiculoCreado.IsSuccessStatusCode)
+            {
+                MarcaSeleccionada = "";
+                ModeloSeleccionado = "";
+                AgeSeleccionado = "";
+                ColorSeleccionado = "";
+                PrecioPorDia = 0;
+                TipoVehiculoSeleccionado = "";
+                CapacidadCarga = 0;
+                Pasajeros = 0;
+                Matricula = "";
+                NumeroSeguro = "";
+                UrlImage = "";
+                _snackbar.Add($"El vehiculo se ha registrado correctamente.", Severity.Success);
+                _vehicles = await _http.GetFromJsonAsync<List<Vehicle>>("api/vehiculo");
+            }
+            else
+            {
+                Console.WriteLine(vehiculoCreado.Content.ReadAsStringAsync());
+                _snackbar.Add($"Ha ocurrido un error, por favor revisar los datos.", Severity.Error);
+            }
         }
     }
 

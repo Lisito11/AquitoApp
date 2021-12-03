@@ -16,7 +16,7 @@
                         <MudCard> 
                             <MudCardHeader>
                                 <CardHeaderAvatar>
-                                    <MudAvatar Color="@(factura.Status == 2 ? Color.Success : Color.Error)">$</MudAvatar>
+                                    <MudAvatar Color="@(factura.Status == 4 ? Color.Success : Color.Error)">$</MudAvatar>
                                 </CardHeaderAvatar>
                                 <CardHeaderContent>
                                     <MudText Typo="Typo.h5">AQUITO</MudText>
@@ -97,7 +97,7 @@
             decimal seDebe = ((reservation.Vehicle.Priceday * (reservation.Enddate.Value.Day - reservation.Startdate.Value.Day)) - reservation.Totalpay).Value;
 
             if (seDebe == 0) {
-                string statusPago = "2";
+                string statusPago = "4";
                 json = "[{\"op\": \"replace\",\"path\": \"/status\",\"value\":" + $"\"{statusPago}\"" + "}]";
                 content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
                 response = await Http.PatchAsync($"api/reservacion/{id}", content);

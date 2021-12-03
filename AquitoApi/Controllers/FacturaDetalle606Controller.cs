@@ -62,10 +62,10 @@ namespace AquitoApi.Controllers
             //Colocando las columnas
             sheet.Columns[0].SetWidth(150, LengthUnit.Pixel);
             sheet.Columns[1].SetWidth(150, LengthUnit.Pixel);
-            sheet.Columns[2].SetWidth(150, LengthUnit.Pixel);
+            sheet.Columns[2].SetWidth(200, LengthUnit.Pixel);
             sheet.Columns[3].SetWidth(150, LengthUnit.Pixel);
+            sheet.Columns[4].SetWidth(150, LengthUnit.Pixel);
             sheet.Columns[5].SetWidth(150, LengthUnit.Pixel);
-            sheet.Columns[6].SetWidth(300, LengthUnit.Pixel);
 
             sheet.Cells["A1"].Value = "Tipo Bienes y Servicios Comprados";
             sheet.Cells["B1"].Value = "NCF";

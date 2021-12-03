@@ -1,6 +1,7 @@
 ﻿@inject ISnackbar Snackbar
 @inject HttpClient _http
 @inject NavigationManager navigationManager
+@inject ISnackbar _snackbar
 
 <MudDialog>
     <TitleContent>
@@ -80,9 +81,9 @@
     private readonly List<string> _ages = new();
     Dictionary<string, string> meses;
     public string AgeSeleccionado { get; set; } = "2021";
-    public string MesSeleccionado { get; set; } = "Diciembre";
-        public string AgeSeleccionadoB { get; set; } = "2021";
-    public string MesSeleccionadoB { get; set; } = "Diciembre";
+    public string MesSeleccionado { get; set; }
+    public string AgeSeleccionadoB { get; set; } = "2021";
+    public string MesSeleccionadoB { get; set; }
     public string IdentificaSeleccionado { get; set; }
     protected override async Task OnInitializedAsync()
     {
@@ -120,27 +121,43 @@
     private async Task Buscar()
     {
         var facturabuscada = await _http.GetFromJsonAsync<Factura>($"api/factura60{idfactura}/search/{MesSeleccionadoB}/{AgeSeleccionadoB}");
-  
-        navigationManager.NavigateTo($"reportes/facturas/{idfactura}/{facturabuscada.Id}");   
-       
+        if (facturabuscada == null)
+        {
+          _snackbar.Add($"Ha ocurrido un error, esa factura no existe.", Severity.Error);
+        }
+        else
+        {
+            navigationManager.NavigateTo($"reportes/facturas/{idfactura}/{facturabuscada.Id}");   
+            _snackbar.Add($"Se ha creado la factura correctamente.", Severity.Success);
+        }
+
     }
 
     private async Task Crear()
     {
-        Factura factura = new Factura();
-        factura.EmisionDate = DateTime.Now.Date;
-        factura.Status = 1;
-        factura.Age = AgeSeleccionado;
-        factura.Identification = IdentificaSeleccionado;
-        factura.Mes = int.Parse(MesSeleccionado);
-
-        var facturaCreada = await _http.PostAsJsonAsync($"api/factura60{idfactura}", factura);
-        if (facturaCreada.IsSuccessStatusCode)
+        if (String.IsNullOrEmpty(MesSeleccionado))
         {
-            var fac = facturaCreada.Content.ReadFromJsonAsync<Factura>();
-            if (fac.IsCompletedSuccessfully)
+            _snackbar.Add($"Ha ocurrido un error, por favor revisar los datos.", Severity.Error);
+        }
+        else
+        {
+
+            Factura factura = new Factura();
+            factura.EmisionDate = DateTime.Now.Date;
+            factura.Status = 1;
+            factura.Age = AgeSeleccionado;
+            factura.Identification = IdentificaSeleccionado;
+            factura.Mes = int.Parse(MesSeleccionado);
+
+            var facturaCreada = await _http.PostAsJsonAsync($"api/factura60{idfactura}", factura);
+            if (facturaCreada.IsSuccessStatusCode)
             {
-                navigationManager.NavigateTo($"reportes/facturas/{idfactura}/{fac.Result.Id}");     
+                var fac = facturaCreada.Content.ReadFromJsonAsync<Factura>();
+                if (fac.IsCompletedSuccessfully)
+                {
+                    _snackbar.Add($"Se ha creado la factura correctamente.", Severity.Success);
+                    navigationManager.NavigateTo($"reportes/facturas/{idfactura}/{fac.Result.Id}");
+                }
             }
         }
 

@@ -63,9 +63,11 @@
                     </MudItem>
                     <MudGrid>
                         <MudItem xs="12">
-                            <MudCardActions>
-                                <MudButton @onclick="RegistrarDetalleFactura" ButtonType="ButtonType.Submit" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary" Class="m-auto">Crear registro</MudButton>
-                            </MudCardActions>
+                           @if (editando) {
+                    <MudButton @onclick="EditarTipo" ButtonType="ButtonType.Submit" FullWidth="true" Variant="Variant.Filled" Color="Color.Secondary" Class="m-auto">Editar registro</MudButton>
+                    } else {
+                        <MudButton @onclick="RegistrarDetalleFactura" ButtonType="ButtonType.Submit" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary" Class="m-auto">Crear registro</MudButton>
+                    }
                         </MudItem>
                     </MudGrid>
                 </MudGrid>
@@ -143,7 +145,7 @@
                     </MudItem>
                     <MudGrid>
                         <MudItem xs="12">
-                            @if (editando) {
+                     @if (editando) {
                     <MudButton @onclick="EditarTipo" ButtonType="ButtonType.Submit" FullWidth="true" Variant="Variant.Filled" Color="Color.Secondary" Class="m-auto">Editar registro</MudButton>
                     } else {
                         <MudButton @onclick="RegistrarDetalleFactura" ButtonType="ButtonType.Submit" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary" Class="m-auto">Crear registro</MudButton>
@@ -175,7 +177,7 @@
                         <MudTd DataLabel="Editar"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => Editar(context.Id)"></MudIconButton></MudTd>
                     </RowTemplate>
                 </MudTable>
-                    <MudButton H @onclick="()=> DescargarArchivo()" FullWidth="true" Variant="Variant.Outlined" Color="Color.Primary" Class="m-auto">Descargar Factura</MudButton>
+                    <MudButton  @onclick="()=> DescargarArchivo()" FullWidth="true" Variant="Variant.Outlined" Color="Color.Primary" Class="m-auto">Descargar Factura</MudButton>
 
             </MudPaper>
 
@@ -194,7 +196,7 @@
     private readonly Margin _margin = Margin.Dense;
     private readonly Variant _variant = Variant.Outlined;
     private readonly Adornment _adornment = Adornment.End;
-    bool editando = false;
+    public bool editando { get; set; } = false;
     int editFT;
 
     List<string> _typeBienesServicios = new List<string>() {
@@ -266,11 +268,13 @@
     //Metodos
 
     private async Task RegistrarDetalleFactura() {
-        if (!String.IsNullOrEmpty(Comprobante)) {
+        if (!String.IsNullOrEmpty(Comprobante))
+        {
 
             if (Id == "6")
             {
-                DetalleFactura606 detalleft606 = new() {
+                DetalleFactura606 detalleft606 = new()
+                    {
                         Comprobante = Comprobante,
                         ComprobanteDate = ComprobanteDate,
                         FechaPago = FechaPago,
@@ -284,7 +288,8 @@
 
                 var ft606 = await _http.PostAsJsonAsync("api/detallefactura606", detalleft606);
 
-                if (ft606.IsSuccessStatusCode) {
+                if (ft606.IsSuccessStatusCode)
+                {
                     Comprobante = "";
                     Monto = 0;
                     Itbis = 0;
@@ -293,12 +298,16 @@
                     _snackbar.Add($"Se ha agregado el registro correctamente.", Severity.Success);
                     detallefacturas606 = await _http.GetFromJsonAsync<List<DetalleFactura606>>($"api/detallefactura606/main/{Ft}");
 
-                } else {
+                }
+                else
+                {
                     _snackbar.Add($"Ha ocurrido un error, por favor revisar los datos.", Severity.Error);
                 }
             }
-            else if (Id == "7") {
-                DetalleFactura607 detalleft607 = new() {
+            else if (Id == "7")
+            {
+                DetalleFactura607 detalleft607 = new()
+                    {
                         Comprobante = Comprobante,
                         ComprobanteDate = ComprobanteDate,
                         Monto = Monto,
@@ -310,7 +319,8 @@
 
                 var ft607 = await _http.PostAsJsonAsync("api/detallefactura607", detalleft607);
 
-                if (ft607.IsSuccessStatusCode) {
+                if (ft607.IsSuccessStatusCode)
+                {
                     Comprobante = "";
                     Monto = 0;
                     Itbis = 0;
@@ -318,7 +328,9 @@
                     _snackbar.Add($"Se ha agregado el registro correctamente.", Severity.Success);
                     detallefacturas607 = await _http.GetFromJsonAsync<List<DetalleFactura607>>($"api/detallefactura607/main/{Ft}");
 
-                } else {
+                }
+                else
+                {
                     _snackbar.Add($"Ha ocurrido un error, por favor revisar los datos.", Severity.Error);
                 }
 
@@ -326,11 +338,13 @@
 
 
         }
+        else { 
+           _snackbar.Add($"Ha ocurrido un error, por favor rellenar todos los datos.", Severity.Error);
+        }
 
     }
 
     async Task Editar(int Idft) {
-
         if  (Id == "6") { 
             DetalleFactura606 detalleFactura = await _http.GetFromJsonAsync<DetalleFactura606>($"api/detallefactura606/{Idft}");
             Comprobante = detalleFactura.Comprobante;
@@ -340,7 +354,7 @@
             FechaPago = detalleFactura.FechaPago;
             FormaPago = detalleFactura.FormaPago;
             TypeVenta = detalleFactura.TypeVenta;
-
+            
         } else if (Id == "7")
         {
             DetalleFactura607 detalleFactura = await _http.GetFromJsonAsync<DetalleFactura607>($"api/detallefactura607/{Idft}");
@@ -349,10 +363,12 @@
             Monto = detalleFactura.Monto;
             Itbis = detalleFactura.Itbis;
             TypeIncome = detalleFactura.TypeIncome;
+            
+
         }
         editando = true;
-        editFT = Idft;
-        StateHasChanged();
+            editFT = Idft;
+            StateHasChanged();
     }
 
     async Task EditarTipo() {

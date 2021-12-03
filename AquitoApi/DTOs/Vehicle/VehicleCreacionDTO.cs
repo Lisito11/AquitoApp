@@ -9,6 +9,7 @@ namespace AquitoApi.DTOs.Vehicle {
         public string Model { get; set; }
         public int? Age { get; set; }
         public decimal? Priceday { get; set; }
+        public decimal? Price { get; set; }
         public decimal? Weightcapacity { get; set; }
         public int? Passengers { get; set; }
         public string Matricula { get; set; }

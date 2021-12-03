@@ -183,6 +183,8 @@ namespace AquitoApi.Entities {
 
                 entity.Property(e => e.Priceday).HasColumnName("priceday");
 
+                entity.Property(e => e.Price).HasColumnName("price");
+
                 entity.Property(e => e.Securitynum)
                     .HasMaxLength(25)
                     .HasColumnName("securitynum");

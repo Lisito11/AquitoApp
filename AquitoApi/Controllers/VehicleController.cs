@@ -78,6 +78,17 @@ namespace AquitoApi.Controllers {
             return mapper.Map<VehicleDTO>(vehiculo);
         }
 
+        [HttpGet("matricula/{matricula}", Name = "obtenerVehiculoMatricula")]
+        public async Task<ActionResult<VehicleDTO>> GetMatricula(string matricula)
+        {
+            Vehicle vehiculo = await context.Vehicles
+                .Include(x => x.Typevehicle)
+                .Include(x => x.Reservations)
+                .ThenInclude(y => y.Client)
+                .FirstOrDefaultAsync(x => x.Matricula == matricula);
+            return mapper.Map<VehicleDTO>(vehiculo);
+        }
+
         //Metodo Get(id) endpoint para traer las 3 proximas citas
         [HttpGet("{id:int}/proximascitas")]
         public async Task<ActionResult<VehicleDTO>> GetCita(int id) {

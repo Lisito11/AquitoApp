@@ -37,13 +37,13 @@
                 </MudGrid>
 
                 <MudGrid Spacing="2">
-                    <MudItem xs="12" sm="6" md="4">
+                    <MudItem xs="12" sm="6" md="3">
                         <MudSelect T="string" Label="Año" Variant="Variant.Outlined" @bind-Value="AgeSeleccionado" Margin="_margin">
                             @foreach (var age in _ages)
                             {<MudSelectItem Value="@age"> @age </MudSelectItem>}
                         </MudSelect>
                     </MudItem>
-                    <MudItem xs="12" sm="6" md="4">
+                    <MudItem xs="12" sm="6" md="3">
                         <MudTextField T="string" @bind-Value="Matricula"
                                       Label="Matricula"
                                       Variant="_variant"
@@ -52,9 +52,18 @@
                                       Margin="_margin">
                         </MudTextField>
                     </MudItem>
-                    <MudItem xs="12" sm="6" md="4">
+                    <MudItem xs="12" sm="6" md="3">
                         <MudTextField @bind-Value="PrecioPorDia"
                                       Label="Precio por dia"
+                                      Variant="_variant"
+                                      Adornment="_adornment"
+                                      AdornmentIcon="@Icons.Material.Filled.AttachMoney"
+                                      Margin="_margin">
+                        </MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="6" md="3">
+                        <MudTextField @bind-Value="Precio"
+                                      Label="Precio Vehiculo"
                                       Variant="_variant"
                                       Adornment="_adornment"
                                       AdornmentIcon="@Icons.Material.Filled.AttachMoney"
@@ -164,9 +173,9 @@
                 <MudTh>Modelo </MudTh>
                 <MudTh>Año</MudTh>
                 <MudTh>Color</MudTh>
-                <MudTh>Tipo</MudTh>
+                <MudTh>Precio dia</MudTh>
                 <MudTh>Precio</MudTh>
-                <MudTh>Capacidad(Kg)</MudTh>
+                <MudTh>Kg</MudTh>
                 <MudTh>Pasajeros</MudTh>
                 <MudTh>Matricula</MudTh>
                 <MudTh>Seguro</MudTh>
@@ -179,9 +188,10 @@
                     <MudTd Class="alert-danger" DataLabel="Modelo">@((context.Model) == null ? "" : context.Model)</MudTd>
                     <MudTd Class="alert-danger" DataLabel="Año">@((context.Age) == null ? "" : context.Age)</MudTd>
                     <MudTd Class="alert-danger" DataLabel="Color">@((context.Color) == null ? "" : context.Color)</MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Tipo">@((context.Typevehicle.Namevehicle) == null ? "" : context.Typevehicle.Namevehicle)</MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Precio"> @((context.Priceday) == null ? "" : $"RD${context.Priceday}")</MudTd>
-                    <MudTd Class="alert-danger" DataLabel="Capacidad(Kg)">@((context.Weightcapacity) == null ? "" : $"{context.Weightcapacity}Kg")</MudTd>
+                   @* <MudTd Class="alert-danger" DataLabel="Tipo">@((context.Typevehicle.Namevehicle) == null ? "" : context.Typevehicle.Namevehicle)</MudTd>*@
+                    <MudTd Class="alert-danger" DataLabel="Precio por dia"> @((context.Priceday) == null ? "" : $"RD${context.Priceday}")</MudTd>
+                    <MudTd Class="alert-danger" DataLabel="Precio"> @((context.Price) == null ? "" : $"RD${context.Price}")</MudTd>
+                    <MudTd Class="alert-danger" DataLabel="Kg">@((context.Weightcapacity) == null ? "" : $"{context.Weightcapacity}Kg")</MudTd>
                     <MudTd Class="alert-danger" DataLabel="Pasajeros">@((context.Passengers) == null ? "" : context.Passengers)</MudTd>
                     <MudTd Class="alert-danger" DataLabel="Matricula">@((context.Matricula) == null ? "" : context.Matricula)</MudTd>
                     <MudTd Class="alert-danger" DataLabel="Seguro">@((context.Securitynum) == null ? "" : context.Securitynum)</MudTd>
@@ -193,9 +203,11 @@
                     <MudTd DataLabel="Modelo">@((context.Model) == null ? "" : context.Model)</MudTd>
                     <MudTd DataLabel="Año">@((context.Age) == null ? "" : context.Age)</MudTd>
                     <MudTd DataLabel="Color">@((context.Color) == null ? "" : context.Color)</MudTd>
-                    <MudTd DataLabel="Tipo">@((context.Typevehicle.Namevehicle) == null ? "" : context.Typevehicle.Namevehicle)</MudTd>
-                    <MudTd DataLabel="Precio"> @((context.Priceday) == null ? "" : $"RD${context.Priceday}")</MudTd>
-                    <MudTd DataLabel="Capacidad(Kg)">@((context.Weightcapacity) == null ? "" : $"{context.Weightcapacity}Kg")</MudTd>
+                   @* <MudTd Class="alert-danger" DataLabel="Tipo">@((context.Typevehicle.Namevehicle) == null ? "" : context.Typevehicle.Namevehicle)</MudTd>*@
+
+                    <MudTd DataLabel="Precio por dia"> @((context.Priceday) == null ? "" : $"RD${context.Priceday}")</MudTd>                    
+                    <MudTd DataLabel="Precio"> @((context.Price) == null ? "" : $"RD${context.Price}")</MudTd>
+                    <MudTd DataLabel="Kg">@((context.Weightcapacity) == null ? "" : $"{context.Weightcapacity}Kg")</MudTd>
                     <MudTd DataLabel="Pasajeros">@((context.Passengers) == null ? "" : context.Passengers)</MudTd>
                     <MudTd DataLabel="Matricula">@((context.Matricula) == null ? "" : context.Matricula)</MudTd>
                     <MudTd DataLabel="Seguro">@((context.Securitynum) == null ? "" : context.Securitynum)</MudTd>
@@ -253,6 +265,7 @@
 
     public string NumeroSeguro { get; set; }
     public decimal PrecioPorDia { get; set; }
+    public decimal Precio { get; set; }
     public string Matricula { get; set; }
     public string TipoVehiculoSeleccionado { get; set; }
     public decimal CapacidadCarga { get; set; }
@@ -375,7 +388,7 @@
 
     private async Task RegistrarVehiculo()
     {
-        if (String.IsNullOrEmpty(MarcaSeleccionada))
+        if (String.IsNullOrEmpty(Matricula))
         {
             _snackbar.Add($"Debe de completar todos los datos.", Severity.Error);
         }
@@ -388,6 +401,7 @@
                     Age = int.Parse(AgeSeleccionado),
                     Color = ColorSeleccionado,
                     Priceday = PrecioPorDia,
+                    Price = Precio,
                     Typevehicleid = int.Parse(TipoVehiculoSeleccionado),
                     Weightcapacity = CapacidadCarga,
                     Passengers = Pasajeros,
@@ -407,6 +421,7 @@
                 AgeSeleccionado = "";
                 ColorSeleccionado = "";
                 PrecioPorDia = 0;
+                Precio = 0;
                 TipoVehiculoSeleccionado = "";
                 CapacidadCarga = 0;
                 Pasajeros = 0;

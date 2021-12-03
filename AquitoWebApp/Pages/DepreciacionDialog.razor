@@ -1,0 +1,23 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.h6">@vehicle.Brand @vehicle.Model</MudText>
+        <MudCardMedia Image="@vehicle.Vehiclepic" Height="250" />
+        <MudText Typo="Typo.body1">Precio Actual:<b> RD$@vehicle.Price</b></MudText>
+        <MudText Typo="Typo.body1">Depreciación Anual:<b> @dpAnual</b></MudText>
+        <MudText Typo="Typo.body1">Depreciación Mensual:<b> @dpmeses</b></MudText>
+             
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public Vehicle vehicle { get; set; }
+    [Parameter] public string dpAnual { get; set; }
+    [Parameter] public string dpmeses { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+}

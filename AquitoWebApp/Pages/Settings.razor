@@ -3,8 +3,9 @@
 @inject HttpClient _http
 @inject ISnackbar _snackbar
 @inject NavigationManager _navigationManager
+@inject IDialogService DialogService
 
-<h1 class="text-center">Gestion y configuració de vehiculos</h1>
+<h1 class="text-center">Gestion y configuración de vehiculos</h1>
 <MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
 <div class="mx-auto" style="max-width: 1300px;">
     <MudPaper Class="pa-10 ma-2" Elevation="2">
@@ -17,9 +18,15 @@
             </TitleContent>
             <ChildContent>
                 <MudGrid Spacing="2">
-                    <MudItem xs="12" sm="12" md="6">
-                        <MudTextField Margin="_margin" T="string" @bind-Value="Matricula" Label="Matricula" Variant="_variant" HelperText="Ingrese la matricula del vehiculo"></MudTextField>
-                    </MudItem>
+                     <MudSelect T="string" Label="Vehiculos" Variant="_variant" Margin="_margin" Placeholder="Elige el vehiculo" @bind-Value="Matricula">                     
+                            @if(vehicles != null){
+                                @foreach (var vehicle in vehicles)
+                                {
+                                    <MudSelectItem Value="@vehicle.Matricula"> @vehicle.Brand @vehicle.Model </MudSelectItem>
+                                } 
+                            }
+                                                
+                     </MudSelect>
                 </MudGrid>
                 <MudGrid>
             <MudItem xs="12">
@@ -94,10 +101,14 @@
     public string DepreciacionMeses { get; set; }
     public string DepreciacionAnual { get; set; }
     public string IdTipoVehiculo { get; set; }
+    private List<Vehicle> vehicles;
     List<Typevehicle> typevehicles;
     bool editado = false;
+
+
     protected override async Task OnInitializedAsync() {
         typevehicles = await _http.GetFromJsonAsync<List<Typevehicle>>("api/tipovehiculo");
+        vehicles = await _http.GetFromJsonAsync<List<Vehicle>>($"api/vehiculo");
     }
 
     private async Task RegistrarTipoVehiculo() {
@@ -191,20 +202,31 @@
 
     private async Task CalcularDepreciacion()
     {
+
+
         int VIDAUTILAGE = 5;
         int VIDAUTILMESES = 60;
 
         if (!String.IsNullOrEmpty(Matricula))
         {
-            Vehicle vehicle = await _http.GetFromJsonAsync<Vehicle>($"api/vehicle/matricula{Matricula}");
+            Vehicle vehicle = await _http.GetFromJsonAsync<Vehicle>($"api/vehiculo/matricula/{Matricula}");
+            Console.WriteLine(vehicle);
+            DepreciacionAnual = $"RD${(vehicle.Price / VIDAUTILAGE).Value.ToString("0.##")}";
 
-            DepreciacionAnual = (vehicle.Price / VIDAUTILAGE).ToString();
+            DepreciacionMeses = $"RD${(vehicle.Price / VIDAUTILMESES).Value.ToString("0.##")}";
 
-            DepreciacionMeses = (vehicle.Price / VIDAUTILMESES).ToString();
+            var parameters = new DialogParameters { 
+                ["vehicle"] = vehicle, 
+                ["dpAnual"] = DepreciacionAnual, 
+                ["dpmeses"] = DepreciacionMeses,
+            };
+
+            var dialog = DialogService.Show<DepreciacionDialog>("Depreciacion", parameters);
 
 
 
-
+            Console.WriteLine(DepreciacionAnual);
+            Console.WriteLine(DepreciacionAnual);
 
 
         }

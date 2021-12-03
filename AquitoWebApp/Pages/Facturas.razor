@@ -4,9 +4,11 @@
 @inject ISnackbar _snackbar
 @inject NavigationManager _navigationManager
 @using System.Linq
+@using System.IO
+@using CsvHelper
 
 <h1 class="text-center">Factura</h1>
-<MudNavLink Href="/" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
+<MudNavLink Href="/reportes" Icon="@Icons.Filled.ArrowBack" Style="width: 150px">Regresar</MudNavLink>
 
 @{
     if (Id == "6")
@@ -95,7 +97,9 @@
                         <MudTd DataLabel="Editar"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => Editar(context.Id)"></MudIconButton></MudTd>
                     </RowTemplate>
                 </MudTable>
-            </MudPaper>
+                                <MudButton @onclick="()=> DescargarArchivo()" FullWidth="true" Variant="Variant.Outlined" Color="Color.Primary" Class="m-auto">Descargar Factura</MudButton>
+
+                </MudPaper>
         </div>
     } else if (Id == "7") {
         //FORMULARIO
@@ -171,8 +175,9 @@
                         <MudTd DataLabel="Editar"><MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => Editar(context.Id)"></MudIconButton></MudTd>
                     </RowTemplate>
                 </MudTable>
+                    <MudButton H @onclick="()=> DescargarArchivo()" FullWidth="true" Variant="Variant.Outlined" Color="Color.Primary" Class="m-auto">Descargar Factura</MudButton>
+
             </MudPaper>
-            <MudButton @onclick="DescargarArchivo"  FullWidth="true" Variant="Variant.Outlined" Color="Color.Primary" Class="m-auto">Descargar Factura</MudButton>
 
         </div>
     }
@@ -440,7 +445,15 @@
         StateHasChanged();
     }
 
-    async Task DescargarArchivo() { 
+    async Task DescargarArchivo()
+    {
+        if (Id == "6")
+        {
+           _navigationManager.NavigateTo($"https://aquitoapp.herokuapp.com/api/detallefactura606/main/{Ft}/export", false);   
+        } else if (Id == "7")
+        {
+           _navigationManager.NavigateTo($"https://aquitoapp.herokuapp.com/api/detallefactura607/main/{Ft}/export", false);   
+        }
     }
 
 

@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Logging;
+using GemBox.Spreadsheet;
 
 namespace AquitoApi
 {
@@ -42,6 +43,7 @@ namespace AquitoApi
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.Configure<Account>(Configuration.GetSection("Cloudinary"));
+            SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
 
             // Agregar Identity
             services.AddIdentity<Useraquito, Roleaquito>(
